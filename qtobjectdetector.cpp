@@ -49,8 +49,8 @@ void QtObjectDetector::on_fileSelected(const QString &file)
 
 void QtObjectDetector::on_loadFilePushButton_clicked()
 {
-    auto test = m_photoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    cv::Mat inputImage = cv::imread(test.data());
+    const auto test = m_photoLoader->getFileInfo().absoluteFilePath().toUtf8();
+    const cv::Mat inputImage = cv::imread(test.data());
 
     const bool autoScale = ui->autoSizeCheckBox->isChecked();
     const int x = autoScale ? inputImage.cols : (ui->xSpinBox->value() > inputImage.cols ? inputImage.cols : ui->xSpinBox->value());
@@ -58,7 +58,7 @@ void QtObjectDetector::on_loadFilePushButton_clicked()
 
     const int formatIndex = ui->formatListComboBox->currentIndex();
 
-    QImage * imgIn = new QImage(static_cast<uchar*>(inputImage.data), x, y, static_cast<int>(inputImage.step), static_cast<QImage::Format>(formatIndex));
+    const QImage * imgIn = new QImage(static_cast<uchar*>(inputImage.data), x, y, static_cast<int>(inputImage.step), static_cast<QImage::Format>(formatIndex));
     QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
     QGraphicsScene* scene = new QGraphicsScene(this);
 
@@ -73,7 +73,6 @@ void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
     {
         ui->xSpinBox->setEnabled(false);
         ui->ySpinBox->setEnabled(false);
-
     }
     else
     {

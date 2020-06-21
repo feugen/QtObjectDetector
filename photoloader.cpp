@@ -2,12 +2,12 @@
 #include <QMetaEnum>
 
 PhotoLoader::PhotoLoader(QObject *parent) : QObject(parent),
-    m_FileInfo(QFileInfo("No File selected")),
-    m_ImageFormat(QImage::Format_BGR888),
-    m_xSize(800),
-    m_ySize(600)
+    m_FileInfo(QFileInfo("No File selected"))
+  , m_ImageFormat(QImage::Format_BGR888)
+  , m_xSize(800)
+  , m_ySize(600)
 {
-    QMetaEnum formatEnum = QMetaEnum::fromType<QImage::Format>();
+    const QMetaEnum formatEnum = QMetaEnum::fromType<QImage::Format>();
 
     for(int i = 0; i < formatEnum.keyCount(); i++){
         m_FormatList += formatEnum.valueToKey(i);
