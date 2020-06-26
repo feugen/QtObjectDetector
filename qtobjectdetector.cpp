@@ -1,6 +1,6 @@
 #include "qtobjectdetector.h"
 #include "ui_qtobjectdetector.h"
-#include <opencv2/opencv.hpp>
+
 
 #include <QImage>
 #include <QPixmap>
@@ -26,7 +26,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     ui->xSpinBox->setValue(static_cast<int>(m_photoLoader->getXSize()));
     ui->ySpinBox->setValue(static_cast<int>(m_photoLoader->getYSize()));
 
-    connect(m_fileDialog, &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
+    connect(m_fileDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
 }
 
 QtObjectDetector::~QtObjectDetector()
@@ -49,16 +49,19 @@ void QtObjectDetector::on_fileSelected(const QString &file)
 
 void QtObjectDetector::on_loadFilePushButton_clicked()
 {
-    const auto test = m_photoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    const cv::Mat inputImage = cv::imread(test.data());
+    const auto filePath = m_photoLoader->getFileInfo().absoluteFilePath().toUtf8();
+    m_inputImage = cv::imread(filePath.data());
+    loadImage();
+}
 
+void QtObjectDetector::loadImage()
+{
     const bool autoScale = ui->autoSizeCheckBox->isChecked();
-    const int x = autoScale ? inputImage.cols : (ui->xSpinBox->value() > inputImage.cols ? inputImage.cols : ui->xSpinBox->value());
-    const int y = autoScale ? inputImage.rows : (ui->ySpinBox->value() > inputImage.rows ? inputImage.rows : ui->ySpinBox->value());
-
+    const int x = autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
+    const int y = autoScale ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
     const int formatIndex = ui->formatListComboBox->currentIndex();
 
-    const QImage * imgIn = new QImage(static_cast<uchar*>(inputImage.data), x, y, static_cast<int>(inputImage.step), static_cast<QImage::Format>(formatIndex));
+    const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), x, y, static_cast<int>(m_inputImage.step), static_cast<QImage::Format>(formatIndex));
     QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
     QGraphicsScene* scene = new QGraphicsScene(this);
 
@@ -79,5 +82,4 @@ void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
         ui->xSpinBox->setEnabled(true);
         ui->ySpinBox->setEnabled(true);
     }
-
 }

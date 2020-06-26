@@ -131,7 +131,13 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QGraphicsView" name="graphicsView_PhotoLoader"/>
+           <widget class="QGraphicsView" name="graphicsView_PhotoLoader">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QWidget" name="widget_2" native="true">
@@ -168,6 +174,17 @@
                  <width>160</width>
                  <height>0</height>
                 </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>160</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <italic>true</italic>
+                </font>
                </property>
                <property name="text">
                 <string>No file selected</string>
