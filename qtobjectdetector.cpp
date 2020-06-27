@@ -18,7 +18,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
 
     const auto formatList = m_photoLoader->getFormatList();
     ui->formatListComboBox->insertItems(0, formatList);
-    const int indexBGR888 = formatList.indexOf("Format_BGR888");
+    const int indexBGR888 = formatList.indexOf("BGR888");
     if (indexBGR888 > -1) ui->formatListComboBox->setCurrentIndex(indexBGR888);
 
     ui->autoSizeCheckBox->setChecked(m_photoLoader->getAutoScale());

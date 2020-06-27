@@ -10,7 +10,8 @@ PhotoLoader::PhotoLoader(QObject *parent) : QObject(parent),
     const QMetaEnum formatEnum = QMetaEnum::fromType<QImage::Format>();
 
     for(int i = 0; i < formatEnum.keyCount(); i++){
-        m_FormatList += formatEnum.valueToKey(i);
+        QString item = formatEnum.valueToKey(i);
+        m_FormatList += item.remove("Format_");
     }
 }
 
