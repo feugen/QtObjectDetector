@@ -96,15 +96,61 @@ void QtObjectDetector::loadImage()
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
-    const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    m_inputVideo.open(filepath.data());
 
-    //Todo, not working
-    while(m_inputVideo.isOpened()){
-        m_inputVideo.read(m_outputVideoImage);
-        cv::imshow("test", m_outputVideoImage);
+    //const auto buildInfo = cv::getBuildInformation();
+    //qDebug() << QString::fromStdString(buildInfo);
+
+    const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
+
+    cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);
+
+    if(!m_inputVideo)
+    {
+        m_inputVideo = std::make_unique<cv::VideoCapture>();
     }
 
+    if(!m_outputVideoImage)
+    {
+        m_outputVideoImage = std::make_unique<cv::Mat>();
+    }
+
+    if (!m_inputVideo->open(filepath.data(), cv::CAP_ANY)) return;
+
+    const double fps = m_inputVideo.get()->get(cv::CAP_PROP_FPS);
+
+    qDebug() << fps << "Fps";
+
+    int i = 0;
+
+    QGraphicsScene * scene = new QGraphicsScene();
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
+    QPixmap pixmap;
+
+    ui->graphicsView_VideoLoader->setScene(scene);
+    scene->addItem(item);
+
+    for(;;)
+    {
+        qDebug() << i;
+        m_inputVideo->read(*m_outputVideoImage.get());
+        if (m_outputVideoImage.get()->empty())
+        {
+            qDebug() << "Empty Image, end video";
+            break;
+        }
+        QImage qimg((*(m_outputVideoImage.get())).data, (*(m_outputVideoImage.get())).cols, (*(m_outputVideoImage.get())).rows, static_cast<int>((*(m_outputVideoImage.get())).step), QImage::Format_RGB888);
+        pixmap = QPixmap::fromImage(qimg.rgbSwapped());
+        item->setPixmap(pixmap);
+
+        //ui->graphicsView_VideoLoader->scene()->addItem(pixmap);
+
+        //cv::imshow("Frame", *m_outputVideoImage.get()); //external window
+        i++;
+
+        cv::waitKey(1000 / static_cast<int>(fps));
+    }
+    m_inputVideo->release();
+    cv::destroyAllWindows();
 }
 
 void QtObjectDetector::stopCamera()

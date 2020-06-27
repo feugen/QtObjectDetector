@@ -47,8 +47,8 @@ private:
     std::unique_ptr<QCamera> m_pCameraActive = nullptr;
     QList<QCameraInfo> m_cameras;
     cv::Mat m_inputImage;
-    cv::Mat m_outputVideoImage;
-    cv::VideoCapture m_inputVideo;
+    std::unique_ptr<cv::Mat> m_outputVideoImage = nullptr;
+    std::unique_ptr<cv::VideoCapture> m_inputVideo = nullptr;
     Ui::QtObjectDetector *ui;
 };
 #endif // OBJECTDETECTOR_H
