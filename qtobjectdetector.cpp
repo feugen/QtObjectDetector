@@ -76,9 +76,6 @@ void QtObjectDetector::on_loadFilePushButton_clicked()
 void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 {
     m_pVideoDialog->open();
-    //const auto filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    //m_inputVideo = cv::VideoCapture(filePath.data());
-    //todo
 }
 
 void QtObjectDetector::loadImage()
@@ -95,6 +92,19 @@ void QtObjectDetector::loadImage()
     scene->addItem(item);
     ui->graphicsView_PhotoLoader->setScene(scene);
     ui->graphicsView_PhotoLoader->show();
+}
+
+void QtObjectDetector::on_pushButton_LoadVideo_clicked()
+{
+    const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
+    m_inputVideo.open(filepath.data());
+
+    //Todo, not working
+    while(m_inputVideo.isOpened()){
+        m_inputVideo.read(m_outputVideoImage);
+        cv::imshow("test", m_outputVideoImage);
+    }
+
 }
 
 void QtObjectDetector::stopCamera()
@@ -183,3 +193,4 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
         ui->spinBox_CameraYResolution->setEnabled(false);
     }
 }
+

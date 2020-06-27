@@ -33,6 +33,8 @@ private slots:
 
     void on_pushButton_SelectVideo_clicked();
 
+    void on_pushButton_LoadVideo_clicked();
+
 private:
     void loadImage();
     void stopCamera();
@@ -45,6 +47,7 @@ private:
     std::unique_ptr<QCamera> m_pCameraActive = nullptr;
     QList<QCameraInfo> m_cameras;
     cv::Mat m_inputImage;
+    cv::Mat m_outputVideoImage;
     cv::VideoCapture m_inputVideo;
     Ui::QtObjectDetector *ui;
 };
