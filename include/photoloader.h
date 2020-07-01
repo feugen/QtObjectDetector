@@ -26,9 +26,9 @@ public:
 
 private:
 
+    QStringList m_FormatList;
     QFileInfo m_FileInfo;
     QImage::Format m_ImageFormat;
-    QStringList m_FormatList;
     uint m_xSize;
     uint m_ySize;
     bool m_autoScale = true;

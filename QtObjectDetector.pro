@@ -17,14 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    photoloader.cpp \
-    qtobjectdetector.cpp \
-    videoloader.cpp
+    src/photoloader.cpp \
+    src/qtobjectdetector.cpp \
+    src/videoloader.cpp
 
 HEADERS += \
-    photoloader.h \
-    qtobjectdetector.h \
-    videoloader.h
+    include/photoloader.h \
+    include/qtobjectdetector.h \
+    include/videoloader.h
 
 FORMS += \
     qtobjectdetector.ui
