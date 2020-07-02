@@ -230,6 +230,7 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
     {
         ui->pushButton_StartCamera->setEnabled(true);
         ui->comboBox_LiveCamera->setEnabled(true);
+        ui->pushButton_SelectVideo->setEnabled(false);
     }
     else
     {
@@ -237,6 +238,21 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
         ui->comboBox_LiveCamera->setEnabled(false);
         ui->spinBox_CameraXResolution->setEnabled(false);
         ui->spinBox_CameraYResolution->setEnabled(false);
+        ui->pushButton_SelectVideo->setEnabled(true);
     }
 }
 
+
+void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
+{
+    if(static_cast<bool>(arg1) == true)
+    {
+        ui->spinBox_CameraXResolution->setEnabled(false);
+        ui->spinBox_CameraYResolution->setEnabled(false);
+    }
+    else
+    {
+        ui->spinBox_CameraXResolution->setEnabled(true);
+        ui->spinBox_CameraYResolution->setEnabled(true);
+    }
+}

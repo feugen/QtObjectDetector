@@ -195,8 +195,14 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="label_2">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
-                      <string>Format</string>
+                      <string>Format:</string>
                      </property>
                     </widget>
                    </item>
@@ -407,7 +413,7 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>160</width>
+                       <width>210</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -436,15 +442,21 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="label_5">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
-                      <string>Format</string>
+                      <string>Format:</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QComboBox" name="formatListComboBox_2">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -461,6 +473,12 @@
                     <widget class="QPushButton" name="pushButton_LoadVideo">
                      <property name="enabled">
                       <bool>false</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
                      <property name="text">
                       <string>Load Video</string>
@@ -488,8 +506,14 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="label_6">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
-                      <string>Select Camera</string>
+                      <string>Camera:</string>
                      </property>
                     </widget>
                    </item>
@@ -502,8 +526,24 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="label">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
-                      <string>Resolution</string>
+                      <string>Resolution:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBox_AutoResolution">
+                     <property name="text">
+                      <string>Auto</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -519,6 +559,9 @@
                    </item>
                    <item>
                     <widget class="QSpinBox" name="spinBox_CameraXResolution">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
                      <property name="minimum">
                       <number>319</number>
                      </property>
@@ -539,6 +582,9 @@
                    </item>
                    <item>
                     <widget class="QSpinBox" name="spinBox_CameraYResolution">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
                      <property name="minimum">
                       <number>240</number>
                      </property>
@@ -552,6 +598,12 @@
                    </item>
                    <item>
                     <widget class="Line" name="line_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
@@ -563,14 +615,14 @@
                       <bool>false</bool>
                      </property>
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>252</width>
+                       <width>50</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -578,6 +630,53 @@
                       <string>Start Camera</string>
                      </property>
                     </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QWidget" name="widget_12" native="true">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(35, 38, 41);</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <item>
+                 <widget class="QWidget" name="widget_13" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <item>
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>510</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_14" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>510</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>

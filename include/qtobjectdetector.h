@@ -35,6 +35,8 @@ private slots:
 
     void on_pushButton_LoadVideo_clicked();
 
+    void on_checkBox_AutoResolution_stateChanged(int arg1);
+
 private:
     void loadImage();
     void stopCamera();
