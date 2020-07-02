@@ -6,8 +6,8 @@
 #include <QString>
 #include <QCamera>
 #include <memory>
-#include <photoloader.h>
-#include <videoloader.h>
+#include "photoloader.h"
+#include "videoloader.h"
 #include <opencv2/opencv.hpp>
 
 QT_BEGIN_NAMESPACE
