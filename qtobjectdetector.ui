@@ -15,9 +15,132 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
+    <item row="2" column="1">
+     <widget class="QWidget" name="widget_PipelineCreator" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(35, 38, 41);</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="5" column="1">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Add new</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QLabel" name="label_11">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Arguments:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="label_10">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Function:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Delete current</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="label_12">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Step:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QComboBox" name="comboBox_FunctionSelector"/>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QWidget" name="widget_Arguments" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QWidget" name="widget_16" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(35, 38, 41);</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Pipeline creator</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0" rowspan="2">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+      <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>0</number>
@@ -27,7 +150,7 @@
           <string>Photo Loader</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QWidget" name="widget" native="true">
             <layout class="QGridLayout" name="gridLayout_5">
              <property name="leftMargin">
@@ -328,7 +451,7 @@
             </layout>
            </widget>
           </item>
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QGraphicsView" name="graphicsView_PhotoLoader">
             <property name="font">
              <font>
@@ -653,7 +776,7 @@
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
-                       <width>510</width>
+                       <width>254</width>
                        <height>20</height>
                       </size>
                      </property>
@@ -672,7 +795,7 @@
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
-                       <width>510</width>
+                       <width>254</width>
                        <height>20</height>
                       </size>
                      </property>
