@@ -12,12 +12,12 @@
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
+    , ui(new Ui::QtObjectDetector)
     , m_pPhotoLoader(new PhotoLoader(this))
-    , m_pVideoLoader(new VideoLoader(this))
     , m_pImageDialog(new QFileDialog(this))
+    , m_pVideoLoader(new VideoLoader(this))
     , m_pVideoDialog(new QFileDialog(this))
     , m_cameras(m_pVideoLoader->CameraInfo().availableCameras())
-    , ui(new Ui::QtObjectDetector)
 {
     ui->setupUi(this);
 
@@ -46,6 +46,7 @@ QtObjectDetector::~QtObjectDetector()
     delete ui;
 }
 
+//Image Part
 
 void QtObjectDetector::on_selectFileButton_clicked()
 {
@@ -59,23 +60,11 @@ void QtObjectDetector::on_fileSelected(const QString &file)
     ui->loadFilePushButton->setEnabled(true);
 }
 
-void QtObjectDetector::on_videoSelected(const QString &file)
-{
-    m_pVideoLoader->setFileInfo(file);
-    ui->label_videoName->setText(m_pVideoLoader->getFileInfo().fileName());
-    ui->pushButton_LoadVideo->setEnabled(true);
-}
-
 void QtObjectDetector::on_loadFilePushButton_clicked()
 {
     const auto filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
     m_inputImage = cv::imread(filePath.data());
     loadImage();
-}
-
-void QtObjectDetector::on_pushButton_SelectVideo_clicked()
-{
-    m_pVideoDialog->open();
 }
 
 void QtObjectDetector::loadImage()
@@ -92,6 +81,35 @@ void QtObjectDetector::loadImage()
     scene->addItem(item);
     ui->graphicsView_PhotoLoader->setScene(scene);
     ui->graphicsView_PhotoLoader->show();
+}
+
+void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
+{
+    if(checked)
+    {
+        ui->xSpinBox->setEnabled(false);
+        ui->ySpinBox->setEnabled(false);
+    }
+    else
+    {
+        ui->xSpinBox->setEnabled(true);
+        ui->ySpinBox->setEnabled(true);
+    }
+}
+
+
+//Video Part
+
+void QtObjectDetector::on_videoSelected(const QString &file)
+{
+    m_pVideoLoader->setFileInfo(file);
+    ui->label_videoName->setText(m_pVideoLoader->getFileInfo().fileName());
+    ui->pushButton_LoadVideo->setEnabled(true);
+}
+
+void QtObjectDetector::on_pushButton_SelectVideo_clicked()
+{
+    m_pVideoDialog->open();
 }
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
@@ -153,7 +171,7 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     cv::destroyAllWindows();
 }
 
-void QtObjectDetector::stopCamera()
+void QtObjectDetector::stopCamera() const
 {
     if(m_pCameraActive){
         m_pCameraActive->stop();
@@ -165,19 +183,7 @@ void QtObjectDetector::stopCamera()
     }
 }
 
-void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
-{
-    if(checked)
-    {
-        ui->xSpinBox->setEnabled(false);
-        ui->ySpinBox->setEnabled(false);
-    }
-    else
-    {
-        ui->xSpinBox->setEnabled(true);
-        ui->ySpinBox->setEnabled(true);
-    }
-}
+
 
 void QtObjectDetector::on_pushButton_StartCamera_clicked()
 {
