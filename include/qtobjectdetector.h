@@ -53,7 +53,7 @@ private slots:
 private:
     void storeImageSettings();
     void loadImage();
-    void loadImageToGraphicsView();
+    void loadImageToGraphicsView(const size_t &storagePosition = 0);
     void stopCamera() const;
 
 private:
@@ -63,7 +63,7 @@ private:
     QGraphicsScene *m_pScene;
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pImageDialog = nullptr;
-    cv::Mat m_inputImage;
+    std::vector<cv::Mat> m_imageStorage;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;

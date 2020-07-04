@@ -9,6 +9,7 @@
 #include <QString>
 #include <QMetaEnum>
 #include <QVariant>
+#include <QByteArray>
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
@@ -63,32 +64,22 @@ QtObjectDetector::~QtObjectDetector()
 //Todo
 void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
-    const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+    if (!m_imageStorage.empty())
+    {
+        const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+        const size_t lastStoragePosition = m_imageStorage.size() - 1;
 
-    switch (selectedFunction) {
-    case PipelineHandler::e_OpenCVFunction::cvtColor:
-        cv::Mat tempImage;
-        m_pPipelineHandler->m_cvtColor(m_inputImage, tempImage, cv::COLOR_BGR2GRAY, 0);
-        m_inputImage = tempImage;
+        switch (selectedFunction)
+        {
+            case PipelineHandler::e_OpenCVFunction::cvtColor:
+                cv::Mat newImage;
+                m_pPipelineHandler->m_cvtColor(m_imageStorage.at(lastStoragePosition), newImage, cv::COLOR_BGR2GRAY, 0);
+                m_imageStorage.push_back(newImage);
 
-        const bool autoScale = ui->autoSizeCheckBox->isChecked();
-        const int x = autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
-        const int y = autoScale ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
-
-        QImage * imgIn2 = new QImage();
-        imgIn2->loadFromData(static_cast<uchar*>(m_inputImage.data), static_cast<int>(m_inputImage.total()));
-
-
-
-        const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), x, y, static_cast<int>(m_inputImage.step), QImage::Format::Format_Mono);
-        QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
-        m_pScene->addItem(item);
-        ui->graphicsView_PhotoLoader->setScene(m_pScene);
-        ui->graphicsView_PhotoLoader->show();
-
-        break;
+                loadImageToGraphicsView(m_imageStorage.size() - 1);
+                break;
+        }
     }
-
 }
 
 //Image Part
@@ -109,31 +100,49 @@ void QtObjectDetector::on_loadFilePushButton_clicked()
 {
     loadImage();
     storeImageSettings();
-    loadImageToGraphicsView();
+    loadImageToGraphicsView(0);
 }
 
 void QtObjectDetector::storeImageSettings()
 {
-    m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    m_imageSettings.autoScale = ui->autoSizeCheckBox->isChecked();
-    m_imageSettings.x = m_imageSettings.autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
-    m_imageSettings.y = m_imageSettings.autoScale  ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
-    m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
+    if(!m_imageStorage.empty())
+    {
+        m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
+        m_imageSettings.autoScale = ui->autoSizeCheckBox->isChecked();
+        m_imageSettings.x = m_imageSettings.autoScale ? m_imageStorage.at(0).cols : (ui->xSpinBox->value() > m_imageStorage.at(0).cols ? m_imageStorage.at(0).cols : ui->xSpinBox->value());
+        m_imageSettings.y = m_imageSettings.autoScale  ? m_imageStorage.at(0).rows : (ui->ySpinBox->value() > m_imageStorage.at(0).rows ? m_imageStorage.at(0).rows : ui->ySpinBox->value());
+        m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
+    }
 }
 
 void QtObjectDetector::loadImage()
 {
-    m_inputImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data());
+    const cv::Mat inputImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data());
+    m_imageStorage.clear();
+    m_imageStorage.push_back(inputImage);
 }
 
-void QtObjectDetector::loadImageToGraphicsView()
+void QtObjectDetector::loadImageToGraphicsView(const size_t& storagePosition)
 {
-    const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_inputImage.step), m_imageSettings.imageFormat);
-    QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
+    if((m_imageStorage.size() - 1) >= storagePosition)
+    {
+        auto numberOfItems = m_pScene->items().size();
+        if(numberOfItems > 0)
+        {
+            while (numberOfItems != 0)
+            {
+                m_pScene->removeItem(m_pScene->items().at(numberOfItems-1));
+                numberOfItems--;
+            }
+        }
+        QImage *imgIn = new QImage(static_cast<uchar*>(m_imageStorage.at(storagePosition).data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imageStorage.at(storagePosition).step), m_imageSettings.imageFormat);
+        QGraphicsPixmapItem *item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
 
-    m_pScene->addItem(item);
-    ui->graphicsView_PhotoLoader->setScene(m_pScene);
-    ui->graphicsView_PhotoLoader->show();
+        m_pScene->addItem(item);
+
+        ui->graphicsView_PhotoLoader->setScene(m_pScene);
+        ui->graphicsView_PhotoLoader->show();
+    }
 }
 
 void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
