@@ -107,19 +107,28 @@ void QtObjectDetector::on_fileSelected(const QString &file)
 
 void QtObjectDetector::on_loadFilePushButton_clicked()
 {
-    const auto filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    m_inputImage = cv::imread(filePath.data());
     loadImage();
+    storeImageSettings();
+    loadImageToGraphicsView();
+}
+
+void QtObjectDetector::storeImageSettings()
+{
+    m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
+    m_imageSettings.autoScale = ui->autoSizeCheckBox->isChecked();
+    m_imageSettings.x = m_imageSettings.autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
+    m_imageSettings.y = m_imageSettings.autoScale  ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
+    m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
 }
 
 void QtObjectDetector::loadImage()
 {
-    const bool autoScale = ui->autoSizeCheckBox->isChecked();
-    const int x = autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
-    const int y = autoScale ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
-    const int formatIndex = ui->formatListComboBox->currentIndex();
+    m_inputImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data());
+}
 
-    const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), x, y, static_cast<int>(m_inputImage.step), static_cast<QImage::Format>(formatIndex));
+void QtObjectDetector::loadImageToGraphicsView()
+{
+    const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_inputImage.step), m_imageSettings.imageFormat);
     QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
 
     m_pScene->addItem(item);
@@ -306,3 +315,5 @@ void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
         ui->spinBox_CameraYResolution->setEnabled(true);
     }
 }
+
+

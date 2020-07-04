@@ -20,6 +20,14 @@ class QtObjectDetector : public QMainWindow
 {
     Q_OBJECT
 
+    struct ImageSettings {
+        bool autoScale;
+        int x;
+        int y;
+        QImage::Format imageFormat;
+        QByteArray filePath;
+    };
+
 public:
     QtObjectDetector(QWidget *parent = nullptr);
     ~QtObjectDetector();
@@ -43,7 +51,9 @@ private slots:
     void on_checkBox_AutoResolution_stateChanged(int arg1);
 
 private:
+    void storeImageSettings();
     void loadImage();
+    void loadImageToGraphicsView();
     void stopCamera() const;
 
 private:
@@ -61,5 +71,6 @@ private:
     std::unique_ptr<cv::Mat> m_pOutputVideoImage = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
     QList<QCameraInfo> m_cameras;
+    ImageSettings m_imageSettings;
 };
 #endif // OBJECTDETECTOR_H
