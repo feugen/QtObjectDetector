@@ -4,15 +4,17 @@
 #include <QImage>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
-#include <QGraphicsScene>
 #include <QGraphicsVideoItem>
 #include <QDebug>
 #include <QString>
-
+#include <QMetaEnum>
+#include <QVariant>
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::QtObjectDetector)
+    , m_pPipelineHandler(new PipelineHandler(this))
+    , m_pScene(new QGraphicsScene(this))
     , m_pPhotoLoader(new PhotoLoader(this))
     , m_pImageDialog(new QFileDialog(this))
     , m_pVideoLoader(new VideoLoader(this))
@@ -37,6 +39,15 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     ui->xSpinBox->setValue(static_cast<int>(m_pPhotoLoader->getXSize()));
     ui->ySpinBox->setValue(static_cast<int>(m_pPhotoLoader->getYSize()));
 
+    QStringList functionsList;
+    const QMetaEnum metaEnum = QMetaEnum::fromType<PipelineHandler::e_OpenCVFunction>();
+
+    for (int i = 0; i < metaEnum.keyCount() ; i++ )
+    {
+        functionsList += metaEnum.valueToKey(i);
+    }
+    ui->comboBox_FunctionSelector->addItems(functionsList);
+
     connect(m_pImageDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
     connect(m_pVideoDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_videoSelected);
 }
@@ -44,6 +55,40 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
 QtObjectDetector::~QtObjectDetector()
 {
     delete ui;
+}
+
+//General Part
+
+
+//Todo
+void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
+{
+    const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+
+    switch (selectedFunction) {
+    case PipelineHandler::e_OpenCVFunction::cvtColor:
+        cv::Mat tempImage;
+        m_pPipelineHandler->m_cvtColor(m_inputImage, tempImage, cv::COLOR_BGR2GRAY, 0);
+        m_inputImage = tempImage;
+
+        const bool autoScale = ui->autoSizeCheckBox->isChecked();
+        const int x = autoScale ? m_inputImage.cols : (ui->xSpinBox->value() > m_inputImage.cols ? m_inputImage.cols : ui->xSpinBox->value());
+        const int y = autoScale ? m_inputImage.rows : (ui->ySpinBox->value() > m_inputImage.rows ? m_inputImage.rows : ui->ySpinBox->value());
+
+        QImage * imgIn2 = new QImage();
+        imgIn2->loadFromData(static_cast<uchar*>(m_inputImage.data), static_cast<int>(m_inputImage.total()));
+
+
+
+        const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), x, y, static_cast<int>(m_inputImage.step), QImage::Format::Format_Mono);
+        QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
+        m_pScene->addItem(item);
+        ui->graphicsView_PhotoLoader->setScene(m_pScene);
+        ui->graphicsView_PhotoLoader->show();
+
+        break;
+    }
+
 }
 
 //Image Part
@@ -76,10 +121,9 @@ void QtObjectDetector::loadImage()
 
     const QImage * imgIn = new QImage(static_cast<uchar*>(m_inputImage.data), x, y, static_cast<int>(m_inputImage.step), static_cast<QImage::Format>(formatIndex));
     QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
-    QGraphicsScene* scene = new QGraphicsScene(this);
 
-    scene->addItem(item);
-    ui->graphicsView_PhotoLoader->setScene(scene);
+    m_pScene->addItem(item);
+    ui->graphicsView_PhotoLoader->setScene(m_pScene);
     ui->graphicsView_PhotoLoader->show();
 }
 
@@ -122,19 +166,19 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 
     cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);
 
-    if(!m_inputVideo)
+    if(!m_pInputVideo)
     {
-        m_inputVideo = std::make_unique<cv::VideoCapture>();
+        m_pInputVideo = std::make_unique<cv::VideoCapture>();
     }
 
-    if(!m_outputVideoImage)
+    if(!m_pOutputVideoImage)
     {
-        m_outputVideoImage = std::make_unique<cv::Mat>();
+        m_pOutputVideoImage = std::make_unique<cv::Mat>();
     }
 
-    if (!m_inputVideo->open(filepath.data(), cv::CAP_ANY)) return;
+    if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
-    const double fps = m_inputVideo.get()->get(cv::CAP_PROP_FPS);
+    const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
 
     qDebug() << fps << "Fps";
 
@@ -150,13 +194,13 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     for(;;)
     {
         qDebug() << i;
-        m_inputVideo->read(*m_outputVideoImage.get());
-        if (m_outputVideoImage.get()->empty())
+        m_pInputVideo->read(*m_pOutputVideoImage.get());
+        if (m_pOutputVideoImage.get()->empty())
         {
             qDebug() << "Empty Image, end video";
             break;
         }
-        QImage qimg((*(m_outputVideoImage.get())).data, (*(m_outputVideoImage.get())).cols, (*(m_outputVideoImage.get())).rows, static_cast<int>((*(m_outputVideoImage.get())).step), QImage::Format_RGB888);
+        QImage qimg((*(m_pOutputVideoImage.get())).data, (*(m_pOutputVideoImage.get())).cols, (*(m_pOutputVideoImage.get())).rows, static_cast<int>((*(m_pOutputVideoImage.get())).step), QImage::Format_RGB888);
         pixmap = QPixmap::fromImage(qimg.rgbSwapped());
         item->setPixmap(pixmap);
 
@@ -167,7 +211,7 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 
         cv::waitKey(1000 / static_cast<int>(fps));
     }
-    m_inputVideo->release();
+    m_pInputVideo->release();
     cv::destroyAllWindows();
 }
 

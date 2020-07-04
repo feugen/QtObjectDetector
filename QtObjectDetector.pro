@@ -18,13 +18,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     src/photoloader.cpp \
+    src/pipelinehandler.cpp \
     src/qtobjectdetector.cpp \
     src/videoloader.cpp
 
 HEADERS += \
     include/photoloader.h \
+    include/pipelinehandler.h \
     include/qtobjectdetector.h \
-    include/videoloader.h
+    include/videoloader.h \
 
 FORMS += \
     qtobjectdetector.ui
@@ -35,7 +37,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += /usr/include/opencv4 $$PWD/include
-LIBS += -L/usr/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio
+LIBS += -L/usr/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_imgproc
 
 DISTFILES += \
     doc/readme
