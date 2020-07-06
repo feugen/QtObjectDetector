@@ -10,12 +10,13 @@
 #include <QMetaEnum>
 #include <QVariant>
 #include <QByteArray>
+#include <QPixmap>
+
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::QtObjectDetector)
     , m_pPipelineHandler(new PipelineHandler(this))
-    , m_pScene(new QGraphicsScene(this))
     , m_pPhotoLoader(new PhotoLoader(this))
     , m_pImageDialog(new QFileDialog(this))
     , m_pVideoLoader(new VideoLoader(this))
@@ -64,19 +65,24 @@ QtObjectDetector::~QtObjectDetector()
 //Todo
 void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
-    if (!m_imageStorage.empty())
+    if (!m_imagePipeline.empty())
     {
         const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
-        const size_t lastStoragePosition = m_imageStorage.size() - 1;
+        const size_t lastStoragePosition = m_imagePipeline.size() - 1;
 
         switch (selectedFunction)
         {
             case PipelineHandler::e_OpenCVFunction::cvtColor:
-                cv::Mat newImage;
-                m_pPipelineHandler->m_cvtColor(m_imageStorage.at(lastStoragePosition), newImage, cv::COLOR_BGR2GRAY, 0);
-                m_imageStorage.push_back(newImage);
+                const PhotoLoader::e_ColorFormat currentColorFormat = m_imagePipeline.at(lastStoragePosition).second;
+                const PhotoLoader::e_ColorFormat selectedColorFormat = PhotoLoader::e_ColorFormat::GRAY; //Todo read from GUI
 
-                loadImageToGraphicsView(m_imageStorage.size() - 1);
+                if(currentColorFormat == PhotoLoader::e_ColorFormat::COLOR && selectedColorFormat == PhotoLoader::e_ColorFormat::GRAY) //Only one direction will be supported
+                {
+                    cv::Mat newImage;
+                    m_pPipelineHandler->m_cvtColor(m_imagePipeline.at(lastStoragePosition).first, newImage, cv::COLOR_BGR2GRAY, 0);
+                    m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(newImage, selectedColorFormat));
+                    loadImageToQLabel(m_imagePipeline.size() - 1);
+                }
                 break;
         }
     }
@@ -100,48 +106,47 @@ void QtObjectDetector::on_loadFilePushButton_clicked()
 {
     loadImage();
     storeImageSettings();
-    loadImageToGraphicsView(0);
+    loadImageToQLabel(0);
 }
 
 void QtObjectDetector::storeImageSettings()
 {
-    if(!m_imageStorage.empty())
+    if(!m_imagePipeline.empty())
     {
         m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
         m_imageSettings.autoScale = ui->autoSizeCheckBox->isChecked();
-        m_imageSettings.x = m_imageSettings.autoScale ? m_imageStorage.at(0).cols : (ui->xSpinBox->value() > m_imageStorage.at(0).cols ? m_imageStorage.at(0).cols : ui->xSpinBox->value());
-        m_imageSettings.y = m_imageSettings.autoScale  ? m_imageStorage.at(0).rows : (ui->ySpinBox->value() > m_imageStorage.at(0).rows ? m_imageStorage.at(0).rows : ui->ySpinBox->value());
+        m_imageSettings.x = m_imageSettings.autoScale ? m_imagePipeline.at(0).first.cols : (ui->xSpinBox->value() > m_imagePipeline.at(0).first.cols ? m_imagePipeline.at(0).first.cols : ui->xSpinBox->value());
+        m_imageSettings.y = m_imageSettings.autoScale  ? m_imagePipeline.at(0).first.rows : (ui->ySpinBox->value() > m_imagePipeline.at(0).first.rows ? m_imagePipeline.at(0).first.rows : ui->ySpinBox->value());
         m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
     }
 }
 
 void QtObjectDetector::loadImage()
 {
-    const cv::Mat inputImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data());
-    m_imageStorage.clear();
-    m_imageStorage.push_back(inputImage);
+    m_imagePipeline.clear();
+    const QString selectedFilter = ui->formatListComboBox->currentText();
+    if(selectedFilter == "Indexed8")
+    {
+        m_loadedImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_GRAYSCALE);
+        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_loadedImage, PhotoLoader::e_ColorFormat::GRAY));
+    }
+    else if(selectedFilter == "BGR888")
+    {
+        m_loadedImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_COLOR);
+        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_loadedImage, PhotoLoader::e_ColorFormat::COLOR));
+    }
 }
 
-void QtObjectDetector::loadImageToGraphicsView(const size_t& storagePosition)
+void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
 {
-    if((m_imageStorage.size() - 1) >= storagePosition)
+    QFile file(m_imageSettings.filePath);
+    if (!file.open(QFile::ReadOnly)) return;
+
+    if((m_imagePipeline.size() - 1) >= storagePosition)
     {
-        auto numberOfItems = m_pScene->items().size();
-        if(numberOfItems > 0)
-        {
-            while (numberOfItems != 0)
-            {
-                m_pScene->removeItem(m_pScene->items().at(numberOfItems-1));
-                numberOfItems--;
-            }
-        }
-        QImage *imgIn = new QImage(static_cast<uchar*>(m_imageStorage.at(storagePosition).data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imageStorage.at(storagePosition).step), m_imageSettings.imageFormat);
-        QGraphicsPixmapItem *item = new QGraphicsPixmapItem(QPixmap::fromImage(*imgIn));
-
-        m_pScene->addItem(item);
-
-        ui->graphicsView_PhotoLoader->setScene(m_pScene);
-        ui->graphicsView_PhotoLoader->show();
+        const QImage *imgIn = new QImage(static_cast<uchar*>(m_imagePipeline.at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imagePipeline.at(storagePosition).first.step), static_cast<QImage::Format>(m_imagePipeline.at(storagePosition).second));
+        const QPixmap myPixmap = QPixmap::fromImage(*imgIn);
+        ui->qLabel_PhotoLoader->setPixmap(myPixmap);
     }
 }
 

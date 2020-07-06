@@ -11,7 +11,10 @@ PhotoLoader::PhotoLoader(QObject *parent) : QObject(parent),
 
     for(int i = 0; i < formatEnum.keyCount(); i++){
         QString item = formatEnum.valueToKey(i);
-        m_FormatList += item.remove("Format_");
+        if(item == "Format_Indexed8" || item == "Format_BGR888") //Only 2 Formats are supported for now
+        {
+            m_FormatList += item.remove("Format_");
+        }
     }
 }
 

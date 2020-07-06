@@ -53,17 +53,17 @@ private slots:
 private:
     void storeImageSettings();
     void loadImage();
-    void loadImageToGraphicsView(const size_t &storagePosition = 0);
+    void loadImageToQLabel(const size_t &storagePosition = 0);
     void stopCamera() const;
 
 private:
     Ui::QtObjectDetector *ui;
     std::unique_ptr<PipelineHandler> m_pPipelineHandler = nullptr;
     //Image part
-    QGraphicsScene *m_pScene;
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pImageDialog = nullptr;
-    std::vector<cv::Mat> m_imageStorage;
+    std::vector<std::pair<cv::Mat, PhotoLoader::e_ColorFormat>> m_imagePipeline;
+    cv::Mat m_loadedImage;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
