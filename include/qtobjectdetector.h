@@ -7,6 +7,7 @@
 #include <QCamera>
 #include <QGraphicsScene>
 #include <memory>
+#include <functional>
 #include "photoloader.h"
 #include "videoloader.h"
 #include "pipelinehandler.h"
@@ -42,6 +43,8 @@ private slots:
     void on_fileSelected(const QString &file);
     void on_autoSizeCheckBox_toggled(bool checked);
 
+    void applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat);
+
     //Video Part
     void on_videoSelected(const QString &file);
     void on_pushButton_StartCamera_clicked();
@@ -49,6 +52,10 @@ private slots:
     void on_pushButton_SelectVideo_clicked();
     void on_pushButton_LoadVideo_clicked();
     void on_checkBox_AutoResolution_stateChanged(int arg1);
+
+    void on_pushButton_addToPipeline_clicked();
+
+    void on_pushButton_deleteFromPipeline_clicked();
 
 private:
     void storeImageSettings();
@@ -63,6 +70,9 @@ private:
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pImageDialog = nullptr;
     std::vector<std::pair<cv::Mat, PhotoLoader::e_ColorFormat>> m_imagePipeline;
+    std::vector<std::function<void()>> m_functionPipeline;
+    std::function<void()> m_lastFunction;
+    QString m_lastFunctionString;
     cv::Mat m_loadedImage;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;

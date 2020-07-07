@@ -63,7 +63,7 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_addToPipeline">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -76,7 +76,7 @@
         <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
        </item>
        <item row="6" column="0">
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButton_deleteFromPipeline">
          <property name="enabled">
           <bool>false</bool>
          </property>

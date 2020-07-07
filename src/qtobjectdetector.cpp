@@ -68,21 +68,16 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
     if (!m_imagePipeline.empty())
     {
         const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
-        const size_t lastStoragePosition = m_imagePipeline.size() - 1;
 
         switch (selectedFunction)
         {
             case PipelineHandler::e_OpenCVFunction::cvtColor:
-                const PhotoLoader::e_ColorFormat currentColorFormat = m_imagePipeline.at(lastStoragePosition).second;
                 const PhotoLoader::e_ColorFormat selectedColorFormat = PhotoLoader::e_ColorFormat::GRAY; //Todo read from GUI
-
-                if(currentColorFormat == PhotoLoader::e_ColorFormat::COLOR && selectedColorFormat == PhotoLoader::e_ColorFormat::GRAY) //Only one direction will be supported
-                {
-                    cv::Mat newImage;
-                    m_pPipelineHandler->m_cvtColor(m_imagePipeline.at(lastStoragePosition).first, newImage, cv::COLOR_BGR2GRAY, 0);
-                    m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(newImage, selectedColorFormat));
-                    loadImageToQLabel(m_imagePipeline.size() - 1);
-                }
+                applyCvtColor(selectedColorFormat);
+                loadImageToQLabel(m_imagePipeline.size() - 1);
+                m_lastFunction = [this](){applyCvtColor(selectedColorFormat);};
+                m_lastFunctionString = "cvtColor";
+                ui->pushButton_addToPipeline->setEnabled(true);
                 break;
         }
     }
@@ -163,6 +158,46 @@ void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
         ui->ySpinBox->setEnabled(true);
     }
 }
+
+void QtObjectDetector::applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat)
+{
+    const PhotoLoader::e_ColorFormat currentColorFormat = m_imagePipeline.back().second;
+    if(currentColorFormat == PhotoLoader::e_ColorFormat::COLOR && selectedColorFormat == PhotoLoader::e_ColorFormat::GRAY) //Only one direction will be supported
+    {
+        cv::Mat newImage;
+        const auto colorFilter = cv::COLOR_BGR2GRAY;
+
+        m_pPipelineHandler->m_cvtColor(m_imagePipeline.back().first, newImage, colorFilter, 0);
+        //Mit bind die Funktion speichern mit Parametern
+        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(newImage, selectedColorFormat));
+    }
+}
+
+void QtObjectDetector::on_pushButton_addToPipeline_clicked()
+{
+    m_functionPipeline.push_back(m_lastFunction);
+    ui->comboBox_PipelineStepSelector->setEnabled(true);
+    ui->comboBox_PipelineStepSelector->addItem(m_lastFunctionString);
+    ui->pushButton_addToPipeline->setEnabled(false);
+    ui->pushButton_deleteFromPipeline->setEnabled(true);
+}
+
+void QtObjectDetector::on_pushButton_deleteFromPipeline_clicked()
+{
+    const auto currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
+    ui->comboBox_PipelineStepSelector->removeItem(currentIndex);
+    if(static_cast<int>(m_functionPipeline.size()) > currentIndex)
+    {
+        m_functionPipeline.erase(m_functionPipeline.begin() + currentIndex);
+        m_imagePipeline.erase(m_imagePipeline.begin() + currentIndex);
+    }
+    if(m_functionPipeline.empty())
+    {
+        ui->comboBox_PipelineStepSelector->setEnabled(false);
+        ui->pushButton_deleteFromPipeline->setEnabled(false);
+    }
+}
+
 
 
 //Video Part
@@ -329,5 +364,3 @@ void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
         ui->spinBox_CameraYResolution->setEnabled(true);
     }
 }
-
-
