@@ -33,21 +33,8 @@
        <string notr="true">background-color: rgb(35, 38, 41);</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
-       <item row="8" column="0" colspan="2">
-        <widget class="QWidget" name="widget_Arguments" native="true"/>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QLabel" name="label_11">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Arguments:</string>
-         </property>
-        </widget>
+       <item row="2" column="0" colspan="2">
+        <widget class="QComboBox" name="comboBox_FunctionSelector"/>
        </item>
        <item row="1" column="0" colspan="2">
         <widget class="QLabel" name="label_10">
@@ -62,8 +49,51 @@
          </property>
         </widget>
        </item>
+       <item row="6" column="0">
+        <widget class="QPushButton" name="pushButton_DeleteFromPipeline">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Delete Step</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QLabel" name="label_11">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Arguments:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_SavePipeline">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Save Pipeline</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_ApplyFunction">
+         <property name="text">
+          <string>Apply Function</string>
+         </property>
+        </widget>
+       </item>
        <item row="6" column="1">
-        <widget class="QPushButton" name="pushButton_addToPipeline">
+        <widget class="QPushButton" name="pushButton_AddToPipeline">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -72,18 +102,8 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QPushButton" name="pushButton_deleteFromPipeline">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Delete Step</string>
-         </property>
-        </widget>
+       <item row="10" column="0" colspan="2">
+        <widget class="QWidget" name="widget_Arguments" native="true"/>
        </item>
        <item row="4" column="0" colspan="2">
         <widget class="QLabel" name="label_12">
@@ -98,13 +118,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QComboBox" name="comboBox_FunctionSelector"/>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_ApplyFunction">
-         <property name="text">
-          <string>Apply Function</string>
+       <item row="7" column="0" colspan="2">
+        <widget class="QLineEdit" name="lineEdit_PipelineName">
+         <property name="placeholderText">
+          <string>Add pipeline name here</string>
          </property>
         </widget>
        </item>
@@ -165,6 +182,12 @@
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="0">
            <widget class="QWidget" name="widget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <layout class="QGridLayout" name="gridLayout_5">
              <property name="leftMargin">
               <number>4</number>
@@ -181,69 +204,7 @@
              <property name="spacing">
               <number>4</number>
              </property>
-             <item row="0" column="1">
-              <widget class="QWidget" name="widget_6" native="true">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(35, 38, 41);</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <property name="spacing">
-                 <number>2</number>
-                </property>
-                <property name="leftMargin">
-                 <number>2</number>
-                </property>
-                <property name="topMargin">
-                 <number>2</number>
-                </property>
-                <property name="rightMargin">
-                 <number>2</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="QWidget" name="widget_7" native="true">
-                  <layout class="QHBoxLayout" name="horizontalLayout_3">
-                   <item>
-                    <spacer name="horizontalSpacer_3">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>274</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="widget_8" native="true">
-                  <layout class="QHBoxLayout" name="horizontalLayout_4">
-                   <item>
-                    <spacer name="horizontalSpacer_4">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>274</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="0">
+             <item row="1" column="0">
               <widget class="QWidget" name="widget_5" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -461,21 +422,160 @@
                </layout>
               </widget>
              </item>
+             <item row="1" column="1">
+              <widget class="QWidget" name="widget_6" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(35, 38, 41);</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <widget class="QWidget" name="widget_7" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <item>
+                    <widget class="QLabel" name="label_13">
+                     <property name="text">
+                      <string>Available Pipeline:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="comboBox_PipelineNameSelector">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>274</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_8" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QPushButton" name="pushButton_DeletePipeline">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="text">
+                      <string>Delete Pipeline</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_ApplyPipeline">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Apply Pipeline</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_4">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="qLabel_PhotoLoader">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="qLabel_PhotoLoader">
+           <widget class="QLabel" name="qLabel_PhotoLoader_3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>800</width>
-              <height>600</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
             <property name="text">
@@ -865,14 +965,20 @@
      <height>30</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuTest">
+   <widget class="QMenu" name="menuApp">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionExit"/>
    </widget>
-   <addaction name="menuTest"/>
+   <addaction name="menuApp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

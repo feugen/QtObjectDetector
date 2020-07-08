@@ -42,6 +42,9 @@ private slots:
     void on_loadFilePushButton_clicked();
     void on_fileSelected(const QString &file);
     void on_autoSizeCheckBox_toggled(bool checked);
+    void on_pushButton_AddToPipeline_clicked();
+    void on_pushButton_DeleteFromPipeline_clicked();
+    void on_pushButton_SavePipeline_clicked();
 
     void applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat);
 
@@ -53,9 +56,9 @@ private slots:
     void on_pushButton_LoadVideo_clicked();
     void on_checkBox_AutoResolution_stateChanged(int arg1);
 
-    void on_pushButton_addToPipeline_clicked();
+    void on_pushButton_DeletePipeline_clicked();
 
-    void on_pushButton_deleteFromPipeline_clicked();
+    void on_lineEdit_PipelineName_textChanged(const QString &arg1);
 
 private:
     void storeImageSettings();
@@ -74,6 +77,7 @@ private:
     std::function<void()> m_lastFunction;
     QString m_lastFunctionString;
     cv::Mat m_loadedImage;
+    std::vector<std::pair<std::vector<std::function<void()>>, QString>> m_availablePipelines;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;

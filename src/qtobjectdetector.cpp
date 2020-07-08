@@ -3,14 +3,13 @@
 
 #include <QImage>
 #include <QPixmap>
-#include <QGraphicsPixmapItem>
 #include <QGraphicsVideoItem>
 #include <QDebug>
 #include <QString>
 #include <QMetaEnum>
-#include <QVariant>
 #include <QByteArray>
-#include <QPixmap>
+
+#include <utility>
 
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
@@ -52,6 +51,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
 
     connect(m_pImageDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
     connect(m_pVideoDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_videoSelected);
+    connect(ui->actionExit, &QAction::triggered, this, &QApplication::exit);
 }
 
 QtObjectDetector::~QtObjectDetector()
@@ -77,7 +77,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 loadImageToQLabel(m_imagePipeline.size() - 1);
                 m_lastFunction = [this](){applyCvtColor(selectedColorFormat);};
                 m_lastFunctionString = "cvtColor";
-                ui->pushButton_addToPipeline->setEnabled(true);
+                ui->pushButton_AddToPipeline->setEnabled(true);
                 break;
         }
     }
@@ -173,16 +173,16 @@ void QtObjectDetector::applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFor
     }
 }
 
-void QtObjectDetector::on_pushButton_addToPipeline_clicked()
+void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
 {
     m_functionPipeline.push_back(m_lastFunction);
     ui->comboBox_PipelineStepSelector->setEnabled(true);
     ui->comboBox_PipelineStepSelector->addItem(m_lastFunctionString);
-    ui->pushButton_addToPipeline->setEnabled(false);
-    ui->pushButton_deleteFromPipeline->setEnabled(true);
+    ui->pushButton_AddToPipeline->setEnabled(false);
+    ui->pushButton_DeleteFromPipeline->setEnabled(true);
 }
 
-void QtObjectDetector::on_pushButton_deleteFromPipeline_clicked()
+void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
 {
     const auto currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
     ui->comboBox_PipelineStepSelector->removeItem(currentIndex);
@@ -194,10 +194,45 @@ void QtObjectDetector::on_pushButton_deleteFromPipeline_clicked()
     if(m_functionPipeline.empty())
     {
         ui->comboBox_PipelineStepSelector->setEnabled(false);
-        ui->pushButton_deleteFromPipeline->setEnabled(false);
+        ui->pushButton_DeleteFromPipeline->setEnabled(false);
+        ui->pushButton_ApplyPipeline->setEnabled(false);
     }
 }
 
+void QtObjectDetector::on_pushButton_SavePipeline_clicked()
+{
+    const auto pipelineName = ui->lineEdit_PipelineName->text();
+    if(pipelineName.at(0).isLetter())
+    {
+        const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_functionPipeline, pipelineName);
+        m_availablePipelines.push_back(pipelinePair);
+        ui->comboBox_PipelineNameSelector->setEnabled(true);
+        ui->pushButton_ApplyPipeline->setEnabled(true);
+        ui->pushButton_DeletePipeline->setEnabled(true);
+        ui->comboBox_PipelineNameSelector->addItem(pipelineName);
+    }
+}
+
+void QtObjectDetector::on_pushButton_DeletePipeline_clicked()
+{
+    const int currentIndex = ui->comboBox_PipelineNameSelector->currentIndex();
+    if(currentIndex >= 0)
+    {
+        ui->comboBox_PipelineNameSelector->removeItem(currentIndex);
+        if (static_cast<int>(m_availablePipelines.size() - 1) >= currentIndex)
+        {
+            m_availablePipelines.erase(m_availablePipelines.begin() + currentIndex);
+        }
+    }
+}
+
+void QtObjectDetector::on_lineEdit_PipelineName_textChanged(const QString &arg1)
+{
+    if(arg1.at(0).isLetter() && ui->comboBox_PipelineStepSelector->count() > 0)
+    {
+        ui->pushButton_SavePipeline->setEnabled(true);
+    }
+}
 
 
 //Video Part
