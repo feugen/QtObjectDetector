@@ -35,7 +35,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     const int indexBGR888 = formatList.indexOf("BGR888");
     if (indexBGR888 > -1) ui->formatListComboBox->setCurrentIndex(indexBGR888);
 
-    ui->autoSizeCheckBox->setChecked(m_pPhotoLoader->getAutoScale());
+    ui->checkBox_autoSize->setChecked(m_pPhotoLoader->getAutoScale());
     ui->fileNameLabel->setText(m_pPhotoLoader->getFileInfo().fileName());
     ui->xSpinBox->setValue(static_cast<int>(m_pPhotoLoader->getXSize()));
     ui->ySpinBox->setValue(static_cast<int>(m_pPhotoLoader->getYSize()));
@@ -109,7 +109,7 @@ void QtObjectDetector::storeImageSettings()
     if(!m_imagePipeline.empty())
     {
         m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-        m_imageSettings.autoScale = ui->autoSizeCheckBox->isChecked();
+        m_imageSettings.autoScale = ui->checkBox_autoSize->isChecked();
         m_imageSettings.x = m_imageSettings.autoScale ? m_imagePipeline.at(0).first.cols : (ui->xSpinBox->value() > m_imagePipeline.at(0).first.cols ? m_imagePipeline.at(0).first.cols : ui->xSpinBox->value());
         m_imageSettings.y = m_imageSettings.autoScale  ? m_imagePipeline.at(0).first.rows : (ui->ySpinBox->value() > m_imagePipeline.at(0).first.rows ? m_imagePipeline.at(0).first.rows : ui->ySpinBox->value());
         m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
@@ -139,13 +139,24 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
 
     if((m_imagePipeline.size() - 1) >= storagePosition)
     {
-        const QImage *imgIn = new QImage(static_cast<uchar*>(m_imagePipeline.at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imagePipeline.at(storagePosition).first.step), static_cast<QImage::Format>(m_imagePipeline.at(storagePosition).second));
-        const QPixmap myPixmap = QPixmap::fromImage(*imgIn);
+        const QImage *imgIn = new QImage(static_cast<uchar*>(m_imagePipeline.at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imagePipeline.at(storagePosition).first.step), static_cast<QImage::Format>(m_imagePipeline.at(storagePosition).second));   
+        QPixmap myPixmap;
+        if(ui->checkBox_autoSize->isChecked())
+        {
+            const int lineWidth = ui->qLabel_PhotoLoader->lineWidth(); // we need to substract the line width.
+            const int bugFix = 1 + 4*lineWidth; //Where does the "1" come from??? Without a box around qlabel (with line width = 1), the 1 fixes the scaling. Why is the Line-width *2 wrong? Fixes needed
+            myPixmap = QPixmap::fromImage(*imgIn).scaled(ui->qLabel_PhotoLoader->size().width() - bugFix, ui->qLabel_PhotoLoader->size().height() - bugFix, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        else{
+            myPixmap = QPixmap::fromImage(*imgIn).scaled(ui->xSpinBox->value(),ui->ySpinBox->value(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        ui->qLabel_PhotoLoader->setScaledContents(ui->checkBox_autoScale->isChecked());
+        ui->qLabel_PhotoLoader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         ui->qLabel_PhotoLoader->setPixmap(myPixmap);
     }
 }
 
-void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
+void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
 {
     if(checked)
     {
@@ -158,6 +169,7 @@ void QtObjectDetector::on_autoSizeCheckBox_toggled(bool checked)
         ui->ySpinBox->setEnabled(true);
     }
 }
+
 
 void QtObjectDetector::applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat)
 {
@@ -180,6 +192,11 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     ui->comboBox_PipelineStepSelector->addItem(m_lastFunctionString);
     ui->pushButton_AddToPipeline->setEnabled(false);
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
+
+    if(ui->lineEdit_PipelineName->text().at(0).isLetter())
+    {
+        ui->pushButton_SavePipeline->setEnabled(true);
+    }
 }
 
 void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
@@ -196,13 +213,14 @@ void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
         ui->comboBox_PipelineStepSelector->setEnabled(false);
         ui->pushButton_DeleteFromPipeline->setEnabled(false);
         ui->pushButton_ApplyPipeline->setEnabled(false);
+        ui->pushButton_SavePipeline->setEnabled(false);
     }
 }
 
 void QtObjectDetector::on_pushButton_SavePipeline_clicked()
 {
     const auto pipelineName = ui->lineEdit_PipelineName->text();
-    if(pipelineName.at(0).isLetter())
+    if(pipelineName.at(0).isLetter() && !m_functionPipeline.empty())
     {
         const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_functionPipeline, pipelineName);
         m_availablePipelines.push_back(pipelinePair);

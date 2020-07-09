@@ -41,7 +41,7 @@ private slots:
     void on_selectFileButton_clicked();
     void on_loadFilePushButton_clicked();
     void on_fileSelected(const QString &file);
-    void on_autoSizeCheckBox_toggled(bool checked);
+    void on_checkBox_autoSize_toggled(bool checked);
     void on_pushButton_AddToPipeline_clicked();
     void on_pushButton_DeleteFromPipeline_clicked();
     void on_pushButton_SavePipeline_clicked();
