@@ -122,13 +122,13 @@ void QtObjectDetector::loadImage()
     const QString selectedFilter = ui->formatListComboBox->currentText();
     if(selectedFilter == "Indexed8")
     {
-        m_loadedImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_GRAYSCALE);
-        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_loadedImage, PhotoLoader::e_ColorFormat::GRAY));
+        m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_GRAYSCALE);
+        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_originalImage, PhotoLoader::e_ColorFormat::GRAY));
     }
     else if(selectedFilter == "BGR888")
     {
-        m_loadedImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_COLOR);
-        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_loadedImage, PhotoLoader::e_ColorFormat::COLOR));
+        m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_COLOR);
+        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_originalImage, PhotoLoader::e_ColorFormat::COLOR));
     }
 }
 
@@ -180,7 +180,6 @@ void QtObjectDetector::applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFor
         const auto colorFilter = cv::COLOR_BGR2GRAY;
 
         m_pPipelineHandler->m_cvtColor(m_imagePipeline.back().first, newImage, colorFilter, 0);
-        //Mit bind die Funktion speichern mit Parametern
         m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(newImage, selectedColorFormat));
     }
 }
@@ -193,7 +192,7 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     ui->pushButton_AddToPipeline->setEnabled(false);
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
 
-    if(ui->lineEdit_PipelineName->text().at(0).isLetter())
+    if(ui->lineEdit_PipelineName->text().length() > 0 && ui->lineEdit_PipelineName->text().at(0).isLetter())
     {
         ui->pushButton_SavePipeline->setEnabled(true);
     }
@@ -249,6 +248,27 @@ void QtObjectDetector::on_lineEdit_PipelineName_textChanged(const QString &arg1)
     if(arg1.at(0).isLetter() && ui->comboBox_PipelineStepSelector->count() > 0)
     {
         ui->pushButton_SavePipeline->setEnabled(true);
+    }
+}
+
+void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
+{
+    const QString selectedPipeline = ui->comboBox_PipelineNameSelector->currentText();
+    for (const auto& pipeline : m_availablePipelines)
+    {
+        if(pipeline.second == selectedPipeline)
+        {
+            const auto functionPipeline = pipeline.first;
+
+            for(const auto& function : functionPipeline)
+            {
+                function();
+            }
+        }
+    }
+    if(m_imagePipeline.size() > 0)
+    {
+        loadImageToQLabel(m_imagePipeline.size()-1);
     }
 }
 

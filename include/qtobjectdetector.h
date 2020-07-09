@@ -45,6 +45,7 @@ private slots:
     void on_pushButton_AddToPipeline_clicked();
     void on_pushButton_DeleteFromPipeline_clicked();
     void on_pushButton_SavePipeline_clicked();
+    void on_pushButton_ApplyPipeline_clicked();
 
     void applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat);
 
@@ -76,7 +77,7 @@ private:
     std::vector<std::function<void()>> m_functionPipeline;
     std::function<void()> m_lastFunction;
     QString m_lastFunctionString;
-    cv::Mat m_loadedImage;
+    cv::Mat m_originalImage;
     std::vector<std::pair<std::vector<std::function<void()>>, QString>> m_availablePipelines;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
