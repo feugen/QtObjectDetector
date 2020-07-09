@@ -12,7 +12,8 @@ public:
 
     std::function<void(cv::InputArray, cv::OutputArray, int, int)> m_cvtColor = cv::cvtColor;
 
-    enum e_OpenCVFunction {
+    enum e_OpenCVFunction
+    {
         cvtColor,
     };
     Q_ENUM(e_OpenCVFunction)

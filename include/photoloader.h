@@ -32,6 +32,8 @@ public:
     void setYSize(const uint &ySize);
     bool getAutoScale() const;
     void setAutoScale(bool autoScale);
+    bool getAutoSize() const;
+    void setAutoSize(bool autoSize);
 
 private:
 
@@ -40,7 +42,8 @@ private:
     QImage::Format m_ImageFormat;
     uint m_xSize;
     uint m_ySize;
-    bool m_autoScale = true;
+    bool m_autoSize = true;
+    bool m_autoScale = false;
 
 signals:
 

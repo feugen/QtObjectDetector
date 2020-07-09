@@ -9,8 +9,6 @@
 #include <QMetaEnum>
 #include <QByteArray>
 
-#include <utility>
-
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
@@ -35,7 +33,8 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     const int indexBGR888 = formatList.indexOf("BGR888");
     if (indexBGR888 > -1) ui->formatListComboBox->setCurrentIndex(indexBGR888);
 
-    ui->checkBox_autoSize->setChecked(m_pPhotoLoader->getAutoScale());
+    ui->checkBox_autoSize->setChecked(m_pPhotoLoader->getAutoSize());
+    ui->checkBox_autoScale->setChecked(m_pPhotoLoader->getAutoScale());
     ui->fileNameLabel->setText(m_pPhotoLoader->getFileInfo().fileName());
     ui->xSpinBox->setValue(static_cast<int>(m_pPhotoLoader->getXSize()));
     ui->ySpinBox->setValue(static_cast<int>(m_pPhotoLoader->getYSize()));
@@ -62,7 +61,6 @@ QtObjectDetector::~QtObjectDetector()
 //General Part
 
 
-//Todo
 void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
     if (!m_imagePipeline.empty())
@@ -109,9 +107,10 @@ void QtObjectDetector::storeImageSettings()
     if(!m_imagePipeline.empty())
     {
         m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-        m_imageSettings.autoScale = ui->checkBox_autoSize->isChecked();
-        m_imageSettings.x = m_imageSettings.autoScale ? m_imagePipeline.at(0).first.cols : (ui->xSpinBox->value() > m_imagePipeline.at(0).first.cols ? m_imagePipeline.at(0).first.cols : ui->xSpinBox->value());
-        m_imageSettings.y = m_imageSettings.autoScale  ? m_imagePipeline.at(0).first.rows : (ui->ySpinBox->value() > m_imagePipeline.at(0).first.rows ? m_imagePipeline.at(0).first.rows : ui->ySpinBox->value());
+        m_imageSettings.autoSize = ui->checkBox_autoSize->isChecked();
+        m_imageSettings.autoScaled = ui->checkBox_autoScale->isChecked();
+        m_imageSettings.x = m_imageSettings.autoSize ? m_imagePipeline.at(0).first.cols : (ui->xSpinBox->value() > m_imagePipeline.at(0).first.cols ? m_imagePipeline.at(0).first.cols : ui->xSpinBox->value());
+        m_imageSettings.y = m_imageSettings.autoSize  ? m_imagePipeline.at(0).first.rows : (ui->ySpinBox->value() > m_imagePipeline.at(0).first.rows ? m_imagePipeline.at(0).first.rows : ui->ySpinBox->value());
         m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
     }
 }
@@ -141,7 +140,7 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
     {
         const QImage *imgIn = new QImage(static_cast<uchar*>(m_imagePipeline.at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imagePipeline.at(storagePosition).first.step), static_cast<QImage::Format>(m_imagePipeline.at(storagePosition).second));   
         QPixmap myPixmap;
-        if(ui->checkBox_autoSize->isChecked())
+        if(m_imageSettings.autoSize)
         {
             const int lineWidth = ui->qLabel_PhotoLoader->lineWidth(); // we need to substract the line width.
             const int bugFix = 1 + 4*lineWidth; //Where does the "1" come from??? Without a box around qlabel (with line width = 1), the 1 fixes the scaling. Why is the Line-width *2 wrong? Fixes needed
@@ -289,10 +288,6 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
-
-    //const auto buildInfo = cv::getBuildInformation();
-    //qDebug() << QString::fromStdString(buildInfo);
-
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
 
     cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);

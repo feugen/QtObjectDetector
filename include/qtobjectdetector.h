@@ -22,7 +22,8 @@ class QtObjectDetector : public QMainWindow
     Q_OBJECT
 
     struct ImageSettings {
-        bool autoScale;
+        bool autoSize;
+        bool autoScaled;
         int x;
         int y;
         QImage::Format imageFormat;

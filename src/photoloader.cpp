@@ -78,3 +78,13 @@ void PhotoLoader::setAutoScale(bool autoScale)
 {
     m_autoScale = autoScale;
 }
+
+bool PhotoLoader::getAutoSize() const
+{
+    return m_autoSize;
+}
+
+void PhotoLoader::setAutoSize(bool autoSize)
+{
+    m_autoSize = autoSize;
+}
