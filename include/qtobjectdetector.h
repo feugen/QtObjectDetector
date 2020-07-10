@@ -62,6 +62,8 @@ private slots:
 
     void on_lineEdit_PipelineName_textChanged(const QString &arg1);
 
+    void on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1);
+
 private:
     void storeImageSettings();
     void loadImage();

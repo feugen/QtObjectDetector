@@ -70,12 +70,20 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
         switch (selectedFunction)
         {
             case PipelineHandler::e_OpenCVFunction::cvtColor:
-                const PhotoLoader::e_ColorFormat selectedColorFormat = PhotoLoader::e_ColorFormat::GRAY; //Todo read from GUI
-                applyCvtColor(selectedColorFormat);
-                loadImageToQLabel(m_imagePipeline.size() - 1);
-                m_lastFunction = [this](){applyCvtColor(selectedColorFormat);};
-                m_lastFunctionString = "cvtColor";
-                ui->pushButton_AddToPipeline->setEnabled(true);
+
+                auto comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
+                const auto comboBoxValue = comboBox->currentText();
+
+                PhotoLoader::e_ColorFormat selectedColorFormat;
+                if(comboBoxValue == "Gray")
+                {
+                    selectedColorFormat = PhotoLoader::e_ColorFormat::GRAY;
+                    applyCvtColor(selectedColorFormat);
+                    loadImageToQLabel(m_imagePipeline.size() - 1);
+                    m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
+                    m_lastFunctionString = "cvtColor";
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
         }
     }
@@ -271,8 +279,30 @@ void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
     }
 }
 
+void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1)
+{
 
-//Video Part
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->setAlignment(Qt::AlignTop);
+    ui->widget_Arguments->setLayout(layout);
+
+    if(arg1 == "cvtColor")
+    {
+        QLabel* labelFormat = new QLabel(this);
+        labelFormat->setText("Color Format:");
+
+        QComboBox* comboboxFormat = new QComboBox(this);
+        comboboxFormat->setObjectName("comboboxFormat");
+        comboboxFormat->addItem("Gray");
+
+        ui->widget_Arguments->layout()->addWidget(labelFormat);
+        ui->widget_Arguments->layout()->addWidget(comboboxFormat);
+    }
+}
+
+/*
+////////////////////////////////////////////////Video Part////////////////////////////////////////////
+*/
 
 void QtObjectDetector::on_videoSelected(const QString &file)
 {
