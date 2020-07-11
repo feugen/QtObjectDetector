@@ -10,10 +10,11 @@ class Base : public QObject
 public:
     explicit Base(QObject *parent = nullptr);
 
+    //Only 2 Formats are supported
     enum e_ColorFormat
     {
-        COLOR = QImage::Format_BGR888, //Todo - Only 2 Formats are supported
-        GRAY = QImage::Format_Indexed8 //Todo - this way we can cast easily and dont need conversion right now (temp. solution)
+        COLOR = QImage::Format_BGR888,
+        GRAY = QImage::Format_Indexed8
     };
     Q_ENUM(e_ColorFormat)
 
