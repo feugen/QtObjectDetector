@@ -5,7 +5,7 @@ PipelineHandler::PipelineHandler(QObject *parent) : QObject(parent)
 
 }
 
-std::vector<std::pair<cv::Mat, Base::e_ColorFormat>> &PipelineHandler::getImagePipeline()
+std::vector<std::pair<cv::Mat, Base::e_OpenCVColorFormat>> &PipelineHandler::getImagePipeline()
 {
     return m_imagePipeline;
 }

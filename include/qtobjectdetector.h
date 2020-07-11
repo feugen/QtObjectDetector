@@ -39,7 +39,8 @@ private slots:
     void on_pushButton_SavePipeline_clicked();
     void on_pushButton_ApplyPipeline_clicked();
 
-    void applyCvtColor(Base::e_ColorFormat selectedColorFormat);
+    void applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat);
+    void applyThreshold(double threshold, double thresholdMax, int type);
 
     //Video Part
     void on_videoSelected(const QString &file);

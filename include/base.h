@@ -11,16 +11,27 @@ public:
     explicit Base(QObject *parent = nullptr);
 
     //Only 2 Formats are supported
-    enum e_ColorFormat
+    enum e_OpenCVColorFormat
     {
         COLOR = QImage::Format_BGR888,
         GRAY = QImage::Format_Indexed8
     };
-    Q_ENUM(e_ColorFormat)
+    Q_ENUM(e_OpenCVColorFormat)
+
+    enum e_OpenCVThresholdType
+    {
+        THRESH_BINARY = 0,
+        THRESH_BINARY_INV = 1,
+        THRESH_TRUNC = 2,
+        THRESH_TOZERO = 3,
+        THRESH_TOZERO_INV = 4
+    };
+    Q_ENUM(e_OpenCVThresholdType)
 
     enum e_OpenCVFunction
     {
-        cvtColor,
+        cvtColor = 0,
+        threshold = 1
     };
     Q_ENUM(e_OpenCVFunction)
 

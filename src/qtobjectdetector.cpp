@@ -70,14 +70,14 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
         switch (selectedFunction)
         {
             case Base::e_OpenCVFunction::cvtColor:
+            {
+                auto cvtColor_comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
+                const auto comboBoxValue = cvtColor_comboBox->currentText();
 
-                auto comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
-                const auto comboBoxValue = comboBox->currentText();
-
-                Base::e_ColorFormat selectedColorFormat;
+                Base::e_OpenCVColorFormat selectedColorFormat;
                 if(comboBoxValue == "Gray")
                 {
-                    selectedColorFormat = Base::e_ColorFormat::GRAY;
+                    selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
                     applyCvtColor(selectedColorFormat);
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                     m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
@@ -85,6 +85,26 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
+            }
+
+            case Base::e_OpenCVFunction::threshold:
+            {
+                auto thresholdValue_spinBox = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
+                auto thresholdValueMax_spinBox = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
+                auto thresholdType_comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+
+
+                const auto thresholdValue = thresholdValue_spinBox->value();
+                const auto thresholdValueMax = thresholdValueMax_spinBox->value();
+                const auto thresholdType = thresholdType_comboBox->currentIndex();
+
+                applyThreshold(thresholdValue, thresholdValueMax, thresholdType);
+                loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                m_lastFunction = [=](){applyThreshold(thresholdValue, thresholdValueMax, thresholdType);};
+                m_lastFunctionString = "threshold";
+                ui->pushButton_AddToPipeline->setEnabled(true);
+                break;
+            }
         }
     }
 }
@@ -130,12 +150,12 @@ void QtObjectDetector::loadImage()
     if(selectedFilter == "Indexed8")
     {
         m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_GRAYSCALE);
-        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(m_originalImage, Base::e_ColorFormat::GRAY));
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_originalImage, Base::e_OpenCVColorFormat::GRAY));
     }
     else if(selectedFilter == "BGR888")
     {
         m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_COLOR);
-        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(m_originalImage, Base::e_ColorFormat::COLOR));
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_originalImage, Base::e_OpenCVColorFormat::COLOR));
     }
 }
 
@@ -178,17 +198,25 @@ void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
 }
 
 
-void QtObjectDetector::applyCvtColor(Base::e_ColorFormat selectedColorFormat)
+void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat)
 {
-    const Base::e_ColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
-    if(currentColorFormat == Base::e_ColorFormat::COLOR && selectedColorFormat == Base::e_ColorFormat::GRAY) //Only one direction will be supported
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    if(currentColorFormat == Base::e_OpenCVColorFormat::COLOR && selectedColorFormat == Base::e_OpenCVColorFormat::GRAY) //Only one direction will be supported
     {
         cv::Mat newImage;
         const auto colorFilter = cv::COLOR_BGR2GRAY;
 
         m_pPipelineHandler->m_cvtColor(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
-        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(newImage, selectedColorFormat));
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, selectedColorFormat));
     }
+}
+
+void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int type)
+{
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    m_pPipelineHandler->m_threshold(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
@@ -196,6 +224,7 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     m_pPipelineHandler->getFunctionPipeline().push_back(m_lastFunction);
     ui->comboBox_PipelineStepSelector->setEnabled(true);
     ui->comboBox_PipelineStepSelector->addItem(m_lastFunctionString);
+    ui->comboBox_PipelineStepSelector->setCurrentIndex(ui->comboBox_PipelineStepSelector->findText(m_lastFunctionString));
     ui->pushButton_AddToPipeline->setEnabled(false);
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
 
@@ -229,7 +258,7 @@ void QtObjectDetector::on_pushButton_SavePipeline_clicked()
     auto x = m_pPipelineHandler->getFunctionPipeline();
     if(pipelineName.at(0).isLetter() && !m_pPipelineHandler->getFunctionPipeline().empty())
     {
-        const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_pPipelineHandler->getFunctionPipeline(), pipelineName); //
+        const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_pPipelineHandler->getFunctionPipeline(), pipelineName);
         m_pPipelineHandler->getAvailablePipelines().push_back(pipelinePair);
         ui->comboBox_PipelineNameSelector->setEnabled(true);
         ui->pushButton_ApplyPipeline->setEnabled(true);
@@ -247,6 +276,10 @@ void QtObjectDetector::on_pushButton_DeletePipeline_clicked()
         if (static_cast<int>(m_pPipelineHandler->getAvailablePipelines().size() - 1) >= currentIndex)
         {
             m_pPipelineHandler->getAvailablePipelines().erase(m_pPipelineHandler->getAvailablePipelines().begin() + currentIndex);
+        }
+        if(m_pPipelineHandler->getAvailablePipelines().size() == 0)
+        {
+            ui->pushButton_ApplyPipeline->setEnabled(false);
         }
     }
 }
@@ -282,6 +315,18 @@ void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
 
 void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1)
 {
+    QLayout* myLayout = ui->widget_Arguments->layout();
+    if(myLayout != nullptr)
+    {
+        QLayoutItem* item;
+        while((item = myLayout->takeAt(0)) != nullptr)
+        {
+            delete item->widget();
+            myLayout->removeItem(item);
+        }
+        delete item;
+        delete myLayout;
+    }
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
@@ -298,6 +343,47 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
 
         ui->widget_Arguments->layout()->addWidget(labelFormat);
         ui->widget_Arguments->layout()->addWidget(comboboxFormat);
+    }
+    else if(arg1 == "threshold")
+    {
+        //Argument 1
+        QLabel* labelThresh = new QLabel(this);
+        labelThresh->setText("Threshold Value:");
+
+        QDoubleSpinBox* spinboxTresholdValue = new QDoubleSpinBox(this);
+        spinboxTresholdValue->setObjectName("spinboxTresholdValue");
+        spinboxTresholdValue->setRange(0.0, 255);
+        spinboxTresholdValue->setDecimals(1);
+        spinboxTresholdValue->setValue(155.0);
+
+        //Argument 2
+        QLabel* labelThreshMax = new QLabel(this);
+        labelThreshMax->setText("Threshold Max Value:");
+
+        QDoubleSpinBox* spinboxTresholdValueMax = new QDoubleSpinBox(this);
+        spinboxTresholdValueMax->setObjectName("spinboxTresholdValueMax");
+        spinboxTresholdValueMax->setRange(0.0, 255);
+        spinboxTresholdValueMax->setDecimals(1);
+        spinboxTresholdValueMax->setValue(210.0);
+
+        //Argument 3
+        QLabel* labelThreshType = new QLabel(this);
+        labelThreshType->setText("Threshold Type:");
+
+        QComboBox* comboboxThreshType = new QComboBox(this);
+        comboboxThreshType->setObjectName("comboboxThreshType");
+        comboboxThreshType->addItem("THRESH_BINARY");
+        comboboxThreshType->addItem("THRESH_BINARY_INV");
+        comboboxThreshType->addItem("THRESH_TRUNC");
+        comboboxThreshType->addItem("THRESH_TOZERO");
+        comboboxThreshType->addItem("THRESH_TOZERO_INV");
+
+        ui->widget_Arguments->layout()->addWidget(labelThresh);
+        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValue);
+        ui->widget_Arguments->layout()->addWidget(labelThreshMax);
+        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValueMax);
+        ui->widget_Arguments->layout()->addWidget(labelThreshType);
+        ui->widget_Arguments->layout()->addWidget(comboboxThreshType);
     }
 }
 
