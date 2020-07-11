@@ -227,6 +227,7 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     ui->comboBox_PipelineStepSelector->setCurrentIndex(ui->comboBox_PipelineStepSelector->findText(m_lastFunctionString));
     ui->pushButton_AddToPipeline->setEnabled(false);
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
+    ui->lineEdit_PipelineName->setEnabled(true);
 
     if(ui->lineEdit_PipelineName->text().length() > 0 && ui->lineEdit_PipelineName->text().at(0).isLetter())
     {
@@ -249,6 +250,7 @@ void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
         ui->pushButton_DeleteFromPipeline->setEnabled(false);
         ui->pushButton_ApplyPipeline->setEnabled(false);
         ui->pushButton_SavePipeline->setEnabled(false);
+        ui->lineEdit_PipelineName->setEnabled(false);
     }
 }
 
@@ -286,9 +288,13 @@ void QtObjectDetector::on_pushButton_DeletePipeline_clicked()
 
 void QtObjectDetector::on_lineEdit_PipelineName_textChanged(const QString &arg1)
 {
-    if(arg1.at(0).isLetter() && ui->comboBox_PipelineStepSelector->count() > 0)
+    if(arg1.size() && arg1.at(0).isLetter() && ui->comboBox_PipelineStepSelector->count() > 0)
     {
         ui->pushButton_SavePipeline->setEnabled(true);
+    }
+    else
+    {
+        ui->pushButton_SavePipeline->setEnabled(false);
     }
 }
 
