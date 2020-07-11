@@ -21,15 +21,6 @@ class QtObjectDetector : public QMainWindow
 {
     Q_OBJECT
 
-    struct ImageSettings {
-        bool autoSize;
-        bool autoScaled;
-        int x;
-        int y;
-        QImage::Format imageFormat;
-        QByteArray filePath;
-    };
-
 public:
     QtObjectDetector(QWidget *parent = nullptr);
     ~QtObjectDetector();
@@ -48,7 +39,7 @@ private slots:
     void on_pushButton_SavePipeline_clicked();
     void on_pushButton_ApplyPipeline_clicked();
 
-    void applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat);
+    void applyCvtColor(Base::e_ColorFormat selectedColorFormat);
 
     //Video Part
     void on_videoSelected(const QString &file);
@@ -76,12 +67,9 @@ private:
     //Image part
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pImageDialog = nullptr;
-    std::vector<std::pair<cv::Mat, PhotoLoader::e_ColorFormat>> m_imagePipeline;
-    std::vector<std::function<void()>> m_functionPipeline;
     std::function<void()> m_lastFunction;
     QString m_lastFunctionString;
     cv::Mat m_originalImage;
-    std::vector<std::pair<std::vector<std::function<void()>>, QString>> m_availablePipelines;
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
@@ -89,6 +77,6 @@ private:
     std::unique_ptr<cv::Mat> m_pOutputVideoImage = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
     QList<QCameraInfo> m_cameras;
-    ImageSettings m_imageSettings;
+    Base::ImageSettings m_imageSettings;
 };
 #endif // OBJECTDETECTOR_H

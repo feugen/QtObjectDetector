@@ -3,20 +3,13 @@
 
 #include <QObject>
 #include <QFileInfo>
-#include <QImage>
+#include "base.h"
 
 class PhotoLoader : public QObject
 {
     Q_OBJECT
 
 public:
-
-    enum e_ColorFormat
-    {
-        COLOR = QImage::Format_BGR888, //Todo - Only 2 Formats are supported
-        GRAY = QImage::Format_Indexed8 //Todo - this way we can cast easily and dont need conversion right now (temp. solution)
-    };
-    Q_ENUM(e_ColorFormat)
 
     explicit PhotoLoader(QObject *parent = nullptr);
 

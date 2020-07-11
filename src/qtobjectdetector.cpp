@@ -40,7 +40,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     ui->ySpinBox->setValue(static_cast<int>(m_pPhotoLoader->getYSize()));
 
     QStringList functionsList;
-    const QMetaEnum metaEnum = QMetaEnum::fromType<PipelineHandler::e_OpenCVFunction>();
+    const QMetaEnum metaEnum = QMetaEnum::fromType<Base::e_OpenCVFunction>();
 
     for (int i = 0; i < metaEnum.keyCount() ; i++ )
     {
@@ -63,23 +63,23 @@ QtObjectDetector::~QtObjectDetector()
 
 void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
-    if (!m_imagePipeline.empty())
+    if (!m_pPipelineHandler->getImagePipeline().empty())
     {
-        const auto selectedFunction = static_cast<PipelineHandler::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+        const auto selectedFunction = static_cast<Base::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
 
         switch (selectedFunction)
         {
-            case PipelineHandler::e_OpenCVFunction::cvtColor:
+            case Base::e_OpenCVFunction::cvtColor:
 
                 auto comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
                 const auto comboBoxValue = comboBox->currentText();
 
-                PhotoLoader::e_ColorFormat selectedColorFormat;
+                Base::e_ColorFormat selectedColorFormat;
                 if(comboBoxValue == "Gray")
                 {
-                    selectedColorFormat = PhotoLoader::e_ColorFormat::GRAY;
+                    selectedColorFormat = Base::e_ColorFormat::GRAY;
                     applyCvtColor(selectedColorFormat);
-                    loadImageToQLabel(m_imagePipeline.size() - 1);
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                     m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
                     m_lastFunctionString = "cvtColor";
                     ui->pushButton_AddToPipeline->setEnabled(true);
@@ -112,30 +112,30 @@ void QtObjectDetector::on_loadFilePushButton_clicked()
 
 void QtObjectDetector::storeImageSettings()
 {
-    if(!m_imagePipeline.empty())
+    if(!m_pPipelineHandler->getImagePipeline().empty())
     {
         m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
         m_imageSettings.autoSize = ui->checkBox_autoSize->isChecked();
         m_imageSettings.autoScaled = ui->checkBox_autoScale->isChecked();
-        m_imageSettings.x = m_imageSettings.autoSize ? m_imagePipeline.at(0).first.cols : (ui->xSpinBox->value() > m_imagePipeline.at(0).first.cols ? m_imagePipeline.at(0).first.cols : ui->xSpinBox->value());
-        m_imageSettings.y = m_imageSettings.autoSize  ? m_imagePipeline.at(0).first.rows : (ui->ySpinBox->value() > m_imagePipeline.at(0).first.rows ? m_imagePipeline.at(0).first.rows : ui->ySpinBox->value());
+        m_imageSettings.x = m_imageSettings.autoSize ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : (ui->xSpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.cols ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : ui->xSpinBox->value());
+        m_imageSettings.y = m_imageSettings.autoSize  ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : (ui->ySpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.rows ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : ui->ySpinBox->value());
         m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
     }
 }
 
 void QtObjectDetector::loadImage()
 {
-    m_imagePipeline.clear();
+    m_pPipelineHandler->getImagePipeline().clear();
     const QString selectedFilter = ui->formatListComboBox->currentText();
     if(selectedFilter == "Indexed8")
     {
         m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_GRAYSCALE);
-        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_originalImage, PhotoLoader::e_ColorFormat::GRAY));
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(m_originalImage, Base::e_ColorFormat::GRAY));
     }
     else if(selectedFilter == "BGR888")
     {
         m_originalImage = cv::imread(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8().data(), cv::IMREAD_COLOR);
-        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(m_originalImage, PhotoLoader::e_ColorFormat::COLOR));
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(m_originalImage, Base::e_ColorFormat::COLOR));
     }
 }
 
@@ -144,9 +144,9 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
     QFile file(m_imageSettings.filePath);
     if (!file.open(QFile::ReadOnly)) return;
 
-    if((m_imagePipeline.size() - 1) >= storagePosition)
+    if((m_pPipelineHandler->getImagePipeline().size() - 1) >= storagePosition)
     {
-        const QImage *imgIn = new QImage(static_cast<uchar*>(m_imagePipeline.at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_imagePipeline.at(storagePosition).first.step), static_cast<QImage::Format>(m_imagePipeline.at(storagePosition).second));   
+        const QImage *imgIn = new QImage(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
         QPixmap myPixmap;
         if(m_imageSettings.autoSize)
         {
@@ -178,22 +178,22 @@ void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
 }
 
 
-void QtObjectDetector::applyCvtColor(PhotoLoader::e_ColorFormat selectedColorFormat)
+void QtObjectDetector::applyCvtColor(Base::e_ColorFormat selectedColorFormat)
 {
-    const PhotoLoader::e_ColorFormat currentColorFormat = m_imagePipeline.back().second;
-    if(currentColorFormat == PhotoLoader::e_ColorFormat::COLOR && selectedColorFormat == PhotoLoader::e_ColorFormat::GRAY) //Only one direction will be supported
+    const Base::e_ColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    if(currentColorFormat == Base::e_ColorFormat::COLOR && selectedColorFormat == Base::e_ColorFormat::GRAY) //Only one direction will be supported
     {
         cv::Mat newImage;
         const auto colorFilter = cv::COLOR_BGR2GRAY;
 
-        m_pPipelineHandler->m_cvtColor(m_imagePipeline.back().first, newImage, colorFilter, 0);
-        m_imagePipeline.push_back(std::pair<cv::Mat, PhotoLoader::e_ColorFormat>(newImage, selectedColorFormat));
+        m_pPipelineHandler->m_cvtColor(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
+        m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_ColorFormat>(newImage, selectedColorFormat));
     }
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
 {
-    m_functionPipeline.push_back(m_lastFunction);
+    m_pPipelineHandler->getFunctionPipeline().push_back(m_lastFunction);
     ui->comboBox_PipelineStepSelector->setEnabled(true);
     ui->comboBox_PipelineStepSelector->addItem(m_lastFunctionString);
     ui->pushButton_AddToPipeline->setEnabled(false);
@@ -209,12 +209,12 @@ void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
 {
     const auto currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
     ui->comboBox_PipelineStepSelector->removeItem(currentIndex);
-    if(static_cast<int>(m_functionPipeline.size()) > currentIndex)
+    if(static_cast<int>(m_pPipelineHandler->getFunctionPipeline().size()) > currentIndex)
     {
-        m_functionPipeline.erase(m_functionPipeline.begin() + currentIndex);
-        m_imagePipeline.erase(m_imagePipeline.begin() + currentIndex);
+        m_pPipelineHandler->getFunctionPipeline().erase(m_pPipelineHandler->getFunctionPipeline().begin() + currentIndex);
+        m_pPipelineHandler->getImagePipeline().erase(m_pPipelineHandler->getImagePipeline().begin() + currentIndex);
     }
-    if(m_functionPipeline.empty())
+    if(m_pPipelineHandler->getFunctionPipeline().empty())
     {
         ui->comboBox_PipelineStepSelector->setEnabled(false);
         ui->pushButton_DeleteFromPipeline->setEnabled(false);
@@ -226,10 +226,11 @@ void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
 void QtObjectDetector::on_pushButton_SavePipeline_clicked()
 {
     const auto pipelineName = ui->lineEdit_PipelineName->text();
-    if(pipelineName.at(0).isLetter() && !m_functionPipeline.empty())
+    auto x = m_pPipelineHandler->getFunctionPipeline();
+    if(pipelineName.at(0).isLetter() && !m_pPipelineHandler->getFunctionPipeline().empty())
     {
-        const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_functionPipeline, pipelineName);
-        m_availablePipelines.push_back(pipelinePair);
+        const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_pPipelineHandler->getFunctionPipeline(), pipelineName); //
+        m_pPipelineHandler->getAvailablePipelines().push_back(pipelinePair);
         ui->comboBox_PipelineNameSelector->setEnabled(true);
         ui->pushButton_ApplyPipeline->setEnabled(true);
         ui->pushButton_DeletePipeline->setEnabled(true);
@@ -243,9 +244,9 @@ void QtObjectDetector::on_pushButton_DeletePipeline_clicked()
     if(currentIndex >= 0)
     {
         ui->comboBox_PipelineNameSelector->removeItem(currentIndex);
-        if (static_cast<int>(m_availablePipelines.size() - 1) >= currentIndex)
+        if (static_cast<int>(m_pPipelineHandler->getAvailablePipelines().size() - 1) >= currentIndex)
         {
-            m_availablePipelines.erase(m_availablePipelines.begin() + currentIndex);
+            m_pPipelineHandler->getAvailablePipelines().erase(m_pPipelineHandler->getAvailablePipelines().begin() + currentIndex);
         }
     }
 }
@@ -261,7 +262,7 @@ void QtObjectDetector::on_lineEdit_PipelineName_textChanged(const QString &arg1)
 void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
 {
     const QString selectedPipeline = ui->comboBox_PipelineNameSelector->currentText();
-    for (const auto& pipeline : m_availablePipelines)
+    for (const auto& pipeline : m_pPipelineHandler->getAvailablePipelines())
     {
         if(pipeline.second == selectedPipeline)
         {
@@ -273,9 +274,9 @@ void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
             }
         }
     }
-    if(m_imagePipeline.size() > 0)
+    if(m_pPipelineHandler->getImagePipeline().size() > 0)
     {
-        loadImageToQLabel(m_imagePipeline.size()-1);
+        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size()-1);
     }
 }
 
