@@ -1,5 +1,6 @@
 #include "qtobjectdetector.h"
 #include "ui_qtobjectdetector.h"
+#include "layouthandler.h"
 
 #include <QImage>
 #include <QPixmap>
@@ -373,127 +374,12 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
         delete myLayout;
     }
 
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->setAlignment(Qt::AlignTop);
-    ui->widget_Arguments->setLayout(layout);
-
-    if(arg1 == "cvtColor")
+    QVBoxLayout *pLayout = new QVBoxLayout();
+    LayoutHandler::createLayout(pLayout, arg1);
+    if(pLayout != nullptr)
     {
-        QLabel* labelFormat = new QLabel(this);
-        labelFormat->setText("Color Format:");
-
-        QComboBox* comboboxFormat = new QComboBox(this);
-        comboboxFormat->setObjectName("comboboxFormat");
-        comboboxFormat->addItem("Gray");
-
-        ui->widget_Arguments->layout()->addWidget(labelFormat);
-        ui->widget_Arguments->layout()->addWidget(comboboxFormat);
-    }
-    else if(arg1 == "threshold")
-    {
-        //Argument 1
-        QLabel* labelThresh = new QLabel(this);
-        labelThresh->setText("Threshold Value:");
-
-        QDoubleSpinBox* spinboxTresholdValue = new QDoubleSpinBox(this);
-        spinboxTresholdValue->setObjectName("spinboxTresholdValue");
-        spinboxTresholdValue->setRange(0.0, 255);
-        spinboxTresholdValue->setDecimals(1);
-        spinboxTresholdValue->setValue(155.0);
-
-        //Argument 2
-        QLabel* labelThreshMax = new QLabel(this);
-        labelThreshMax->setText("Threshold Max Value:");
-
-        QDoubleSpinBox* spinboxTresholdValueMax = new QDoubleSpinBox(this);
-        spinboxTresholdValueMax->setObjectName("spinboxTresholdValueMax");
-        spinboxTresholdValueMax->setRange(0.0, 255);
-        spinboxTresholdValueMax->setDecimals(1);
-        spinboxTresholdValueMax->setValue(210.0);
-
-        //Argument 3
-        QLabel* labelThreshType = new QLabel(this);
-        labelThreshType->setText("Threshold Type:");
-
-        QComboBox* comboboxThreshType = new QComboBox(this);
-        comboboxThreshType->setObjectName("comboboxThreshType");
-        comboboxThreshType->addItem("THRESH_BINARY");
-        comboboxThreshType->addItem("THRESH_BINARY_INV");
-        comboboxThreshType->addItem("THRESH_TRUNC");
-        comboboxThreshType->addItem("THRESH_TOZERO");
-        comboboxThreshType->addItem("THRESH_TOZERO_INV");
-
-        ui->widget_Arguments->layout()->addWidget(labelThresh);
-        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValue);
-        ui->widget_Arguments->layout()->addWidget(labelThreshMax);
-        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValueMax);
-        ui->widget_Arguments->layout()->addWidget(labelThreshType);
-        ui->widget_Arguments->layout()->addWidget(comboboxThreshType);
-    }
-    else if(arg1 == "adaptiveThreshold")
-    {
-        //Argument 1
-        QLabel* labelThreshMax = new QLabel(this);
-        labelThreshMax->setText("Threshold Max Value:");
-
-        QDoubleSpinBox* spinboxTresholdValueMax = new QDoubleSpinBox(this);
-        spinboxTresholdValueMax->setObjectName("spinboxTresholdValueMax");
-        spinboxTresholdValueMax->setRange(0.0, 255);
-        spinboxTresholdValueMax->setDecimals(1);
-        spinboxTresholdValueMax->setValue(210.0);
-
-        //Argument 2
-        QLabel* labelAdaptiveMethod = new QLabel(this);
-        labelAdaptiveMethod->setText("Adaptive Method:");
-
-        QComboBox* comboboxAdaptiveMethod = new QComboBox(this);
-        comboboxAdaptiveMethod->setObjectName("comboboxAdaptiveMethod");
-        comboboxAdaptiveMethod->addItem("BORDER_REPLICATE");
-        comboboxAdaptiveMethod->addItem("BORDER_ISOLATED");
-
-        //Argument 3
-        QLabel* labelThreshType = new QLabel(this);
-        labelThreshType->setText("Threshold Type:");
-
-        QComboBox* comboboxThreshType = new QComboBox(this);
-        comboboxThreshType->setObjectName("comboboxThreshType");
-        comboboxThreshType->addItem("THRESH_BINARY");
-        comboboxThreshType->addItem("THRESH_BINARY_INV");
-        comboboxThreshType->addItem("THRESH_TRUNC");
-        comboboxThreshType->addItem("THRESH_TOZERO");
-        comboboxThreshType->addItem("THRESH_TOZERO_INV");
-
-        //Argument 4
-        QLabel* labelBlockSize = new QLabel(this);
-        labelBlockSize->setText("Block Size:");
-
-        QComboBox* comboboxBlockSize = new QComboBox(this);
-        comboboxBlockSize->setObjectName("comboboxBlockSize");
-        comboboxBlockSize->addItem("3");
-        comboboxBlockSize->addItem("5");
-        comboboxBlockSize->addItem("7");
-        comboboxBlockSize->addItem("9");
-        comboboxBlockSize->addItem("11");
-
-        //Argument 5
-        QLabel* labelConstantC = new QLabel(this);
-        labelConstantC->setText("Constant C:");
-
-        QDoubleSpinBox* spinBoxConstantC = new QDoubleSpinBox(this);
-        spinBoxConstantC->setObjectName("spinboxConstantC");
-        spinBoxConstantC->setRange(-1000.0, 1000);
-        spinBoxConstantC->setValue(0);
-
-        ui->widget_Arguments->layout()->addWidget(labelThreshMax);
-        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValueMax);
-        ui->widget_Arguments->layout()->addWidget(labelAdaptiveMethod);
-        ui->widget_Arguments->layout()->addWidget(comboboxAdaptiveMethod);
-        ui->widget_Arguments->layout()->addWidget(labelThreshType);
-        ui->widget_Arguments->layout()->addWidget(comboboxThreshType);
-        ui->widget_Arguments->layout()->addWidget(labelBlockSize);
-        ui->widget_Arguments->layout()->addWidget(comboboxBlockSize);
-        ui->widget_Arguments->layout()->addWidget(labelConstantC);
-        ui->widget_Arguments->layout()->addWidget(spinBoxConstantC);
+        pLayout->setAlignment(Qt::AlignTop);
+        ui->widget_Arguments->setLayout(pLayout);
     }
 }
 

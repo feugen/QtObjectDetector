@@ -21,14 +21,16 @@ SOURCES += \
     src/photoloader.cpp \
     src/pipelinehandler.cpp \
     src/qtobjectdetector.cpp \
-    src/videoloader.cpp
+    src/videoloader.cpp \
+    src/layouthandler.cpp
 
 HEADERS += \
     include/base.h \
     include/photoloader.h \
     include/pipelinehandler.h \
     include/qtobjectdetector.h \
-    include/videoloader.h \
+    include/videoloader.h \ \
+    include/layouthandler.h
 
 FORMS += \
     qtobjectdetector.ui
