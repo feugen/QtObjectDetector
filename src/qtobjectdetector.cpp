@@ -71,38 +71,69 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
         {
             case Base::e_OpenCVFunction::cvtColor:
             {
-                auto cvtColor_comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
-                const auto comboBoxValue = cvtColor_comboBox->currentText();
+                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
 
-                Base::e_OpenCVColorFormat selectedColorFormat;
-                if(comboBoxValue == "Gray")
+                if(arg1)
                 {
-                    selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
-                    applyCvtColor(selectedColorFormat);
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
-                    m_lastFunctionString = "cvtColor";
-                    ui->pushButton_AddToPipeline->setEnabled(true);
+                    const auto arg1Value = arg1->currentText();
+                    Base::e_OpenCVColorFormat selectedColorFormat;
+                    if(arg1Value == "Gray")
+                    {
+                        selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
+
+                        m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
+                        m_lastFunctionString = "cvtColor";
+                        m_lastFunction();
+                        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                        ui->pushButton_AddToPipeline->setEnabled(true);
+                    }
                 }
                 break;
             }
 
             case Base::e_OpenCVFunction::threshold:
             {
-                auto thresholdValue_spinBox = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
-                auto thresholdValueMax_spinBox = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
-                auto thresholdType_comboBox = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
+                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
+                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
 
+                if(arg1 && arg2 && arg3)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->currentIndex();
 
-                const auto thresholdValue = thresholdValue_spinBox->value();
-                const auto thresholdValueMax = thresholdValueMax_spinBox->value();
-                const auto thresholdType = thresholdType_comboBox->currentIndex();
+                    m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, arg3Value);};
+                    m_lastFunctionString = "threshold";
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
+                break;
+            }
 
-                applyThreshold(thresholdValue, thresholdValueMax, thresholdType);
-                loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                m_lastFunction = [=](){applyThreshold(thresholdValue, thresholdValueMax, thresholdType);};
-                m_lastFunctionString = "threshold";
-                ui->pushButton_AddToPipeline->setEnabled(true);
+            case Base::e_OpenCVFunction::adaptiveThreshold:
+            {
+                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
+                const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxAdaptiveMethod");
+                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
+                const auto arg5 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxConstantC");
+
+                if(arg1 && arg2 && arg3 && arg4 && arg5)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->currentIndex();
+                    const auto arg3Value = arg3->currentIndex();
+                    const auto arg4Value = arg4->currentText().toInt();
+                    const auto arg5Value = arg5->value();
+
+                    m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, arg2Value, arg3Value, arg4Value, arg5Value);};
+                    m_lastFunctionString = "adaptiveThreshold";
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
         }
@@ -216,6 +247,14 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     m_pPipelineHandler->m_threshold(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+}
+
+void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
+{
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    m_pPipelineHandler->m_adaptiveThreshold(m_pPipelineHandler->getImagePipeline().back().first, newImage, maxValue, adaptiveMethod, thresholdType, blockSize, C);
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
@@ -390,6 +429,71 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
         ui->widget_Arguments->layout()->addWidget(spinboxTresholdValueMax);
         ui->widget_Arguments->layout()->addWidget(labelThreshType);
         ui->widget_Arguments->layout()->addWidget(comboboxThreshType);
+    }
+    else if(arg1 == "adaptiveThreshold")
+    {
+        //Argument 1
+        QLabel* labelThreshMax = new QLabel(this);
+        labelThreshMax->setText("Threshold Max Value:");
+
+        QDoubleSpinBox* spinboxTresholdValueMax = new QDoubleSpinBox(this);
+        spinboxTresholdValueMax->setObjectName("spinboxTresholdValueMax");
+        spinboxTresholdValueMax->setRange(0.0, 255);
+        spinboxTresholdValueMax->setDecimals(1);
+        spinboxTresholdValueMax->setValue(210.0);
+
+        //Argument 2
+        QLabel* labelAdaptiveMethod = new QLabel(this);
+        labelAdaptiveMethod->setText("Adaptive Method:");
+
+        QComboBox* comboboxAdaptiveMethod = new QComboBox(this);
+        comboboxAdaptiveMethod->setObjectName("comboboxAdaptiveMethod");
+        comboboxAdaptiveMethod->addItem("BORDER_REPLICATE");
+        comboboxAdaptiveMethod->addItem("BORDER_ISOLATED");
+
+        //Argument 3
+        QLabel* labelThreshType = new QLabel(this);
+        labelThreshType->setText("Threshold Type:");
+
+        QComboBox* comboboxThreshType = new QComboBox(this);
+        comboboxThreshType->setObjectName("comboboxThreshType");
+        comboboxThreshType->addItem("THRESH_BINARY");
+        comboboxThreshType->addItem("THRESH_BINARY_INV");
+        comboboxThreshType->addItem("THRESH_TRUNC");
+        comboboxThreshType->addItem("THRESH_TOZERO");
+        comboboxThreshType->addItem("THRESH_TOZERO_INV");
+
+        //Argument 4
+        QLabel* labelBlockSize = new QLabel(this);
+        labelBlockSize->setText("Block Size:");
+
+        QComboBox* comboboxBlockSize = new QComboBox(this);
+        comboboxBlockSize->setObjectName("comboboxBlockSize");
+        comboboxBlockSize->addItem("3");
+        comboboxBlockSize->addItem("5");
+        comboboxBlockSize->addItem("7");
+        comboboxBlockSize->addItem("9");
+        comboboxBlockSize->addItem("11");
+
+        //Argument 5
+        QLabel* labelConstantC = new QLabel(this);
+        labelConstantC->setText("Constant C:");
+
+        QDoubleSpinBox* spinBoxConstantC = new QDoubleSpinBox(this);
+        spinBoxConstantC->setObjectName("spinboxConstantC");
+        spinBoxConstantC->setRange(-1000.0, 1000);
+        spinBoxConstantC->setValue(0);
+
+        ui->widget_Arguments->layout()->addWidget(labelThreshMax);
+        ui->widget_Arguments->layout()->addWidget(spinboxTresholdValueMax);
+        ui->widget_Arguments->layout()->addWidget(labelAdaptiveMethod);
+        ui->widget_Arguments->layout()->addWidget(comboboxAdaptiveMethod);
+        ui->widget_Arguments->layout()->addWidget(labelThreshType);
+        ui->widget_Arguments->layout()->addWidget(comboboxThreshType);
+        ui->widget_Arguments->layout()->addWidget(labelBlockSize);
+        ui->widget_Arguments->layout()->addWidget(comboboxBlockSize);
+        ui->widget_Arguments->layout()->addWidget(labelConstantC);
+        ui->widget_Arguments->layout()->addWidget(spinBoxConstantC);
     }
 }
 

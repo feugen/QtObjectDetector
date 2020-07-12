@@ -31,7 +31,8 @@ public:
     enum e_OpenCVFunction
     {
         cvtColor = 0,
-        threshold = 1
+        threshold = 1,
+        adaptiveThreshold = 2
     };
     Q_ENUM(e_OpenCVFunction)
 

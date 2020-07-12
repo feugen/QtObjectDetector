@@ -41,6 +41,7 @@ private slots:
 
     void applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat);
     void applyThreshold(double threshold, double thresholdMax, int type);
+    void applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C);
 
     //Video Part
     void on_videoSelected(const QString &file);
