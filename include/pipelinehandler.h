@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include "base.h"
-#include <opencv2/opencv.hpp>
 
 class PipelineHandler : public QObject
 {

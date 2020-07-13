@@ -1,5 +1,4 @@
 #include "photoloader.h"
-#include <QMetaEnum>
 
 PhotoLoader::PhotoLoader(QObject *parent) : QObject(parent),
     m_FileInfo(QFileInfo("No File selected"))

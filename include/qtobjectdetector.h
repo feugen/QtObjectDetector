@@ -8,10 +8,10 @@
 #include <QGraphicsScene>
 #include <memory>
 #include <functional>
+#include "base.h"
 #include "photoloader.h"
 #include "videoloader.h"
 #include "pipelinehandler.h"
-#include <opencv2/opencv.hpp>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class QtObjectDetector; }

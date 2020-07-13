@@ -103,6 +103,11 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg1Value = arg1->value();
                     const auto arg2Value = arg2->value();
                     const auto arg3Value = arg3->currentIndex();
+                    const auto arg3ValueText = arg3->currentText();
+
+                    //Verify data
+                    const auto enumValue = static_cast<Base::e_OpenCVThresholdType>(arg3Value);
+                    assert(Base::QEnumToQString(enumValue) == arg3ValueText);
 
                     m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, arg3Value);};
                     m_lastFunctionString = "threshold";
@@ -125,9 +130,17 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 {
                     const auto arg1Value = arg1->value();
                     const auto arg2Value = arg2->currentIndex();
+                    const auto arg2ValueText = arg2->currentText();
                     const auto arg3Value = arg3->currentIndex();
+                    const auto arg3ValueText = arg3->currentText();
                     const auto arg4Value = arg4->currentText().toInt();
                     const auto arg5Value = arg5->value();
+
+                    //Verify data
+                    const auto enumValue2 = static_cast<Base::e_OpenCVAdaptivThresholdMethod>(arg2Value);
+                    assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
+                    const auto enumValue3 = static_cast<Base::e_OpenCVAdaptiveThresholdType>(arg3Value);
+                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
 
                     m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, arg2Value, arg3Value, arg4Value, arg5Value);};
                     m_lastFunctionString = "adaptiveThreshold";

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QImage>
+#include <QMetaEnum>
+#include <opencv2/opencv.hpp>
 
 class Base : public QObject
 {
@@ -10,7 +12,12 @@ class Base : public QObject
 public:
     explicit Base(QObject *parent = nullptr);
 
-    //Only 2 Formats are supported
+    template<typename QEnum>
+    static QString QEnumToQString (const QEnum value)
+    {
+      return QMetaEnum::fromType<QEnum>().valueToKey(value);
+    }
+
     enum e_OpenCVColorFormat
     {
         COLOR = QImage::Format_BGR888,
@@ -20,13 +27,37 @@ public:
 
     enum e_OpenCVThresholdType
     {
-        THRESH_BINARY = 0,
-        THRESH_BINARY_INV = 1,
-        THRESH_TRUNC = 2,
-        THRESH_TOZERO = 3,
-        THRESH_TOZERO_INV = 4
+        THRESH_BINARY = cv::THRESH_BINARY,
+        THRESH_BINARY_INV = cv::THRESH_BINARY_INV,
+        THRESH_TRUNC = cv::THRESH_TRUNC,
+        THRESH_TOZERO = cv::THRESH_TOZERO,
+        THRESH_TOZERO_INV = cv::THRESH_TOZERO_INV
     };
     Q_ENUM(e_OpenCVThresholdType)
+
+    enum e_OpenCVAdaptivThresholdMethod
+    {
+        THRESH_MEAN_C = cv::ADAPTIVE_THRESH_MEAN_C,
+        THRESH_GAUSSIAN_C = cv::ADAPTIVE_THRESH_GAUSSIAN_C
+    };
+    Q_ENUM(e_OpenCVAdaptivThresholdMethod)
+
+    enum e_OpenCVAdaptiveThresholdType
+    {
+        THRESH_ADAPTIV_BINARY = cv::THRESH_BINARY,
+        THRESH_ADAPTIV_BINARY_INV = cv::THRESH_BINARY_INV,
+    };
+    Q_ENUM(e_OpenCVAdaptiveThresholdType)
+
+    enum e_OpenCVAdaptiveThresholdBlocksize
+    {
+        BLOCKSIZE_3 = 3,
+        BLOCKSIZE_5 = 5,
+        BLOCKSIZE_7 = 7,
+        BLOCKSIZE_9 = 9,
+        BLOCKSIZE_11 = 11
+    };
+    Q_ENUM(e_OpenCVAdaptiveThresholdBlocksize)
 
     enum e_OpenCVFunction
     {

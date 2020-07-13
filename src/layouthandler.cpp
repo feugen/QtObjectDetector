@@ -1,4 +1,5 @@
 #include "layouthandler.h"
+#include "base.h"
 #include <QLabel>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -51,11 +52,12 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxThreshType = new QComboBox();
         comboboxThreshType->setObjectName("comboboxThreshType");
-        comboboxThreshType->addItem("THRESH_BINARY");
-        comboboxThreshType->addItem("THRESH_BINARY_INV");
-        comboboxThreshType->addItem("THRESH_TRUNC");
-        comboboxThreshType->addItem("THRESH_TOZERO");
-        comboboxThreshType->addItem("THRESH_TOZERO_INV");
+
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVThresholdType::THRESH_BINARY));
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVThresholdType::THRESH_BINARY_INV));
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVThresholdType::THRESH_TRUNC));
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVThresholdType::THRESH_TOZERO));
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVThresholdType::THRESH_TOZERO_INV));
 
         layout->addWidget(labelThresh);
         layout->addWidget(spinboxTresholdValue);
@@ -82,8 +84,8 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxAdaptiveMethod = new QComboBox();
         comboboxAdaptiveMethod->setObjectName("comboboxAdaptiveMethod");
-        comboboxAdaptiveMethod->addItem("BORDER_REPLICATE");
-        comboboxAdaptiveMethod->addItem("BORDER_ISOLATED");
+        comboboxAdaptiveMethod->addItem(Base::QEnumToQString(Base::e_OpenCVAdaptivThresholdMethod::THRESH_MEAN_C));
+        comboboxAdaptiveMethod->addItem(Base::QEnumToQString(Base::e_OpenCVAdaptivThresholdMethod::THRESH_GAUSSIAN_C));
 
         //Argument 3
         QLabel* labelThreshType = new QLabel();
@@ -91,11 +93,8 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxThreshType = new QComboBox();
         comboboxThreshType->setObjectName("comboboxThreshType");
-        comboboxThreshType->addItem("THRESH_BINARY");
-        comboboxThreshType->addItem("THRESH_BINARY_INV");
-        comboboxThreshType->addItem("THRESH_TRUNC");
-        comboboxThreshType->addItem("THRESH_TOZERO");
-        comboboxThreshType->addItem("THRESH_TOZERO_INV");
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVAdaptiveThresholdType::THRESH_ADAPTIV_BINARY));
+        comboboxThreshType->addItem(Base::QEnumToQString(Base::e_OpenCVAdaptiveThresholdType::THRESH_ADAPTIV_BINARY_INV));
 
         //Argument 4
         QLabel* labelBlockSize = new QLabel();
@@ -103,11 +102,11 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBlockSize = new QComboBox();
         comboboxBlockSize->setObjectName("comboboxBlockSize");
-        comboboxBlockSize->addItem("3");
-        comboboxBlockSize->addItem("5");
-        comboboxBlockSize->addItem("7");
-        comboboxBlockSize->addItem("9");
-        comboboxBlockSize->addItem("11");
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_3)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_5)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_7)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_9)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_11)));
 
         //Argument 5
         QLabel* labelConstantC = new QLabel();
