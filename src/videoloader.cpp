@@ -1,6 +1,6 @@
 #include "videoloader.h"
 
-VideoLoader::VideoLoader(QObject *parent) : QObject(parent)
+VideoLoader::VideoLoader(QObject *parent) : MediaLoader(parent)
 {
 
 }

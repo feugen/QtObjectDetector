@@ -17,15 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    src/base.cpp \
     src/photoloader.cpp \
     src/pipelinehandler.cpp \
     src/qtobjectdetector.cpp \
     src/videoloader.cpp \
-    src/layouthandler.cpp
+    src/layouthandler.cpp \
+    src/medialoader.cpp
 
 HEADERS += \
     include/base.h \
+    include/medialoader.h \
     include/photoloader.h \
     include/pipelinehandler.h \
     include/qtobjectdetector.h \

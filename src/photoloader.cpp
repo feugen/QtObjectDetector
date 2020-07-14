@@ -1,20 +1,10 @@
 #include "photoloader.h"
 
-PhotoLoader::PhotoLoader(QObject *parent) : QObject(parent),
-    m_FileInfo(QFileInfo("No File selected"))
-  , m_ImageFormat(QImage::Format_BGR888)
+PhotoLoader::PhotoLoader(QObject *parent) : MediaLoader(parent),
+    m_ImageFormat(QImage::Format_BGR888)
   , m_xSize(800)
   , m_ySize(600)
 {
-    const QMetaEnum formatEnum = QMetaEnum::fromType<QImage::Format>();
-
-    for(int i = 0; i < formatEnum.keyCount(); i++){
-        QString item = formatEnum.valueToKey(i);
-        if(item == "Format_Indexed8" || item == "Format_BGR888") //Only 2 Formats are supported for now
-        {
-            m_FormatList += item.remove("Format_");
-        }
-    }
 }
 
 
@@ -38,15 +28,7 @@ void PhotoLoader::setImageFormat(const QImage::Format &ImageFormat)
     m_ImageFormat = ImageFormat;
 }
 
-QStringList PhotoLoader::getFormatList() const
-{
-    return m_FormatList;
-}
 
-void PhotoLoader::setFormatList(const QStringList &FormatList)
-{
-    m_FormatList = FormatList;
-}
 
 uint PhotoLoader::getXSize() const
 {

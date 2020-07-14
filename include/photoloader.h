@@ -2,10 +2,10 @@
 #define PHOTOLOADER_H
 
 #include <QObject>
-#include <QFileInfo>
 #include "base.h"
+#include "medialoader.h"
 
-class PhotoLoader : public QObject
+class PhotoLoader : public MediaLoader
 {
     Q_OBJECT
 
@@ -13,12 +13,11 @@ public:
 
     explicit PhotoLoader(QObject *parent = nullptr);
 
-    QFileInfo getFileInfo() const;
-    void setFileInfo(const QFileInfo &Path);
+    QFileInfo getFileInfo() const override;
+    void setFileInfo(const QFileInfo &FileInfo) override;
+
     QImage::Format getImageFormat() const;
     void setImageFormat(const QImage::Format &ImageFormat);
-    QStringList getFormatList() const;
-    void setFormatList(const QStringList &FormatList);
     uint getXSize() const;
     void setXSize(const uint &xSize);
     uint getYSize() const;
@@ -29,9 +28,6 @@ public:
     void setAutoSize(bool autoSize);
 
 private:
-
-    QStringList m_FormatList;
-    QFileInfo m_FileInfo;
     QImage::Format m_ImageFormat;
     uint m_xSize;
     uint m_ySize;

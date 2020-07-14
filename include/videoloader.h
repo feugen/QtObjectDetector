@@ -2,22 +2,21 @@
 #define VIDEOLOADER_H
 
 #include <QObject>
-#include <QFileInfo>
 #include <QCameraInfo>
+#include "medialoader.h"
 
-class VideoLoader : public QObject
+class VideoLoader : public MediaLoader
 {
     Q_OBJECT
 public:
     explicit VideoLoader(QObject *parent = nullptr);
 
-    QFileInfo getFileInfo() const;
-    void setFileInfo(const QFileInfo &FileInfo);
+    QFileInfo getFileInfo() const override;
+    void setFileInfo(const QFileInfo &FileInfo) override;
 
     QCameraInfo CameraInfo() const;
 
 private:
-    QFileInfo m_FileInfo;
     QCameraInfo m_CameraInfo;
 
 signals:

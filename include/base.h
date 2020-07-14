@@ -9,8 +9,8 @@
 class Base : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit Base(QObject *parent = nullptr);
 
     template<typename QEnum>
     static QString QEnumToQString (const QEnum value)
@@ -77,6 +77,12 @@ public:
     };
 
 signals:
+
+private:
+    explicit Base(QObject *parent = nullptr)
+    {
+        Q_UNUSED(parent)
+    }
 
 };
 
