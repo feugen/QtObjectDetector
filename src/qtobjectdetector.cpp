@@ -251,7 +251,14 @@ void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorForm
         cv::Mat newImage;
         const auto colorFilter = cv::COLOR_BGR2GRAY;
 
-        m_pPipelineHandler->m_cvtColor(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
+        try{
+            m_pPipelineHandler->getCvtColor()(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
+        }
+        catch( cv::Exception& e)
+        {
+            const QString err_msg = QString::fromUtf8(e.what());
+            qDebug() << "Exception caught:" << err_msg;
+        }
         m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, selectedColorFormat));
     }
 }
@@ -260,7 +267,16 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
-    m_pPipelineHandler->m_threshold(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
+
+    try{
+        m_pPipelineHandler->getThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
@@ -268,7 +284,15 @@ void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMetho
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
-    m_pPipelineHandler->m_adaptiveThreshold(m_pPipelineHandler->getImagePipeline().back().first, newImage, maxValue, adaptiveMethod, thresholdType, blockSize, C);
+    try{
+        m_pPipelineHandler->getAdaptiveThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, maxValue, adaptiveMethod, thresholdType, blockSize, C);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
