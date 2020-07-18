@@ -25,13 +25,57 @@ std::function<void (cv::InputArray, cv::OutputArray, int, int)> &PipelineHandler
     return m_cvtColor;
                                                                     }
 
-std::function<void (cv::InputArray, cv::OutputArray, double threshold, double max_value, int threshold_type)> &PipelineHandler::getThreshold()
+std::function<void (cv::InputArray, cv::OutputArray, double, double, int)> &PipelineHandler::getThreshold()
 {
- return m_threshold;
-                                                                    }
-
-std::function<void (cv::InputArray, cv::OutputArray, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)> &PipelineHandler::getAdaptiveThreshold()
-{
- return m_adaptiveThreshold;
+    return m_threshold;
 }
-                                                                    
+
+std::function<void (cv::InputArray, cv::OutputArray, double, int, int, int, double C)> &PipelineHandler::getAdaptiveThreshold()
+{
+    return m_adaptiveThreshold;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, int)> &PipelineHandler::getMedianBlur()
+{
+    return m_medianBlur;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, cv::Size, cv::Point, int)> &PipelineHandler::getBlur()
+{
+    return m_blur;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, cv::Size, double, double, int)> &PipelineHandler::getGaussianBlur()
+{
+    return m_gaussianBlur;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, cv::InputArray)> &PipelineHandler::getBitwiseNot()
+{
+    return m_bitwiseNot;
+}
+
+std::function<void (cv::InputArray, double, cv::OutputArray)> &PipelineHandler::getPow()
+{
+    return m_pow;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, cv::InputArray, cv::Point, int, int, const cv::Scalar &)> &PipelineHandler::getErode()
+{
+    return m_erode;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, int, int, int, int, double, double, int)> &PipelineHandler::getSobel()
+{
+    return m_sobel;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, int, int, double, double, int)> &PipelineHandler::getLaplacian()
+{
+    return m_laplacian;
+}
+
+std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> &PipelineHandler::getAddWeighted()
+{
+    return m_addWeighted;
+}

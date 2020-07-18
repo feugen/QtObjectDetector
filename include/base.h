@@ -63,7 +63,16 @@ public:
     {
         cvtColor = 0,
         threshold = 1,
-        adaptiveThreshold = 2
+        adaptiveThreshold = 2,
+        medianBlur = 3,
+        blur = 4,
+        gaussianBlur = 5,
+        bitwiseNot = 6,
+        pow = 7,
+        erode = 8,
+        sobel = 9,
+        laplacian = 10,
+        addWeighted = 11
     };
     Q_ENUM(e_OpenCVFunction)
 

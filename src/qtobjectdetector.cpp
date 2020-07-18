@@ -150,6 +150,46 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 }
                 break;
             }
+
+            case Base::e_OpenCVFunction::medianBlur:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::blur:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::gaussianBlur:
+            {
+                break;
+            }
+
+            case Base::e_OpenCVFunction::bitwiseNot:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::pow:
+            {
+                break;
+            }
+
+            case Base::e_OpenCVFunction::erode:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::sobel:
+            {
+                break;
+            }
+
+            case Base::e_OpenCVFunction::laplacian:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::addWeighted:
+            {
+                break;
+            }
         }
     }
 }
@@ -294,6 +334,74 @@ void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMetho
     }
 
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+}
+
+void QtObjectDetector::applyMedianBlur(int ksize)
+{
+    (void)ksize;
+}
+
+void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, int borderType)
+{
+    (void)ksize;
+    (void)anchor;
+    (void)borderType;
+}
+
+void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY, int borderType)
+{
+    (void)ksize;
+    (void)sigmaX;
+    (void)sigmaY;
+    (void)borderType;
+}
+
+void QtObjectDetector::applyBitwiseNot(cv::_InputArray mask)
+{
+    (void)mask;
+}
+
+void QtObjectDetector::applyPow(double power)
+{
+    (void)power;
+}
+
+void QtObjectDetector::applyErode(cv::_InputArray kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar &borderValue)
+{
+    (void)kernel;
+    (void)anchor;
+    (void)iterations;
+    (void)borderType;
+    (void)borderValue;
+}
+
+void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType)
+{
+    (void)ddepth;
+    (void)dx;
+    (void)dy;
+    (void)ksize;
+    (void)scale;
+    (void)delta;
+    (void)borderType;
+}
+
+void QtObjectDetector::applyLaplacian(int ddepth, int ksize, double scale, double delta, int borderType)
+{
+    (void)ddepth;
+    (void)ksize;
+    (void)scale;
+    (void)delta;
+    (void)borderType;
+}
+
+void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, cv::_OutputArray dst, int dtype)
+{
+    (void)alphaSRC1;
+    (void)betaSRC2;
+    (void)gamma;
+    (void)dst;
+    (void)dtype;
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
