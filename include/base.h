@@ -59,6 +59,16 @@ public:
     };
     Q_ENUM(e_OpenCVAdaptiveThresholdBlocksize)
 
+    enum e_OpenCVKSize
+    {
+        KSIZE_1 = 1,
+        KSIZE_3 = 3,
+        KSIZE_5 = 5,
+        KSIZE_7 = 7,
+        KSIZE_9 = 9
+    };
+    Q_ENUM(e_OpenCVKSize)
+
     enum e_OpenCVFunction
     {
         cvtColor = 0,

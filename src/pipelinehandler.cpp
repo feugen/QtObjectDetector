@@ -18,7 +18,7 @@ std::vector<std::function<void()>> &PipelineHandler::getFunctionPipeline()
 std::vector<std::pair<std::vector<std::function<void()>>, QString>> &PipelineHandler::getAvailablePipelines()
 {
     return m_availablePipelines;
-                                                                    }
+}
                                                                     
 std::function<void (cv::InputArray, cv::OutputArray, int, int)> &PipelineHandler::getCvtColor()
 {

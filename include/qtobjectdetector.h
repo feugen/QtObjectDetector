@@ -43,15 +43,15 @@ private slots:
     void applyThreshold(double threshold, double thresholdMax, int type);
     void applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C);
 
-    void applyMedianBlur(int ksize);
+    void applyMedianBlur(Base::e_OpenCVKSize ksize);
     void applyBlur(cv::Size ksize, cv::Point anchor=cv::Point(-1,-1), int borderType=cv::BORDER_DEFAULT);
     void applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY=0, int borderType=cv::BORDER_DEFAULT);
-    void applyBitwiseNot(cv::_InputArray mask=cv::noArray());
+    void applyBitwiseNot(cv::_InputArray &mask);
     void applyPow(double power);
-    void applyErode(cv::_InputArray kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::morphologyDefaultBorderValue());
+    void applyErode(cv::_InputArray &kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::morphologyDefaultBorderValue());
     void applySobel(int ddepth, int dx, int dy, int ksize=3, double scale=1, double delta=0, int borderType=cv::BORDER_DEFAULT);
-    void applyLaplacian(int ddepth, int ksize=1, double scale=1, double delta=0, int borderType=cv::BORDER_DEFAULT);
-    void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, cv::_OutputArray dst, int dtype=-1);
+    void applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale=1, double delta=0, int borderType=cv::BORDER_DEFAULT);
+    void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype=-1);
 
     //Video Part
     void on_videoSelected(const QString &file);

@@ -303,7 +303,7 @@ void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorForm
     }
 }
 
-void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int type)
+void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int type) //Parameters to Enum?
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -316,11 +316,10 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int
         const QString err_msg = QString::fromUtf8(e.what());
         qDebug() << "Exception caught:" << err_msg;
     }
-
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
+void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C) //Parameters to Enum?
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -332,76 +331,146 @@ void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMetho
         const QString err_msg = QString::fromUtf8(e.what());
         qDebug() << "Exception caught:" << err_msg;
     }
-
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyMedianBlur(int ksize)
+void QtObjectDetector::applyMedianBlur(Base::e_OpenCVKSize ksize)
 {
-    (void)ksize;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getMedianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, int borderType)
+void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, int borderType) //Parameters to Enum?
 {
-    (void)ksize;
-    (void)anchor;
-    (void)borderType;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, anchor, borderType);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY, int borderType)
+void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY, int borderType) //Parameters to Enum?
 {
-    (void)ksize;
-    (void)sigmaX;
-    (void)sigmaY;
-    (void)borderType;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getGaussianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, sigmaX, sigmaY, borderType);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyBitwiseNot(cv::_InputArray mask)
+void QtObjectDetector::applyBitwiseNot(cv::_InputArray &mask) //Parameters to Enum?
 {
-    (void)mask;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getBitwiseNot()(m_pPipelineHandler->getImagePipeline().back().first, newImage, mask);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
 void QtObjectDetector::applyPow(double power)
 {
-    (void)power;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getPow()(m_pPipelineHandler->getImagePipeline().back().first, power, newImage);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyErode(cv::_InputArray kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar &borderValue)
+void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar &borderValue) //Parameters to Enum?
 {
-    (void)kernel;
-    (void)anchor;
-    (void)iterations;
-    (void)borderType;
-    (void)borderValue;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getErode()(m_pPipelineHandler->getImagePipeline().back().first, newImage, kernel, anchor, iterations, borderType, borderValue);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType)
+void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType) //Parameters to Enum?
 {
-    (void)ddepth;
-    (void)dx;
-    (void)dy;
-    (void)ksize;
-    (void)scale;
-    (void)delta;
-    (void)borderType;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getSobel()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, dx, dy, ksize, scale, delta, borderType);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyLaplacian(int ddepth, int ksize, double scale, double delta, int borderType)
+void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale, double delta, int borderType) //Parameters to Enum?
 {
-    (void)ddepth;
-    (void)ksize;
-    (void)scale;
-    (void)delta;
-    (void)borderType;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getLaplacian()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, ksize, scale, delta, borderType);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, cv::_OutputArray dst, int dtype)
+void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype) //Parameters to Enum?
 {
-    (void)alphaSRC1;
-    (void)betaSRC2;
-    (void)gamma;
-    (void)dst;
-    (void)dtype;
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+
+    auto currentPipelineSize = m_pPipelineHandler->getImagePipeline().size();
+    cv::Mat forelastImage = m_pPipelineHandler->getImagePipeline().at(currentPipelineSize).first;
+    cv::_OutputArray outputArray;
+
+    try{
+        m_pPipelineHandler->getAddWeighted()(m_pPipelineHandler->getImagePipeline().back().first, alphaSRC1, forelastImage, betaSRC2, gamma, outputArray, dtype);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(outputArray.getMatRef(), currentColorFormat));
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
@@ -611,8 +680,6 @@ void QtObjectDetector::stopCamera() const
     }
 }
 
-
-
 void QtObjectDetector::on_pushButton_StartCamera_clicked()
 {
     if(m_pCameraActive == nullptr || (m_pCameraActive->status() != QCamera::Status::ActiveStatus))
@@ -655,7 +722,6 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
     {
         stopCamera();
     }
-
 }
 
 void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
@@ -675,7 +741,6 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
         ui->pushButton_SelectVideo->setEnabled(true);
     }
 }
-
 
 void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
 {
