@@ -83,7 +83,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                         selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
 
                         m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
-                        m_lastFunctionString = "cvtColor";
+                        m_lastFunctionString = Base::QEnumToQString(selectedFunction);
                         m_lastFunction();
                         loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                         ui->pushButton_AddToPipeline->setEnabled(true);
@@ -110,7 +110,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enum3Value) == arg3ValueText);
 
                     m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, enum3Value);};
-                    m_lastFunctionString = "threshold";
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
                     m_lastFunction();
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                     ui->pushButton_AddToPipeline->setEnabled(true);
@@ -146,7 +146,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue4).mid(10) == arg4ValueText);
 
                     m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, enumValue2, enumValue3, enumValue4, arg5Value);};
-                    m_lastFunctionString = "adaptiveThreshold";
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
                     m_lastFunction();
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                     ui->pushButton_AddToPipeline->setEnabled(true);
@@ -156,6 +156,25 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
             case Base::e_OpenCVFunction::MedianBlur:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+                if(arg1)
+                {
+                    const auto arg1Value = arg1->currentText();
+                    bool isOk = false;
+                    const auto arg1ValueInt = arg1Value.toInt(&isOk);
+
+                    if(isOk)
+                    {
+                        const auto enumValue1 = static_cast<Base::e_OpenCVKSize>(arg1ValueInt);
+                        assert(Base::QEnumToQString(enumValue1).mid(6) == arg1Value);
+
+                        m_lastFunction = [=](){applyMedianBlur(enumValue1);};
+                        m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                        m_lastFunction();
+                        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                        ui->pushButton_AddToPipeline->setEnabled(true);
+                    }
+                }
                 break;
             }
             case Base::e_OpenCVFunction::Blur:
