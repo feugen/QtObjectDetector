@@ -248,6 +248,18 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             }
             case Base::e_OpenCVFunction::Pow:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxPower");
+
+                if(arg1)
+                {
+                    const auto arg1Value = arg1->value();
+
+                    m_lastFunction = [=](){applyPow(arg1Value);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
 
