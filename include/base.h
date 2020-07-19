@@ -61,13 +61,23 @@ public:
 
     enum e_OpenCVKSize
     {
-        KSIZE_1 = 1,
         KSIZE_3 = 3,
         KSIZE_5 = 5,
         KSIZE_7 = 7,
-        KSIZE_9 = 9
+        KSIZE_9 = 9,
+        KSIZE_11 = 11
     };
     Q_ENUM(e_OpenCVKSize)
+
+    enum e_OpenCVKSizeExt
+    {
+        KSIZEEXT_1 = 1,
+        KSIZEEXT_3 = 3,
+        KSIZEEXT_5 = 5,
+        KSIZEEXT_7 = 7,
+        KSIZEEXT_9 = 9
+    };
+    Q_ENUM(e_OpenCVKSizeExt)
 
     enum e_OPenCVBorderType
     {
@@ -83,18 +93,18 @@ public:
 
     enum e_OpenCVFunction
     {
-        cvtColor = 0,
-        threshold = 1,
-        adaptiveThreshold = 2,
-        medianBlur = 3,
-        blur = 4,
-        gaussianBlur = 5,
-        bitwiseNot = 6,
-        pow = 7,
-        erode = 8,
-        sobel = 9,
-        laplacian = 10,
-        addWeighted = 11
+        CvtColor = 0,
+        Threshold = 1,
+        AdaptiveThreshold = 2,
+        MedianBlur = 3,
+        Blur = 4,
+        GaussianBlur = 5,
+        BitwiseNot = 6,
+        Pow = 7,
+        Erode = 8,
+        Sobel = 9,
+        Laplacian = 10,
+        AddWeighted = 11
     };
     Q_ENUM(e_OpenCVFunction)
 

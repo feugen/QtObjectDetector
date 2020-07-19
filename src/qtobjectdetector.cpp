@@ -70,7 +70,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
         switch (selectedFunction)
         {
-            case Base::e_OpenCVFunction::cvtColor:
+            case Base::e_OpenCVFunction::CvtColor:
             {
                 const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
 
@@ -92,7 +92,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 break;
             }
 
-            case Base::e_OpenCVFunction::threshold:
+            case Base::e_OpenCVFunction::Threshold:
             {
                 const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
                 const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
@@ -118,7 +118,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 break;
             }
 
-            case Base::e_OpenCVFunction::adaptiveThreshold:
+            case Base::e_OpenCVFunction::AdaptiveThreshold:
             {
                 const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
                 const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxAdaptiveMethod");
@@ -154,42 +154,42 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 break;
             }
 
-            case Base::e_OpenCVFunction::medianBlur:
+            case Base::e_OpenCVFunction::MedianBlur:
             {
                 break;
             }
-            case Base::e_OpenCVFunction::blur:
+            case Base::e_OpenCVFunction::Blur:
             {
                 break;
             }
-            case Base::e_OpenCVFunction::gaussianBlur:
-            {
-                break;
-            }
-
-            case Base::e_OpenCVFunction::bitwiseNot:
-            {
-                break;
-            }
-            case Base::e_OpenCVFunction::pow:
+            case Base::e_OpenCVFunction::GaussianBlur:
             {
                 break;
             }
 
-            case Base::e_OpenCVFunction::erode:
+            case Base::e_OpenCVFunction::BitwiseNot:
             {
                 break;
             }
-            case Base::e_OpenCVFunction::sobel:
+            case Base::e_OpenCVFunction::Pow:
             {
                 break;
             }
 
-            case Base::e_OpenCVFunction::laplacian:
+            case Base::e_OpenCVFunction::Erode:
             {
                 break;
             }
-            case Base::e_OpenCVFunction::addWeighted:
+            case Base::e_OpenCVFunction::Sobel:
+            {
+                break;
+            }
+
+            case Base::e_OpenCVFunction::Laplacian:
+            {
+                break;
+            }
+            case Base::e_OpenCVFunction::AddWeighted:
             {
                 break;
             }
@@ -382,12 +382,12 @@ void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double s
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyBitwiseNot(cv::_InputArray &mask) //Parameters to Enum?
+void QtObjectDetector::applyBitwiseNot()
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getBitwiseNot()(m_pPipelineHandler->getImagePipeline().back().first, newImage, mask);
+        m_pPipelineHandler->getBitwiseNot()(m_pPipelineHandler->getImagePipeline().back().first, newImage, cv::noArray());
     }
     catch( cv::Exception& e)
     {
@@ -427,7 +427,7 @@ void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
+void QtObjectDetector::applySobel(int ddepth, int dx, int dy, Base::e_OpenCVKSizeExt ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
