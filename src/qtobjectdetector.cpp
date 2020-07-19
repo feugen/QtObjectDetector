@@ -239,6 +239,11 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
             case Base::e_OpenCVFunction::BitwiseNot:
             {
+                m_lastFunction = [=](){applyBitwiseNot();};
+                m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                m_lastFunction();
+                loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                ui->pushButton_AddToPipeline->setEnabled(true);
                 break;
             }
             case Base::e_OpenCVFunction::Pow:
