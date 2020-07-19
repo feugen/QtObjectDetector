@@ -352,7 +352,7 @@ void QtObjectDetector::applyMedianBlur(Base::e_OpenCVKSize ksize)
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, int borderType) //Parameters to Enum?
+void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -367,7 +367,7 @@ void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, int borderTyp
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY, int borderType) //Parameters to Enum?
+void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -412,7 +412,7 @@ void QtObjectDetector::applyPow(double power)
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar &borderValue) //Parameters to Enum?
+void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int iterations, Base::e_OPenCVBorderType borderType, const cv::Scalar &borderValue)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -427,7 +427,7 @@ void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType) //Parameters to Enum?
+void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -442,7 +442,7 @@ void QtObjectDetector::applySobel(int ddepth, int dx, int dy, int ksize, double 
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale, double delta, int borderType) //Parameters to Enum?
+void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -457,7 +457,7 @@ void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, dou
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype) //Parameters to Enum?
+void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
 

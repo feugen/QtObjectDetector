@@ -69,6 +69,18 @@ public:
     };
     Q_ENUM(e_OpenCVKSize)
 
+    enum e_OPenCVBorderType
+    {
+        BORDER_CONSTANT = cv::BorderTypes::BORDER_CONSTANT,
+        BORDER_REPLICATE = cv::BorderTypes::BORDER_REPLICATE,
+        BORDER_REFLECT = cv::BorderTypes::BORDER_REFLECT,
+        BORDER_WRAP = cv::BorderTypes::BORDER_WRAP,
+        BORDER_REFLECT_101 = cv::BorderTypes::BORDER_REFLECT_101,
+        BORDER_TRANSPARENT = cv::BorderTypes::BORDER_TRANSPARENT,
+        BORDER_DEFAULT = BORDER_REFLECT_101
+    };
+    Q_ENUM(e_OPenCVBorderType)
+
     enum e_OpenCVFunction
     {
         cvtColor = 0,

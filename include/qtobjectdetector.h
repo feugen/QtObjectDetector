@@ -42,16 +42,15 @@ private slots:
     void applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat);
     void applyThreshold(double threshold, double thresholdMax, Base::e_OpenCVThresholdType type);
     void applyAdaptiveThreshold(double maxValue, Base::e_OpenCVAdaptivThresholdMethod adaptiveMethod, Base::e_OpenCVAdaptiveThresholdType thresholdType, Base::e_OpenCVBlockSize blockSize, double C);
-
     void applyMedianBlur(Base::e_OpenCVKSize ksize);
-    void applyBlur(cv::Size ksize, cv::Point anchor=cv::Point(-1,-1), int borderType=cv::BORDER_DEFAULT);
-    void applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY=0, int borderType=cv::BORDER_DEFAULT);
+    void applyBlur(cv::Size ksize, cv::Point anchor=cv::Point(-1,-1), Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_DEFAULT);
+    void applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY=0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_DEFAULT);
     void applyBitwiseNot(cv::_InputArray &mask);
     void applyPow(double power);
-    void applyErode(cv::_InputArray &kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::morphologyDefaultBorderValue());
-    void applySobel(int ddepth, int dx, int dy, int ksize=3, double scale=1, double delta=0, int borderType=cv::BORDER_DEFAULT);
-    void applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale=1, double delta=0, int borderType=cv::BORDER_DEFAULT);
-    void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype=-1);
+    void applyErode(cv::_InputArray &kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::morphologyDefaultBorderValue());
+    void applySobel(int ddepth, int dx, int dy, int ksize=3, double scale=1, double delta=0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_DEFAULT);
+    void applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize = Base::e_OpenCVKSize::KSIZE_1, double scale=1, double delta=0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_DEFAULT);
+    void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype = -1);
 
     //Video Part
     void on_videoSelected(const QString &file);
