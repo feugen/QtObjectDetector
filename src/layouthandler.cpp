@@ -211,17 +211,17 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         labelSigmaX->setText("SigmaX:");
 
         QDoubleSpinBox* spinBoxSigmaX = new QDoubleSpinBox();
-        spinBoxSigmaX->setObjectName("spinboxConstantC");
-        spinBoxSigmaX->setRange(0, 2048);
+        spinBoxSigmaX->setObjectName("spinBoxSigmaX");
+        spinBoxSigmaX->setRange(1, 10);
         spinBoxSigmaX->setValue(0);
 
-        //Argument 2
+        //Argument 3
         QLabel* labelSigmaY = new QLabel();
         labelSigmaY->setText("SigmaY:");
 
         QDoubleSpinBox* spinBoxSigmaY = new QDoubleSpinBox();
-        spinBoxSigmaY->setObjectName("spinboxConstantC");
-        spinBoxSigmaY->setRange(0, 2048);
+        spinBoxSigmaY->setObjectName("spinBoxSigmaY");
+        spinBoxSigmaY->setRange(0, 10);
         spinBoxSigmaY->setValue(0);
 
         //Argument 4

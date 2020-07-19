@@ -203,11 +203,37 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
                     ui->pushButton_AddToPipeline->setEnabled(true);
                 }
-
                 break;
             }
             case Base::e_OpenCVFunction::GaussianBlur:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
+                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
+                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaX");
+                const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaY");
+                const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+                if(arg1 && arg2 && arg3 && arg4 && arg5)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->value();
+                    const auto arg4Value = arg4->value();
+                    const auto arg5Value = arg5->currentIndex();
+                    const auto arg5ValueText = arg5->currentText();
+
+                    auto size = cv::Size(arg1Value, arg2Value);
+
+                    //Verify data
+                    const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
+                    assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
+
+                    m_lastFunction = [=](){applyGaussianBlur(size, arg3Value, arg4Value, enumValue5);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
 

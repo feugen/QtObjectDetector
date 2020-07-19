@@ -44,7 +44,7 @@ private slots:
     void applyAdaptiveThreshold(double maxValue, Base::e_OpenCVAdaptivThresholdMethod adaptiveMethod, Base::e_OpenCVAdaptiveThresholdType thresholdType, Base::e_OpenCVBlockSize blockSize, double C);
     void applyMedianBlur(Base::e_OpenCVKSize ksize);
     void applyBlur(cv::Size ksize, cv::Point anchor = cv::Point(-1,-1), Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
-    void applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY=0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
+    void applyGaussianBlur(cv::Size ksize, double sigmaX, double sigmaY = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
     void applyBitwiseNot();
     void applyPow(double power);
     void applyErode(cv::_InputArray &kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_CONSTANT, const cv::Scalar& borderValue = cv::morphologyDefaultBorderValue());
