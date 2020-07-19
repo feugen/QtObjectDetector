@@ -162,9 +162,9 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg1Value = arg1->currentText();
                     bool isOk = false;
                     const auto arg1ValueInt = arg1Value.toInt(&isOk);
-
                     if(isOk)
                     {
+                        //Verify data
                         const auto enumValue1 = static_cast<Base::e_OpenCVKSize>(arg1ValueInt);
                         assert(Base::QEnumToQString(enumValue1).mid(6) == arg1Value);
 
@@ -179,6 +179,31 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             }
             case Base::e_OpenCVFunction::Blur:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
+                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
+                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+                if(arg1 && arg2 && arg3)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->currentIndex();
+                    const auto arg3ValueText = arg3->currentText();
+
+                    auto size = cv::Size(arg1Value, arg2Value);
+                    auto point = cv::Point(-1,-1); //Look at OpenCv documentation
+
+                    //Verify data
+                    const auto enumValue3 = static_cast<Base::e_OPenCVBorderType>(arg3Value);
+                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+
+                    m_lastFunction = [=](){applyBlur(size, point, enumValue3);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
+
                 break;
             }
             case Base::e_OpenCVFunction::GaussianBlur:

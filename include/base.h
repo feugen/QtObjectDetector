@@ -86,8 +86,7 @@ public:
         BORDER_REFLECT = cv::BorderTypes::BORDER_REFLECT,
         BORDER_WRAP = cv::BorderTypes::BORDER_WRAP,
         BORDER_REFLECT_101 = cv::BorderTypes::BORDER_REFLECT_101,
-        BORDER_TRANSPARENT = cv::BorderTypes::BORDER_TRANSPARENT,
-        BORDER_DEFAULT = BORDER_REFLECT_101
+        BORDER_TRANSPARENT = cv::BorderTypes::BORDER_TRANSPARENT
     };
     Q_ENUM(e_OPenCVBorderType)
 

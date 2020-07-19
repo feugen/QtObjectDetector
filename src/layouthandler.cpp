@@ -171,12 +171,13 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_DEFAULT));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_CONSTANT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REPLICATE));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT_101));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
+        comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
         layout->addWidget(labelKSizeWidth);
         layout->addWidget(spinBoxKSizeWidth);
@@ -229,12 +230,13 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_DEFAULT));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_CONSTANT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REPLICATE));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT_101));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
+        comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
         layout->addWidget(labelKSizeWidth);
         layout->addWidget(spinBoxKSizeWidth);
@@ -282,12 +284,13 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_DEFAULT));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_CONSTANT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REPLICATE));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT_101));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
+        comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
         layout->addWidget(labelIterations);
         layout->addWidget(spinBoxIterations);
@@ -341,12 +344,13 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_DEFAULT));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_CONSTANT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REPLICATE));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT_101));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
+        comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
         layout->addWidget(labelDx);
         layout->addWidget(spinBoxDx);
@@ -397,12 +401,13 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_DEFAULT));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
-        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_CONSTANT));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REPLICATE));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_WRAP));
+        comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_REFLECT_101));
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
+        comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
         layout->addWidget(labelKSize);
         layout->addWidget(comboboxKSize);
