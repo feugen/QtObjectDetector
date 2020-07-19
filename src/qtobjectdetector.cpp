@@ -106,10 +106,10 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg3ValueText = arg3->currentText();
 
                     //Verify data
-                    const auto enumValue = static_cast<Base::e_OpenCVThresholdType>(arg3Value);
-                    assert(Base::QEnumToQString(enumValue) == arg3ValueText);
+                    const auto enum3Value = static_cast<Base::e_OpenCVThresholdType>(arg3Value);
+                    assert(Base::QEnumToQString(enum3Value) == arg3ValueText);
 
-                    m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, arg3Value);};
+                    m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, enum3Value);};
                     m_lastFunctionString = "threshold";
                     m_lastFunction();
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
@@ -134,6 +134,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg3Value = arg3->currentIndex();
                     const auto arg3ValueText = arg3->currentText();
                     const auto arg4Value = arg4->currentText().toInt();
+                    const auto arg4ValueText = arg4->currentText();
                     const auto arg5Value = arg5->value();
 
                     //Verify data
@@ -141,8 +142,10 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
                     const auto enumValue3 = static_cast<Base::e_OpenCVAdaptiveThresholdType>(arg3Value);
                     assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                    const auto enumValue4 = static_cast<Base::e_OpenCVBlockSize>(arg4Value);
+                    assert(Base::QEnumToQString(enumValue4).mid(10) == arg4ValueText);
 
-                    m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, arg2Value, arg3Value, arg4Value, arg5Value);};
+                    m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, enumValue2, enumValue3, enumValue4, arg5Value);};
                     m_lastFunctionString = "adaptiveThreshold";
                     m_lastFunction();
                     loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
@@ -303,7 +306,7 @@ void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorForm
     }
 }
 
-void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int type) //Parameters to Enum?
+void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, Base::e_OpenCVThresholdType type)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -319,7 +322,7 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, int
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C) //Parameters to Enum?
+void QtObjectDetector::applyAdaptiveThreshold(double maxValue, Base::e_OpenCVAdaptivThresholdMethod adaptiveMethod, Base::e_OpenCVAdaptiveThresholdType thresholdType, Base::e_OpenCVBlockSize blockSize, double C)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;

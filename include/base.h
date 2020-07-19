@@ -49,7 +49,7 @@ public:
     };
     Q_ENUM(e_OpenCVAdaptiveThresholdType)
 
-    enum e_OpenCVAdaptiveThresholdBlocksize
+    enum e_OpenCVBlockSize
     {
         BLOCKSIZE_3 = 3,
         BLOCKSIZE_5 = 5,
@@ -57,7 +57,7 @@ public:
         BLOCKSIZE_9 = 9,
         BLOCKSIZE_11 = 11
     };
-    Q_ENUM(e_OpenCVAdaptiveThresholdBlocksize)
+    Q_ENUM(e_OpenCVBlockSize)
 
     enum e_OpenCVKSize
     {

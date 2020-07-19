@@ -102,11 +102,11 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxBlockSize = new QComboBox();
         comboboxBlockSize->setObjectName("comboboxBlockSize");
-        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_3)));
-        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_5)));
-        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_7)));
-        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_9)));
-        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVAdaptiveThresholdBlocksize::BLOCKSIZE_11)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_3)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_5)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_7)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_9)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_11)));
 
         //Argument 5
         QLabel* labelConstantC = new QLabel();

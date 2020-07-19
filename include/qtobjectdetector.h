@@ -40,8 +40,8 @@ private slots:
     void on_pushButton_ApplyPipeline_clicked();
 
     void applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat);
-    void applyThreshold(double threshold, double thresholdMax, int type);
-    void applyAdaptiveThreshold(double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C);
+    void applyThreshold(double threshold, double thresholdMax, Base::e_OpenCVThresholdType type);
+    void applyAdaptiveThreshold(double maxValue, Base::e_OpenCVAdaptivThresholdMethod adaptiveMethod, Base::e_OpenCVAdaptiveThresholdType thresholdType, Base::e_OpenCVBlockSize blockSize, double C);
 
     void applyMedianBlur(Base::e_OpenCVKSize ksize);
     void applyBlur(cv::Size ksize, cv::Point anchor=cv::Point(-1,-1), int borderType=cv::BORDER_DEFAULT);
