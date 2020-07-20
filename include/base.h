@@ -79,6 +79,16 @@ public:
     };
     Q_ENUM(e_OpenCVKSizeExt)
 
+    enum e_OpenCVErosionSize
+    {
+        ErosionSize_1 = 1,
+        ErosionSize_2 = 2,
+        ErosionSize_3 = 3,
+        ErosionSize_4 = 4,
+        ErosionSize_5 = 5
+    };
+    Q_ENUM(e_OpenCVErosionSize)
+
     enum e_OPenCVBorderType
     {
         BORDER_CONSTANT = cv::BorderTypes::BORDER_CONSTANT,
@@ -89,6 +99,14 @@ public:
         BORDER_TRANSPARENT = cv::BorderTypes::BORDER_TRANSPARENT
     };
     Q_ENUM(e_OPenCVBorderType)
+
+    enum e_OPenCVMorphShapes
+    {
+        MORPH_RECT = cv::MorphShapes::MORPH_RECT,
+        MORPH_CROSS = cv::MorphShapes::MORPH_CROSS,
+        MORPH_ELLIPSE = cv::MorphShapes::MORPH_ELLIPSE
+    };
+    Q_ENUM(e_OPenCVMorphShapes)
 
     enum e_OpenCVFunction
     {

@@ -280,7 +280,7 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         //Argument 2
         QLabel* labelBorderType = new QLabel();
-        labelBorderType->setText("BorderType:");
+        labelBorderType->setText("Border Type:");
 
         QComboBox* comboboxBorderType = new QComboBox();
         comboboxBorderType->setObjectName("comboboxBorderType");
@@ -292,10 +292,36 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         comboboxBorderType->addItem(Base::QEnumToQString(Base::e_OPenCVBorderType::BORDER_TRANSPARENT));
         comboboxBorderType->setCurrentIndex(4); //BORDER_REFLECT_101 is the default value
 
+        //Argument 2
+        QLabel* labelMorphShapes = new QLabel();
+        labelMorphShapes->setText("Morph Shapes:");
+
+        QComboBox* comboboxMorphShapes = new QComboBox();
+        comboboxMorphShapes->setObjectName("comboboxMorphShapes");
+        comboboxMorphShapes->addItem(Base::QEnumToQString(Base::e_OPenCVMorphShapes::MORPH_RECT));
+        comboboxMorphShapes->addItem(Base::QEnumToQString(Base::e_OPenCVMorphShapes::MORPH_CROSS));
+        comboboxMorphShapes->addItem(Base::QEnumToQString(Base::e_OPenCVMorphShapes::MORPH_ELLIPSE));
+
+        //Argument 2
+        QLabel* labelErosionSize = new QLabel();
+        labelErosionSize->setText("Erosion Size:");
+
+        QComboBox* comboboxErosionSize = new QComboBox();
+        comboboxErosionSize->setObjectName("comboboxErosionSize");
+        comboboxErosionSize->addItem(Base::QEnumToQString(Base::e_OpenCVErosionSize::ErosionSize_1));
+        comboboxErosionSize->addItem(Base::QEnumToQString(Base::e_OpenCVErosionSize::ErosionSize_2));
+        comboboxErosionSize->addItem(Base::QEnumToQString(Base::e_OpenCVErosionSize::ErosionSize_3));
+        comboboxErosionSize->addItem(Base::QEnumToQString(Base::e_OpenCVErosionSize::ErosionSize_4));
+        comboboxErosionSize->addItem(Base::QEnumToQString(Base::e_OpenCVErosionSize::ErosionSize_5));
+
         layout->addWidget(labelIterations);
         layout->addWidget(spinBoxIterations);
         layout->addWidget(labelBorderType);
         layout->addWidget(comboboxBorderType);
+        layout->addWidget(labelMorphShapes);
+        layout->addWidget(comboboxMorphShapes);
+        layout->addWidget(labelErosionSize);
+        layout->addWidget(comboboxErosionSize);
     }
     else if(function == "Sobel")
     {

@@ -265,6 +265,39 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
             case Base::e_OpenCVFunction::Erode:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxIterations");
+                const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxMorphShapes");
+                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxErosionSize");
+
+                if(arg1 && arg2 && arg3 && arg4)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->currentIndex();
+                    const auto arg2ValueText = arg2->currentText();
+                    const auto arg3Value = arg3->currentIndex();
+                    const auto arg3ValueText = arg3->currentText();
+                    const auto arg4Value = arg4->currentIndex()+1;
+                    const auto arg4ValueText = arg4->currentText();
+
+                    //Verify data
+                    const auto enumValue2 = static_cast<Base::e_OPenCVBorderType>(arg2Value);
+                    assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
+                    const auto enumValue3 = static_cast<Base::e_OPenCVMorphShapes>(arg3Value);
+                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                    const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
+                    assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
+
+
+                    cv::Mat element = cv::getStructuringElement( enumValue3, cv::Size( 2*enumValue4 + 1, 2*enumValue4+1 ), cv::Point( enumValue4, enumValue4 ) );
+
+                    m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
+
                 break;
             }
             case Base::e_OpenCVFunction::Sobel:
@@ -499,7 +532,7 @@ void QtObjectDetector::applyPow(double power)
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyErode(cv::_InputArray &kernel, cv::Point anchor, int iterations, Base::e_OPenCVBorderType borderType, const cv::Scalar &borderValue)
+void QtObjectDetector::applyErode(cv::Mat kernel, cv::Point anchor, int iterations, Base::e_OPenCVBorderType borderType, const cv::Scalar &borderValue)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
