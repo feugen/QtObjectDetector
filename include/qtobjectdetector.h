@@ -49,7 +49,7 @@ private slots:
     void applyPow(double power);
     void applyErode(cv::Mat kernel, cv::Point anchor=cv::Point(-1,-1), int iterations=1, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_CONSTANT, const cv::Scalar& borderValue = cv::morphologyDefaultBorderValue());
     void applySobel(int ddepth, int dx, int dy, Base::e_OpenCVKSizeExt ksize = Base::e_OpenCVKSizeExt::KSIZEEXT_3, double scale = 1, double delta = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
-    void applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize = Base::e_OpenCVKSize::KSIZE_3, double scale = 1, double delta = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
+    void applyLaplacian(int ddepth, Base::e_OpenCVKSizeExt ksize = Base::e_OpenCVKSizeExt::KSIZEEXT_1, double scale = 1, double delta = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
     void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype = -1);
 
     //Video Part

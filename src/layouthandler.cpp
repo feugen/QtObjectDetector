@@ -349,11 +349,10 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxKSize = new QComboBox();
         comboboxKSize->setObjectName("comboboxKSize");
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_1)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_3)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_5)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_7)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_9)));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_1));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_3));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_5));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_7));
 
         //Argument 4
         QLabel* labelScale = new QLabel();
@@ -397,11 +396,10 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxKSize = new QComboBox();
         comboboxKSize->setObjectName("comboboxKSize");
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_1)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_3)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_5)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_7)));
-        comboboxKSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVKSizeExt::KSIZEEXT_9)));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_1));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_3));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_5));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_7));
 
         //Argument 2
         QLabel* labelScale = new QLabel();
@@ -417,7 +415,7 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         labelDelta->setText("Delta:");
 
         QDoubleSpinBox* spinBoxDelta = new QDoubleSpinBox();
-        spinBoxDelta->setObjectName("spinBoxScale");
+        spinBoxDelta->setObjectName("spinBoxDelta");
         spinBoxDelta->setRange(0, 2048);
         spinBoxDelta->setValue(0);
 
@@ -460,7 +458,7 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         labelBeta->setText("Beta:");
 
         QDoubleSpinBox* spinBoxBeta = new QDoubleSpinBox();
-        spinBoxBeta->setObjectName("spinBoxAlpha");
+        spinBoxBeta->setObjectName("spinBoxBeta");
         spinBoxBeta->setRange(0,1);
         spinBoxBeta->setValue(0.5);
 

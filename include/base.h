@@ -74,8 +74,7 @@ public:
         KSIZEEXT_1 = 1,
         KSIZEEXT_3 = 3,
         KSIZEEXT_5 = 5,
-        KSIZEEXT_7 = 7,
-        KSIZEEXT_9 = 9
+        KSIZEEXT_7 = 7
     };
     Q_ENUM(e_OpenCVKSizeExt)
 

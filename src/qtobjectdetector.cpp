@@ -302,15 +302,88 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             }
             case Base::e_OpenCVFunction::Sobel:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDx");
+                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDy");
+                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+                const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
+                const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+                if(arg1 && arg2 && arg3 && arg4 && arg5)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->currentIndex();
+                    const auto arg3ValueInt = 2*arg3Value+1;
+                    const auto arg3ValueText = arg3->currentText();
+                    const auto arg4Value = arg4->value();
+                    const auto arg5Value = arg5->currentIndex();
+                    const auto arg5ValueText = arg5->currentText();
+
+                    //Verify data
+                    const auto enumValue3 = static_cast<Base::e_OpenCVKSizeExt>(arg3ValueInt);
+                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                    const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
+                    assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
+
+
+                    m_lastFunction = [=](){applySobel(-1, arg1Value, arg2Value, enumValue3, arg4Value, 0, enumValue5);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
 
             case Base::e_OpenCVFunction::Laplacian:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
+                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxDelta");
+                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+                if(arg1 && arg2 && arg3 && arg4)
+                {
+                    const auto arg1Value = arg1->currentIndex();
+                    const auto arg1ValueInt = 2*arg1Value+1;
+                    const auto arg1ValueText = arg1->currentText();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->value();
+                    const auto arg4Value = arg4->currentIndex();
+                    const auto arg4ValueText = arg4->currentText();
+
+                    //Verify data
+                    const auto enumValue1 = static_cast<Base::e_OpenCVKSizeExt>(arg1ValueInt);
+                    assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
+                    const auto enumValue4 = static_cast<Base::e_OPenCVBorderType>(arg4Value);
+                    assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
+
+                    m_lastFunction = [=](){applyLaplacian(-1, enumValue1, arg2Value, arg3Value, enumValue4);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
             case Base::e_OpenCVFunction::AddWeighted:
             {
+                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxAlpha");
+                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxBeta");
+                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxGamma");
+
+                if(arg1 && arg2 && arg3)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->value();
+
+                    m_lastFunction = [=](){applyAddWeighted(arg1Value, arg2Value, arg3Value, -1);};
+                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+                    m_lastFunction();
+                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+                    ui->pushButton_AddToPipeline->setEnabled(true);
+                }
                 break;
             }
         }
@@ -562,7 +635,7 @@ void QtObjectDetector::applySobel(int ddepth, int dx, int dy, Base::e_OpenCVKSiz
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
 }
 
-void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSize ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
+void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSizeExt ksize, double scale, double delta, Base::e_OPenCVBorderType borderType)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
@@ -582,8 +655,8 @@ void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, doubl
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
 
     auto currentPipelineSize = m_pPipelineHandler->getImagePipeline().size();
-    cv::Mat forelastImage = m_pPipelineHandler->getImagePipeline().at(currentPipelineSize).first;
-    cv::_OutputArray outputArray;
+    cv::Mat forelastImage = m_pPipelineHandler->getImagePipeline().at(currentPipelineSize-2).first;
+    cv::Mat outputArray;
 
     try{
         m_pPipelineHandler->getAddWeighted()(m_pPipelineHandler->getImagePipeline().back().first, alphaSRC1, forelastImage, betaSRC2, gamma, outputArray, dtype);
@@ -593,7 +666,7 @@ void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, doubl
         const QString err_msg = QString::fromUtf8(e.what());
         qDebug() << "Exception caught:" << err_msg;
     }
-    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(outputArray.getMatRef(), currentColorFormat));
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(outputArray, currentColorFormat));
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
