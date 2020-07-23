@@ -713,9 +713,13 @@ void QtObjectDetector::on_pushButton_SavePipeline_clicked()
         const auto pipelinePair = std::pair<std::vector<std::function<void()>>, QString>(m_pPipelineHandler->getFunctionPipeline(), pipelineName);
         m_pPipelineHandler->getAvailablePipelines().push_back(pipelinePair);
         ui->comboBox_PipelineNameSelector->setEnabled(true);
+        ui->comboBox_PipelineNameSelectorVideo->setEnabled(true);
         ui->pushButton_ApplyPipeline->setEnabled(true);
+        ui->pushButton_ApplyPipelineVideo->setEnabled(true);
         ui->pushButton_DeletePipeline->setEnabled(true);
+        ui->pushButton_DeletePipelineVideo->setEnabled(true);
         ui->comboBox_PipelineNameSelector->addItem(pipelineName);
+        ui->comboBox_PipelineNameSelectorVideo->addItem(pipelineName);
     }
 }
 
@@ -725,6 +729,7 @@ void QtObjectDetector::on_pushButton_DeletePipeline_clicked()
     if(currentIndex >= 0)
     {
         ui->comboBox_PipelineNameSelector->removeItem(currentIndex);
+        ui->comboBox_PipelineNameSelectorVideo->removeItem(currentIndex);
         if (static_cast<int>(m_pPipelineHandler->getAvailablePipelines().size() - 1) >= currentIndex)
         {
             m_pPipelineHandler->getAvailablePipelines().erase(m_pPipelineHandler->getAvailablePipelines().begin() + currentIndex);
@@ -790,6 +795,14 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
     {
         pLayout->setAlignment(Qt::AlignTop);
         ui->widget_Arguments->setLayout(pLayout);
+    }
+}
+
+void QtObjectDetector::on_comboBox_PipelineNameSelector_currentIndexChanged(int index)
+{
+    if(ui->comboBox_PipelineNameSelectorVideo->currentIndex() != index)
+    {
+        ui->comboBox_PipelineNameSelectorVideo->setCurrentIndex(index);
     }
 }
 
@@ -949,5 +962,23 @@ void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
     {
         ui->spinBox_CameraXResolution->setEnabled(true);
         ui->spinBox_CameraYResolution->setEnabled(true);
+    }
+}
+
+void QtObjectDetector::on_pushButton_ApplyPipelineVideo_clicked()
+{
+    on_pushButton_ApplyPipeline_clicked();
+}
+
+void QtObjectDetector::on_pushButton_DeletePipelineVideo_clicked()
+{
+    on_pushButton_DeletePipeline_clicked();
+}
+
+void QtObjectDetector::on_comboBox_PipelineNameSelectorVideo_currentIndexChanged(int index)
+{
+    if(ui->comboBox_PipelineNameSelector->currentIndex() != index)
+    {
+        ui->comboBox_PipelineNameSelector->setCurrentIndex(index);
     }
 }
