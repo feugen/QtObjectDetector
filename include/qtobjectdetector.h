@@ -3,11 +3,8 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include <QString>
 #include <QCamera>
-#include <QGraphicsScene>
 #include <memory>
-#include <functional>
 #include "base.h"
 #include "photoloader.h"
 #include "videoloader.h"
@@ -59,19 +56,12 @@ private slots:
     void on_pushButton_SelectVideo_clicked();
     void on_pushButton_LoadVideo_clicked();
     void on_checkBox_AutoResolution_stateChanged(int arg1);
-
     void on_pushButton_DeletePipeline_clicked();
-
     void on_lineEdit_PipelineName_textChanged(const QString &arg1);
-
     void on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1);
-
     void on_pushButton_ApplyPipelineVideo_clicked();
-
     void on_pushButton_DeletePipelineVideo_clicked();
-
     void on_comboBox_PipelineNameSelector_currentIndexChanged(int index);
-
     void on_comboBox_PipelineNameSelectorVideo_currentIndexChanged(int index);
 
 private:

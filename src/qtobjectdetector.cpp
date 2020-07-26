@@ -2,14 +2,9 @@
 #include "ui_qtobjectdetector.h"
 #include "layouthandler.h"
 
-#include <QImage>
 #include <QPixmap>
 #include <QGraphicsVideoItem>
 #include <QDebug>
-#include <QString>
-#include <QMetaEnum>
-#include <QByteArray>
-
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
@@ -447,6 +442,7 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
 
     if((m_pPipelineHandler->getImagePipeline().size() - 1) >= storagePosition)
     {
+        qDebug() << "Image Format loaded: " << QString::fromStdString(cv::typeToString(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.type()));
         const QImage *imgIn = new QImage(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
         QPixmap myPixmap;
         if(m_imageSettings.autoSize)
