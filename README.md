@@ -1,5 +1,5 @@
-# QtObjectDetector
+# QtObjectDetector - OpenCV pipeline creator for images und videos
 
-An early version of a Qt/C++ software to interact with OpenCV for object recognition and tracking. It will be possible to create a basic piplene and deploy it to images or videos. 
+A Qt/C++ application to interact with OpenCV. It is possible to create a basic piplene and deploy it to images or videos (in development). Currently you can use 12 OpenCV functions and almost all parameters of these functions. The supported functions are: CvtColor, Threshold, AdaptiveThreshold, MedianBlur, Blur, GaussianBlur, BitwiseNot, Pow, Erode, Sobel, Laplacian, AddWeighted.
 
 ![Test Image 1](QtObjectTracker.bmp)
