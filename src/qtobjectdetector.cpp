@@ -76,12 +76,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     if(arg1Value == "Gray")
                     {
                         selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
-
                         m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
-                        m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                        m_lastFunction();
-                        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                        ui->pushButton_AddToPipeline->setEnabled(true);
                     }
                 }
                 break;
@@ -105,10 +100,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enum3Value) == arg3ValueText);
 
                     m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, enum3Value);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -141,10 +132,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue4).mid(10) == arg4ValueText);
 
                     m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, enumValue2, enumValue3, enumValue4, arg5Value);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -164,10 +151,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                         assert(Base::QEnumToQString(enumValue1).mid(6) == arg1Value);
 
                         m_lastFunction = [=](){applyMedianBlur(enumValue1);};
-                        m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                        m_lastFunction();
-                        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                        ui->pushButton_AddToPipeline->setEnabled(true);
                     }
                 }
                 break;
@@ -193,10 +176,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
 
                     m_lastFunction = [=](){applyBlur(size, point, enumValue3);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -224,10 +203,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
 
                     m_lastFunction = [=](){applyGaussianBlur(size, arg3Value, arg4Value, enumValue5);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -250,10 +225,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg1Value = arg1->value();
 
                     m_lastFunction = [=](){applyPow(arg1Value);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -283,14 +254,8 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
                     assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
-
                     cv::Mat element = cv::getStructuringElement( enumValue3, cv::Size( 2*enumValue4 + 1, 2*enumValue4+1 ), cv::Point( enumValue4, enumValue4 ) );
-
                     m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
 
                 break;
@@ -320,12 +285,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
                     assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
 
-
                     m_lastFunction = [=](){applySobel(-1, arg1Value, arg2Value, enumValue3, arg4Value, 0, enumValue5);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -354,10 +314,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
                     m_lastFunction = [=](){applyLaplacian(-1, enumValue1, arg2Value, arg3Value, enumValue4);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
@@ -374,13 +330,17 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto arg3Value = arg3->value();
 
                     m_lastFunction = [=](){applyAddWeighted(arg1Value, arg2Value, arg3Value, -1);};
-                    m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                    m_lastFunction();
-                    loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                    ui->pushButton_AddToPipeline->setEnabled(true);
                 }
                 break;
             }
+        }
+
+        if(m_lastFunction)
+        {
+            m_lastFunctionString = Base::QEnumToQString(selectedFunction);
+            m_lastFunction();
+            loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+            ui->pushButton_AddToPipeline->setEnabled(true);
         }
     }
 }
@@ -863,7 +823,6 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
         item->setPixmap(pixmap);
 
         //ui->graphicsView_VideoLoader->scene()->addItem(pixmap);
-
         //cv::imshow("Frame", *m_outputVideoImage.get()); //external window
         i++;
 
