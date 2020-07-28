@@ -21,7 +21,9 @@ public:
     enum e_OpenCVColorFormat
     {
         COLOR = QImage::Format_BGR888,
-        GRAY = QImage::Format_Indexed8
+        COLOR_INV = QImage::Format_RGB888,
+        GRAY = QImage::Format_Indexed8,
+        UNKNOWN = 1000
     };
     Q_ENUM(e_OpenCVColorFormat)
 

@@ -341,6 +341,31 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
     }
 }
 
+Base::e_OpenCVColorFormat QtObjectDetector::getColorFormat(cv::Mat mat, bool BGRtoRGB) const
+{
+    const auto chanels = mat.channels();
+    Base::e_OpenCVColorFormat colorFormat = Base::e_OpenCVColorFormat::UNKNOWN;
+
+    if(chanels == 1)
+    {
+        colorFormat = Base::e_OpenCVColorFormat::GRAY;
+    }
+    else if(chanels == 3)
+    {
+        if(BGRtoRGB)
+        {
+            colorFormat = Base::e_OpenCVColorFormat::COLOR;
+        }
+        else{
+            colorFormat = Base::e_OpenCVColorFormat::COLOR_INV;
+        }
+    }
+    else{
+        qDebug() << "Number of video image channels ist neither 3 nor 1";
+    }
+    return colorFormat;
+}
+
 //Image Part
 
 void QtObjectDetector::on_selectFileButton_clicked()
@@ -434,10 +459,10 @@ void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
 void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorFormat)
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
-    if(currentColorFormat == Base::e_OpenCVColorFormat::COLOR && selectedColorFormat == Base::e_OpenCVColorFormat::GRAY) //Only one direction will be supported
+    if((currentColorFormat == Base::e_OpenCVColorFormat::COLOR || currentColorFormat == Base::e_OpenCVColorFormat::COLOR_INV) && selectedColorFormat == Base::e_OpenCVColorFormat::GRAY) //Only one direction will be supported
     {
         cv::Mat newImage;
-        const auto colorFilter = cv::COLOR_BGR2GRAY;
+        const auto colorFilter = currentColorFormat == Base::e_OpenCVColorFormat::COLOR ? cv::COLOR_BGR2GRAY : cv::COLOR_RGB2GRAY;
         try{
             m_pPipelineHandler->getCvtColor()(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
         }
@@ -775,8 +800,6 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    m_pPipelineHandler->getImagePipeline().clear();
-
     cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);
 
     if(!m_pInputVideo)
@@ -787,10 +810,7 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
     const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
-
     qDebug() << fps << "Fps";
-
-    int i = 0;
 
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
@@ -799,16 +819,17 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     ui->graphicsView_VideoLoader->setScene(scene);
     scene->addItem(item);
 
+    int frameCounter = 0;
     for(;;)
     {
-        qDebug() << "Video Frame: " << i;
+        m_pPipelineHandler->getImagePipeline().clear();
+        qDebug() << "Video Frame: " << frameCounter;
         m_pInputVideo->read(m_pOutputVideoImage);
         if (!m_pOutputVideoImage.empty())
         {
             qDebug() << m_pPipelineHandler->getImagePipeline().size();
             qDebug() << "Video Image Format before filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
-            m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, Base::e_OpenCVColorFormat::GRAY));
-
+            m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, getColorFormat(m_pOutputVideoImage)));
         }
         else
         {
@@ -831,13 +852,13 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
             }
         }
 
-        QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), QImage::Format_RGB888);
+        QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), static_cast<QImage::Format>(getColorFormat(m_pOutputVideoImage)));
         pixmap = QPixmap::fromImage(qimg.rgbSwapped());
         item->setPixmap(pixmap);
 
         //ui->graphicsView_VideoLoader->scene()->addItem(pixmap);
         //cv::imshow("Frame", *m_outputVideoImage.get()); //external window
-        i++;
+        frameCounter++;
 
         cv::waitKey(1000 / static_cast<int>(fps));
     }
