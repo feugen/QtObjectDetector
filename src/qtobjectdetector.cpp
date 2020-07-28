@@ -210,10 +210,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             case Base::e_OpenCVFunction::BitwiseNot:
             {
                 m_lastFunction = [=](){applyBitwiseNot();};
-                m_lastFunctionString = Base::QEnumToQString(selectedFunction);
-                m_lastFunction();
-                loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
-                ui->pushButton_AddToPipeline->setEnabled(true);
                 break;
             }
             case Base::e_OpenCVFunction::Pow:
@@ -254,7 +250,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
                     assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
-                    cv::Mat element = cv::getStructuringElement( enumValue3, cv::Size( 2*enumValue4 + 1, 2*enumValue4+1 ), cv::Point( enumValue4, enumValue4 ) );
+                    cv::Mat element = cv::getStructuringElement(enumValue3, cv::Size( 2*enumValue4 + 1, 2*enumValue4+1 ), cv::Point( enumValue4, enumValue4));
                     m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
                 }
 
@@ -442,7 +438,6 @@ void QtObjectDetector::applyCvtColor(Base::e_OpenCVColorFormat selectedColorForm
     {
         cv::Mat newImage;
         const auto colorFilter = cv::COLOR_BGR2GRAY;
-
         try{
             m_pPipelineHandler->getCvtColor()(m_pPipelineHandler->getImagePipeline().back().first, newImage, colorFilter, 0);
         }
@@ -459,7 +454,6 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, Bas
 {
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
-
     try{
         m_pPipelineHandler->getThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
     }
@@ -717,11 +711,11 @@ void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
         if(pipeline.second == selectedPipeline)
         {
             const auto functionPipeline = pipeline.first;
-
             for(const auto& function : functionPipeline)
             {
                 function();
             }
+            break;
         }
     }
     if(m_pPipelineHandler->getImagePipeline().size() > 0)
@@ -781,17 +775,13 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
+    m_pPipelineHandler->getImagePipeline().clear();
 
     cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);
 
     if(!m_pInputVideo)
     {
         m_pInputVideo = std::make_unique<cv::VideoCapture>();
-    }
-
-    if(!m_pOutputVideoImage)
-    {
-        m_pOutputVideoImage = std::make_unique<cv::Mat>();
     }
 
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
@@ -811,14 +801,37 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 
     for(;;)
     {
-        qDebug() << i;
-        m_pInputVideo->read(*m_pOutputVideoImage.get());
-        if (m_pOutputVideoImage.get()->empty())
+        qDebug() << "Video Frame: " << i;
+        m_pInputVideo->read(m_pOutputVideoImage);
+        if (!m_pOutputVideoImage.empty())
+        {
+            qDebug() << m_pPipelineHandler->getImagePipeline().size();
+            qDebug() << "Video Image Format before filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+            m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, Base::e_OpenCVColorFormat::GRAY));
+
+        }
+        else
         {
             qDebug() << "Empty Image, end video";
             break;
         }
-        QImage qimg((*(m_pOutputVideoImage.get())).data, (*(m_pOutputVideoImage.get())).cols, (*(m_pOutputVideoImage.get())).rows, static_cast<int>((*(m_pOutputVideoImage.get())).step), QImage::Format_RGB888);
+
+        if(!m_selectedVideoPipeline.empty())
+        {
+            for(const auto& function : m_selectedVideoPipeline)
+            {
+                function();
+            }
+
+            if(m_pPipelineHandler->getImagePipeline().size() > 0)
+            {
+                qDebug() << m_pPipelineHandler->getImagePipeline().size();
+                m_pOutputVideoImage = m_pPipelineHandler->getImagePipeline().back().first;
+                qDebug() << "Video Image Format after filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+            }
+        }
+
+        QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), QImage::Format_RGB888);
         pixmap = QPixmap::fromImage(qimg.rgbSwapped());
         item->setPixmap(pixmap);
 
@@ -922,7 +935,15 @@ void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
 
 void QtObjectDetector::on_pushButton_ApplyPipelineVideo_clicked()
 {
-    on_pushButton_ApplyPipeline_clicked();
+    const QString selectedPipeline = ui->comboBox_PipelineNameSelectorVideo->currentText();
+    for (const auto& pipeline : m_pPipelineHandler->getAvailablePipelines())
+    {
+        if(pipeline.second == selectedPipeline)
+        {
+            m_selectedVideoPipeline = pipeline.first;
+            break;
+        }
+    }
 }
 
 void QtObjectDetector::on_pushButton_DeletePipelineVideo_clicked()

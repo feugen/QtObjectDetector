@@ -83,8 +83,9 @@ private:
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
     std::unique_ptr<QCamera> m_pCameraActive = nullptr;
-    std::unique_ptr<cv::Mat> m_pOutputVideoImage = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
+    cv::Mat m_pOutputVideoImage;
+    std::vector<std::function<void()>> m_selectedVideoPipeline;
     QList<QCameraInfo> m_cameras;
     Base::ImageSettings m_imageSettings;
 };
