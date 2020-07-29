@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QCamera>
+#include <QThread>
 #include <memory>
 #include "base.h"
 #include "photoloader.h"
@@ -70,9 +71,11 @@ private:
     void loadImageToQLabel(const size_t &storagePosition = 0);
     void stopCamera() const;
     Base::e_OpenCVColorFormat getColorFormat(cv::Mat mat, bool BGRtoRGB = false) const;
+    void loadVideo();
 
 private:
     Ui::QtObjectDetector *ui;
+    QThread m_threadVideo;
     std::unique_ptr<PipelineHandler> m_pPipelineHandler = nullptr;
     //Image part
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;

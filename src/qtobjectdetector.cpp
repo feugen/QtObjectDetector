@@ -6,6 +6,8 @@
 #include <QGraphicsVideoItem>
 #include <QDebug>
 
+#include <QtConcurrent/QtConcurrent>
+
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::QtObjectDetector)
@@ -361,7 +363,7 @@ Base::e_OpenCVColorFormat QtObjectDetector::getColorFormat(cv::Mat mat, bool BGR
         }
     }
     else{
-        qDebug() << "Number of video image channels ist neither 3 nor 1";
+        qDebug() << "Number of video image channels is neither 3 nor 1";
     }
     return colorFormat;
 }
@@ -799,71 +801,74 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
+    QGraphicsScene *scene = new QGraphicsScene(this);
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
+
+    ui->graphicsView_VideoLoader->setScene(scene);
+    scene->addItem(item);
+
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE); //todo get rid of this
 
     if(!m_pInputVideo)
     {
         m_pInputVideo = std::make_unique<cv::VideoCapture>();
     }
-
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
     const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
     qDebug() << fps << "Fps";
-
-    QGraphicsScene * scene = new QGraphicsScene();
-    QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
-    QPixmap pixmap;
-
-    ui->graphicsView_VideoLoader->setScene(scene);
-    scene->addItem(item);
-
     int frameCounter = 0;
-    for(;;)
-    {
-        m_pPipelineHandler->getImagePipeline().clear();
-        qDebug() << "Video Frame: " << frameCounter;
-        m_pInputVideo->read(m_pOutputVideoImage);
-        if (!m_pOutputVideoImage.empty())
-        {
-            qDebug() << m_pPipelineHandler->getImagePipeline().size();
-            qDebug() << "Video Image Format before filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
-            m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, getColorFormat(m_pOutputVideoImage)));
-        }
-        else
-        {
-            qDebug() << "Empty Image, end video";
-            break;
-        }
 
-        if(!m_selectedVideoPipeline.empty())
+    std::function runVideo = [&](){
+        for(;;)
         {
-            for(const auto& function : m_selectedVideoPipeline)
-            {
-                function();
-            }
-
-            if(m_pPipelineHandler->getImagePipeline().size() > 0)
+            m_pPipelineHandler->getImagePipeline().clear();
+            qDebug() << "Video Frame: " << frameCounter;
+            m_pInputVideo->read(m_pOutputVideoImage);
+            if (!m_pOutputVideoImage.empty())
             {
                 qDebug() << m_pPipelineHandler->getImagePipeline().size();
-                m_pOutputVideoImage = m_pPipelineHandler->getImagePipeline().back().first;
-                qDebug() << "Video Image Format after filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+                qDebug() << "Video Image Format before filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+                m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, getColorFormat(m_pOutputVideoImage)));
             }
+            else
+            {
+                qDebug() << "Empty Image, end video";
+                break;
+            }
+            if(!m_selectedVideoPipeline.empty())
+            {
+                for(const auto& function : m_selectedVideoPipeline)
+                {
+                    function();
+                }
+                if(m_pPipelineHandler->getImagePipeline().size() > 0)
+                {
+                    qDebug() << m_pPipelineHandler->getImagePipeline().size();
+                    m_pOutputVideoImage = m_pPipelineHandler->getImagePipeline().back().first;
+                    qDebug() << "Video Image Format post filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+                }
+            }
+
+            QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), static_cast<QImage::Format>(getColorFormat(m_pOutputVideoImage)));
+            item->setPixmap(QPixmap::fromImage(qimg.rgbSwapped())); //Todo Cant run from different thread, since its accessing gui thread
+
+            frameCounter++;
+            //QThread::msleep(33);
+            cv::waitKey(1000 / static_cast<int>(fps)); //todo get rid of this
         }
+        m_pInputVideo->release();
+        cv::destroyAllWindows();
+    };
 
-        QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), static_cast<QImage::Format>(getColorFormat(m_pOutputVideoImage)));
-        pixmap = QPixmap::fromImage(qimg.rgbSwapped());
-        item->setPixmap(pixmap);
+    runVideo();
+    //QtConcurrent::run(runVideo);
+}
 
-        //ui->graphicsView_VideoLoader->scene()->addItem(pixmap);
-        //cv::imshow("Frame", *m_outputVideoImage.get()); //external window
-        frameCounter++;
+void QtObjectDetector::loadVideo()
+{
 
-        cv::waitKey(1000 / static_cast<int>(fps));
-    }
-    m_pInputVideo->release();
-    cv::destroyAllWindows();
 }
 
 void QtObjectDetector::stopCamera() const
@@ -900,8 +905,7 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
         QGraphicsScene * scene = new QGraphicsScene();
         QGraphicsVideoItem *item = new QGraphicsVideoItem();
 
-
-        item->setSize(QSizeF(ui->spinBox_CameraXResolution->text().toInt(),ui->spinBox_CameraYResolution->text().toInt()));
+        item->setSize(QSizeF(ui->spinBox_CameraXResolution->text().toInt(), ui->spinBox_CameraYResolution->text().toInt()));
 
         ui->graphicsView_VideoLoader->setScene(scene);
         scene->addItem(item);
