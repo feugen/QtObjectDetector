@@ -16,11 +16,11 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     , m_pVideoLoader(new VideoLoader(this))
     , m_pVideoDialog(new QFileDialog(this))
     , m_pScene(new QGraphicsScene(this))
-    , m_cameras(m_pVideoLoader->CameraInfo().availableCameras())
+    , m_Cameras(m_pVideoLoader->CameraInfo().availableCameras())
 {
     ui->setupUi(this);
 
-    for (const QCameraInfo &cameraInfo : m_cameras){
+    for (const QCameraInfo &cameraInfo : m_Cameras){
         qDebug() << cameraInfo.deviceName() << "found";
         ui->comboBox_LiveCamera->addItem(cameraInfo.deviceName());
         ui->checkBox_LiveCamera->setEnabled(true);
@@ -816,7 +816,6 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 
         for(;;)
         {
-            qDebug() << "Test!!!!";
             m_pPipelineHandler->getImagePipeline().clear();
             qDebug() << "Video Frame: " << frameCounter;
             m_pInputVideo->read(m_pOutputVideoImage);
@@ -877,13 +876,21 @@ void QtObjectDetector::setUpVideo()
     {
         m_pInputVideo = std::make_unique<cv::VideoCapture>();
     }
+    if(!m_pInputCam)
+    {
+        m_pInputCam = std::make_unique<cv::VideoCapture>();
+    }
     //todo delete
 }
 
 void QtObjectDetector::stopCamera() const
 {
-    if(m_pCameraActive){
-        m_pCameraActive->stop();
+    if(m_pInputCam){
+
+        if(m_pInputCam->isOpened())
+        {
+            m_pInputCam->release();
+        }
         ui->pushButton_StartCamera->setText("Start Camera");
         ui->spinBox_CameraXResolution->setEnabled(true);
         ui->spinBox_CameraYResolution->setEnabled(true);
@@ -894,45 +901,75 @@ void QtObjectDetector::stopCamera() const
 
 void QtObjectDetector::on_pushButton_StartCamera_clicked()
 {
-    if(m_pCameraActive == nullptr || (m_pCameraActive->status() != QCamera::Status::ActiveStatus))
+    if(m_threadCam.isRunning())
     {
-        const auto cameraSelected = ui->comboBox_LiveCamera->currentText();
-        for (const QCameraInfo &cameraInfo : m_cameras){
-            if(cameraInfo.deviceName() == cameraSelected)
-            {
-                m_pCameraActive = std::make_unique<QCamera>(new QCamera(cameraInfo));
-                qDebug() << cameraInfo.description();
-            }
-        }
-
-        if(m_pCameraActive == nullptr)
-        {
-            qDebug() << "Something went wrong on camera selection";
-            return;
-        }
-
-        QGraphicsScene * scene = new QGraphicsScene();
-        QGraphicsVideoItem *item = new QGraphicsVideoItem();
-
-        item->setSize(QSizeF(ui->spinBox_CameraXResolution->text().toInt(), ui->spinBox_CameraYResolution->text().toInt()));
-
-        ui->graphicsView_VideoLoader->setScene(scene);
-        scene->addItem(item);
-        ui->graphicsView_VideoLoader->show();
-
-        m_pCameraActive->setViewfinder(item);
-        m_pCameraActive->start();
-
-        ui->pushButton_StartCamera->setText("Stop Camera");
-        ui->spinBox_CameraXResolution->setEnabled(false);
-        ui->spinBox_CameraYResolution->setEnabled(false);
-        ui->comboBox_LiveCamera->setEnabled(false);
-        ui->checkBox_LiveCamera->setEnabled(false);
-    }
-    else
-    {
+        m_threadCam.exit();
         stopCamera();
+        return;
     }
+
+    setUpVideo();
+    const int currentDeviceIndex = ui->comboBox_LiveCamera->currentIndex();
+    if(!m_Cameras.empty())
+    {
+        m_pInputCam->open(currentDeviceIndex, cv::CAP_ANY);
+    }
+    if(!m_pInputCam->isOpened())
+    {
+        qDebug() << "ERROR! Unable to open camera";
+        return;
+    }
+
+    std::function runCam = [&](){
+
+        const double fps = m_pInputCam.get()->get(cv::CAP_PROP_FPS);
+        qDebug() << fps << "Fps";
+        int frameCounter = 0;
+
+        for (;;)
+        {
+            m_pPipelineHandler->getImagePipeline().clear();
+            qDebug() << "Video Frame: " << frameCounter;
+
+            m_pInputCam->read(m_pOutputVideoImage);
+            if (!m_pOutputVideoImage.empty()) {
+                qDebug() << m_pPipelineHandler->getImagePipeline().size();
+                qDebug() << "Video Image Format before filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+                m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pOutputVideoImage, getColorFormat(m_pOutputVideoImage)));
+
+            }
+            else
+            {
+                qDebug() << "Empty Image, end video";
+                break;
+            }
+            if(!m_selectedVideoPipeline.empty())
+            {
+                for(const auto& function : m_selectedVideoPipeline)
+                {
+                    function();
+                }
+                if(m_pPipelineHandler->getImagePipeline().size() > 0)
+                {
+                    qDebug() << m_pPipelineHandler->getImagePipeline().size();
+                    m_pOutputVideoImage = m_pPipelineHandler->getImagePipeline().back().first;
+                    qDebug() << "Video Image Format post filter: " << QString::fromStdString(cv::typeToString(m_pOutputVideoImage.type()));
+                }
+            }
+            emit newVideoImage();
+            frameCounter++;
+        }
+        m_pInputCam->release();
+    };
+
+    QMetaObject::invokeMethod(QAbstractEventDispatcher::instance(&m_threadCam),runCam, Qt::QueuedConnection);
+    m_threadCam.start();
+
+    ui->pushButton_StartCamera->setText("Stop Camera");
+    ui->spinBox_CameraXResolution->setEnabled(false);
+    ui->spinBox_CameraYResolution->setEnabled(false);
+    ui->comboBox_LiveCamera->setEnabled(false);
+    ui->checkBox_LiveCamera->setEnabled(false);
 }
 
 void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)

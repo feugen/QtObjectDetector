@@ -81,6 +81,7 @@ private:
 private:
     Ui::QtObjectDetector *ui;
     QThread m_threadVideo;
+    QThread m_threadCam;
     std::unique_ptr<PipelineHandler> m_pPipelineHandler = nullptr;
     //Image part
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
@@ -91,14 +92,17 @@ private:
     //Video Part
     std::unique_ptr<VideoLoader> m_pVideoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
-    std::unique_ptr<QCamera> m_pCameraActive = nullptr;
+
+    //std::unique_ptr<QCamera> m_pCameraActive = nullptr;
+
+    std::unique_ptr<cv::VideoCapture> m_pInputCam = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
     std::vector<std::function<void()>> m_selectedVideoPipeline;
     cv::Mat m_pOutputVideoImage;
     QImage m_videoImage;
     QGraphicsScene *m_pScene = nullptr;
     QGraphicsPixmapItem *m_pVideoImageItem = nullptr;
-    QList<QCameraInfo> m_cameras;
+    QList<QCameraInfo> m_Cameras;
     Base::ImageSettings m_imageSettings;
 };
 #endif // OBJECTDETECTOR_H
