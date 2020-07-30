@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QCamera>
 #include <QThread>
+#include <QGraphicsScene>
 #include <memory>
 #include "base.h"
 #include "photoloader.h"
@@ -23,9 +24,13 @@ public:
     QtObjectDetector(QWidget *parent = nullptr);
     ~QtObjectDetector();
 
+signals:
+    void newVideoImage();
+
 private slots:
 
     void on_pushButton_ApplyFunction_clicked();
+    void on_newVideoImage();
 
     //Image part
     void on_selectFileButton_clicked();
@@ -71,7 +76,7 @@ private:
     void loadImageToQLabel(const size_t &storagePosition = 0);
     void stopCamera() const;
     Base::e_OpenCVColorFormat getColorFormat(cv::Mat mat, bool BGRtoRGB = false) const;
-    void loadVideo();
+    void setUpVideo();
 
 private:
     Ui::QtObjectDetector *ui;
@@ -88,8 +93,11 @@ private:
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
     std::unique_ptr<QCamera> m_pCameraActive = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
-    cv::Mat m_pOutputVideoImage;
     std::vector<std::function<void()>> m_selectedVideoPipeline;
+    cv::Mat m_pOutputVideoImage;
+    QImage m_videoImage;
+    QGraphicsScene *m_pScene = nullptr;
+    QGraphicsPixmapItem *m_pVideoImageItem = nullptr;
     QList<QCameraInfo> m_cameras;
     Base::ImageSettings m_imageSettings;
 };

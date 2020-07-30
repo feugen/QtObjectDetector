@@ -4,9 +4,8 @@
 
 #include <QPixmap>
 #include <QGraphicsVideoItem>
+#include <QAbstractEventDispatcher>
 #include <QDebug>
-
-#include <QtConcurrent/QtConcurrent>
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +15,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     , m_pImageDialog(new QFileDialog(this))
     , m_pVideoLoader(new VideoLoader(this))
     , m_pVideoDialog(new QFileDialog(this))
+    , m_pScene(new QGraphicsScene(this))
     , m_cameras(m_pVideoLoader->CameraInfo().availableCameras())
 {
     ui->setupUi(this);
@@ -48,6 +48,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
 
     connect(m_pImageDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
     connect(m_pVideoDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_videoSelected);
+    connect(this, &QtObjectDetector::newVideoImage , this, &QtObjectDetector::on_newVideoImage);
     connect(ui->actionExit, &QAction::triggered, this, &QApplication::exit);
 }
 
@@ -801,28 +802,21 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
+    //todo why need to call it twice?
 
-    ui->graphicsView_VideoLoader->setScene(scene);
-    scene->addItem(item);
-
+    setUpVideo();
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
-    cv::namedWindow("Frame", cv::WINDOW_AUTOSIZE); //todo get rid of this
-
-    if(!m_pInputVideo)
-    {
-        m_pInputVideo = std::make_unique<cv::VideoCapture>();
-    }
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
-    const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
-    qDebug() << fps << "Fps";
-    int frameCounter = 0;
-
     std::function runVideo = [&](){
+
+        const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
+        qDebug() << fps << "Fps";
+        int frameCounter = 0;
+
         for(;;)
         {
+            qDebug() << "Test!!!!";
             m_pPipelineHandler->getImagePipeline().clear();
             qDebug() << "Video Frame: " << frameCounter;
             m_pInputVideo->read(m_pOutputVideoImage);
@@ -851,24 +845,39 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
                 }
             }
 
-            QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), static_cast<QImage::Format>(getColorFormat(m_pOutputVideoImage)));
-            item->setPixmap(QPixmap::fromImage(qimg.rgbSwapped())); //Todo Cant run from different thread, since its accessing gui thread
-
+            emit newVideoImage();
+            QThread::msleep(1000/static_cast<uint>(fps));
             frameCounter++;
-            //QThread::msleep(33);
-            cv::waitKey(1000 / static_cast<int>(fps)); //todo get rid of this
         }
         m_pInputVideo->release();
-        cv::destroyAllWindows();
     };
 
-    runVideo();
-    //QtConcurrent::run(runVideo);
+    QMetaObject::invokeMethod(QAbstractEventDispatcher::instance(&m_threadVideo),runVideo, Qt::QueuedConnection);
+    m_threadVideo.start();
 }
 
-void QtObjectDetector::loadVideo()
+void QtObjectDetector::on_newVideoImage()
 {
+    QImage qimg((m_pOutputVideoImage).data, (m_pOutputVideoImage).cols, (m_pOutputVideoImage).rows, static_cast<int>((m_pOutputVideoImage).step), static_cast<QImage::Format>(getColorFormat(m_pOutputVideoImage)));
+    if(m_pVideoImageItem)
+    {
+        m_pVideoImageItem->setPixmap(QPixmap::fromImage(qimg.rgbSwapped()));
+    }
+}
 
+void QtObjectDetector::setUpVideo()
+{
+    if(m_pVideoImageItem == nullptr)
+    {
+        m_pVideoImageItem = new QGraphicsPixmapItem();
+        ui->graphicsView_VideoLoader->setScene(m_pScene);
+        m_pScene->addItem(m_pVideoImageItem);
+    }
+    if(!m_pInputVideo)
+    {
+        m_pInputVideo = std::make_unique<cv::VideoCapture>();
+    }
+    //todo delete
 }
 
 void QtObjectDetector::stopCamera() const
