@@ -802,13 +802,16 @@ void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 
 void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
-    //todo why need to call it twice?
-
+    if(m_pThreadVideo && m_pThreadVideo->isRunning())
+    {
+        m_pThreadVideo->exit(); //todo not working
+        return;
+    }
     setUpVideo();
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
-    std::function runVideo = [&](){
+    std::function runVideo = [this](){
 
         const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
         qDebug() << fps << "Fps";
@@ -816,6 +819,11 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 
         for(;;)
         {
+            if(!m_pInputVideo->isOpened())
+            {
+                qDebug() << "Video is not opened anymore, stop processing";
+                break;
+            }
             m_pPipelineHandler->getImagePipeline().clear();
             qDebug() << "Video Frame: " << frameCounter;
             m_pInputVideo->read(m_pOutputVideoImage);
@@ -848,11 +856,13 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
             QThread::msleep(1000/static_cast<uint>(fps));
             frameCounter++;
         }
-        m_pInputVideo->release();
     };
 
-    QMetaObject::invokeMethod(QAbstractEventDispatcher::instance(&m_threadVideo),runVideo, Qt::QueuedConnection);
-    m_threadVideo.start();
+    m_pThreadVideo = QThread::create(runVideo);
+    m_pThreadVideo->setObjectName("runVideo");
+    connect(m_pThreadVideo, &QThread::started, this, &QtObjectDetector::setStopVideoSettings);
+    connect(m_pThreadVideo, &QThread::finished, this, &QtObjectDetector::setStartVideoSettings);
+    m_pThreadVideo->start();
 }
 
 void QtObjectDetector::on_newVideoImage()
@@ -883,31 +893,54 @@ void QtObjectDetector::setUpVideo()
     //todo delete
 }
 
-void QtObjectDetector::stopCamera() const
+//When camera is running
+void QtObjectDetector::setStopCameraSettings() const
 {
-    if(m_pInputCam){
+    ui->pushButton_StartCamera->setText("Stop Camera");
+    ui->spinBox_CameraXResolution->setEnabled(false);
+    ui->spinBox_CameraYResolution->setEnabled(false);
+    ui->comboBox_LiveCamera->setEnabled(false);
+    ui->checkBox_LiveCamera->setEnabled(false);
+}
 
-        if(m_pInputCam->isOpened())
-        {
-            m_pInputCam->release();
-        }
-        ui->pushButton_StartCamera->setText("Start Camera");
-        ui->spinBox_CameraXResolution->setEnabled(true);
-        ui->spinBox_CameraYResolution->setEnabled(true);
-        ui->comboBox_LiveCamera->setEnabled(true);
-        ui->checkBox_LiveCamera->setEnabled(true);
+//When camera is not running
+void QtObjectDetector::setStartCameraSettings() const
+{
+    if(m_pInputCam && m_pInputCam->isOpened())
+    {
+        m_pInputCam->release();
     }
+    ui->pushButton_StartCamera->setText("Start Camera");
+    ui->spinBox_CameraXResolution->setEnabled(true);
+    ui->spinBox_CameraYResolution->setEnabled(true);
+    ui->comboBox_LiveCamera->setEnabled(true);
+    ui->checkBox_LiveCamera->setEnabled(true);
+}
+
+//When video is running
+void QtObjectDetector::setStopVideoSettings() const
+{
+    ui->checkBox_LiveCamera->setEnabled(false);
+    ui->checkBox_AutoResolution->setEnabled(false);
+    ui->pushButton_SelectVideo->setEnabled(false);
+    ui->pushButton_LoadVideo->setText("Stop Video");
+}
+
+//When video is not running
+void QtObjectDetector::setStartVideoSettings() const
+{
+    if(m_pInputVideo && m_pInputVideo->isOpened())
+    {
+        m_pInputVideo->release();
+    }
+    ui->checkBox_LiveCamera->setEnabled(false);
+    ui->checkBox_AutoResolution->setEnabled(false);
+    ui->pushButton_SelectVideo->setEnabled(true);
+    ui->pushButton_LoadVideo->setText("Start Video");
 }
 
 void QtObjectDetector::on_pushButton_StartCamera_clicked()
 {
-    if(m_threadCam.isRunning())
-    {
-        m_threadCam.exit();
-        stopCamera();
-        return;
-    }
-
     setUpVideo();
     const int currentDeviceIndex = ui->comboBox_LiveCamera->currentIndex();
     if(!m_Cameras.empty())
@@ -928,6 +961,11 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
 
         for (;;)
         {
+            if(!m_pInputCam->isOpened())
+            {
+                qDebug() << "Camera is not opened anymore, stop processing";
+                break;
+            }
             m_pPipelineHandler->getImagePipeline().clear();
             qDebug() << "Video Frame: " << frameCounter;
 
@@ -959,17 +997,13 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
             emit newVideoImage();
             frameCounter++;
         }
-        m_pInputCam->release();
     };
 
-    QMetaObject::invokeMethod(QAbstractEventDispatcher::instance(&m_threadCam),runCam, Qt::QueuedConnection);
-    m_threadCam.start();
-
-    ui->pushButton_StartCamera->setText("Stop Camera");
-    ui->spinBox_CameraXResolution->setEnabled(false);
-    ui->spinBox_CameraYResolution->setEnabled(false);
-    ui->comboBox_LiveCamera->setEnabled(false);
-    ui->checkBox_LiveCamera->setEnabled(false);
+    QThread *thread = QThread::create(runCam);
+    thread->setObjectName("runCam");
+    connect(thread, &QThread::started, this, &QtObjectDetector::setStopCameraSettings);
+    connect(thread, &QThread::finished, this, &QtObjectDetector::setStartCameraSettings);
+    thread->start();
 }
 
 void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
@@ -979,6 +1013,7 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
         ui->pushButton_StartCamera->setEnabled(true);
         ui->comboBox_LiveCamera->setEnabled(true);
         ui->pushButton_SelectVideo->setEnabled(false);
+        ui->pushButton_LoadVideo->setEnabled(false);
     }
     else
     {
@@ -987,6 +1022,11 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
         ui->spinBox_CameraXResolution->setEnabled(false);
         ui->spinBox_CameraYResolution->setEnabled(false);
         ui->pushButton_SelectVideo->setEnabled(true);
+
+        if(ui->label_videoName->text().length() >= 3 && ui->label_videoName->text().contains("."))
+        {
+            ui->pushButton_LoadVideo->setEnabled(true);
+        }
     }
 }
 
