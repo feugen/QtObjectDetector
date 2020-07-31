@@ -804,9 +804,13 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
 {
     if(m_pThreadVideo && m_pThreadVideo->isRunning())
     {
-        m_pThreadVideo->exit(); //todo not working
+        m_runThread = false;
         return;
     }
+    else{
+        m_runThread = true;
+    }
+
     setUpVideo();
     const auto filepath = m_pVideoLoader->getFileInfo().absoluteFilePath().toUtf8();
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
@@ -855,6 +859,7 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
             emit newVideoImage();
             QThread::msleep(1000/static_cast<uint>(fps));
             frameCounter++;
+            if(!m_runThread) break;
         }
     };
 
@@ -933,14 +938,23 @@ void QtObjectDetector::setStartVideoSettings() const
     {
         m_pInputVideo->release();
     }
-    ui->checkBox_LiveCamera->setEnabled(false);
-    ui->checkBox_AutoResolution->setEnabled(false);
+    ui->checkBox_LiveCamera->setEnabled(true);
+    ui->checkBox_AutoResolution->setEnabled(true);
     ui->pushButton_SelectVideo->setEnabled(true);
     ui->pushButton_LoadVideo->setText("Start Video");
 }
 
 void QtObjectDetector::on_pushButton_StartCamera_clicked()
 {
+    if(m_pThreadVideo && m_pThreadVideo->isRunning())
+    {
+        m_runThread = false;
+        return;
+    }
+    else{
+        m_runThread = true;
+    }
+
     setUpVideo();
     const int currentDeviceIndex = ui->comboBox_LiveCamera->currentIndex();
     if(!m_Cameras.empty())
@@ -996,6 +1010,7 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
             }
             emit newVideoImage();
             frameCounter++;
+            if(!m_runThread) break;
         }
     };
 

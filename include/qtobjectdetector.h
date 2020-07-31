@@ -85,6 +85,7 @@ private:
     Ui::QtObjectDetector *ui;
     std::unique_ptr<PipelineHandler> m_pPipelineHandler = nullptr;
     QThread *m_pThreadVideo = nullptr;
+    bool m_runThread = true;
     //Image part
     std::unique_ptr<PhotoLoader> m_pPhotoLoader = nullptr;
     std::unique_ptr<QFileDialog> m_pImageDialog = nullptr;
