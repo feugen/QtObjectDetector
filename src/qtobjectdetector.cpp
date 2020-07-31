@@ -902,8 +902,6 @@ void QtObjectDetector::setUpVideo()
 void QtObjectDetector::setStopCameraSettings() const
 {
     ui->pushButton_StartCamera->setText("Stop Camera");
-    ui->spinBox_CameraXResolution->setEnabled(false);
-    ui->spinBox_CameraYResolution->setEnabled(false);
     ui->comboBox_LiveCamera->setEnabled(false);
     ui->checkBox_LiveCamera->setEnabled(false);
 }
@@ -916,8 +914,6 @@ void QtObjectDetector::setStartCameraSettings() const
         m_pInputCam->release();
     }
     ui->pushButton_StartCamera->setText("Start Camera");
-    ui->spinBox_CameraXResolution->setEnabled(true);
-    ui->spinBox_CameraYResolution->setEnabled(true);
     ui->comboBox_LiveCamera->setEnabled(true);
     ui->checkBox_LiveCamera->setEnabled(true);
 }
@@ -926,7 +922,6 @@ void QtObjectDetector::setStartCameraSettings() const
 void QtObjectDetector::setStopVideoSettings() const
 {
     ui->checkBox_LiveCamera->setEnabled(false);
-    ui->checkBox_AutoResolution->setEnabled(false);
     ui->pushButton_SelectVideo->setEnabled(false);
     ui->pushButton_LoadVideo->setText("Stop Video");
 }
@@ -939,7 +934,6 @@ void QtObjectDetector::setStartVideoSettings() const
         m_pInputVideo->release();
     }
     ui->checkBox_LiveCamera->setEnabled(true);
-    ui->checkBox_AutoResolution->setEnabled(true);
     ui->pushButton_SelectVideo->setEnabled(true);
     ui->pushButton_LoadVideo->setText("Start Video");
 }
@@ -1034,28 +1028,12 @@ void QtObjectDetector::on_checkBox_LiveCamera_stateChanged(int arg1)
     {
         ui->pushButton_StartCamera->setEnabled(false);
         ui->comboBox_LiveCamera->setEnabled(false);
-        ui->spinBox_CameraXResolution->setEnabled(false);
-        ui->spinBox_CameraYResolution->setEnabled(false);
         ui->pushButton_SelectVideo->setEnabled(true);
 
         if(ui->label_videoName->text().length() >= 3 && ui->label_videoName->text().contains("."))
         {
             ui->pushButton_LoadVideo->setEnabled(true);
         }
-    }
-}
-
-void QtObjectDetector::on_checkBox_AutoResolution_stateChanged(int arg1)
-{
-    if(static_cast<bool>(arg1) == true)
-    {
-        ui->spinBox_CameraXResolution->setEnabled(false);
-        ui->spinBox_CameraYResolution->setEnabled(false);
-    }
-    else
-    {
-        ui->spinBox_CameraXResolution->setEnabled(true);
-        ui->spinBox_CameraYResolution->setEnabled(true);
     }
 }
 

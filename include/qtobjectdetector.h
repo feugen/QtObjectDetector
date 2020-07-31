@@ -65,7 +65,6 @@ private slots:
     void on_checkBox_LiveCamera_stateChanged(int arg1);
     void on_pushButton_SelectVideo_clicked();
     void on_pushButton_LoadVideo_clicked();
-    void on_checkBox_AutoResolution_stateChanged(int arg1);
     void on_pushButton_DeletePipeline_clicked();
     void on_lineEdit_PipelineName_textChanged(const QString &arg1);
     void on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1);
