@@ -545,17 +545,20 @@
                 <string notr="true">background-color: rgb(35, 38, 41);</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_7">
-                <item row="6" column="0">
-                 <widget class="QPushButton" name="pushButton_DeleteFromPipeline">
+                <item row="14" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_SavePipeline">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
-                   <string>Delete Step</string>
+                   <string>Save Pipeline</string>
                   </property>
                  </widget>
                 </item>
-                <item row="11" column="0" colspan="2">
+                <item row="2" column="0" colspan="2">
+                 <widget class="QComboBox" name="comboBox_FunctionTypeSelector"/>
+                </item>
+                <item row="13" column="0" colspan="2">
                  <widget class="QLineEdit" name="lineEdit_PipelineName">
                   <property name="enabled">
                    <bool>false</bool>
@@ -568,7 +571,24 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0" colspan="2">
+                <item row="8" column="0">
+                 <widget class="QPushButton" name="pushButton_DeleteFromPipeline">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Delete Step</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_ApplyFunction">
+                  <property name="text">
+                   <string>Apply Function</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0" colspan="2">
                  <widget class="QLabel" name="label_12">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -581,10 +601,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QComboBox" name="comboBox_FunctionSelector"/>
-                </item>
-                <item row="1" column="0" colspan="2">
+                <item row="3" column="0" colspan="2">
                  <widget class="QLabel" name="label_10">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -597,7 +614,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="9" column="0" colspan="2">
+                <item row="11" column="0" colspan="2">
                  <widget class="QLabel" name="label_11">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -610,7 +627,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="8" column="1">
                  <widget class="QPushButton" name="pushButton_AddToPipeline">
                   <property name="enabled">
                    <bool>false</bool>
@@ -620,26 +637,25 @@
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="2">
+                <item row="7" column="0" colspan="2">
                  <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
                 </item>
-                <item row="3" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_ApplyFunction">
-                  <property name="text">
-                   <string>Apply Function</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="10" column="0" colspan="2">
+                <item row="12" column="0" colspan="2">
                  <widget class="QWidget" name="widget_Arguments" native="true"/>
                 </item>
-                <item row="12" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_SavePipeline">
-                  <property name="enabled">
-                   <bool>false</bool>
+                <item row="4" column="0" colspan="2">
+                 <widget class="QComboBox" name="comboBox_FunctionSelector"/>
+                </item>
+                <item row="1" column="0" colspan="2">
+                 <widget class="QLabel" name="label">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Save Pipeline</string>
+                   <string>Function Type</string>
                   </property>
                  </widget>
                 </item>

@@ -37,14 +37,15 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
     ui->xSpinBox->setValue(static_cast<int>(m_pPhotoLoader->getXSize()));
     ui->ySpinBox->setValue(static_cast<int>(m_pPhotoLoader->getYSize()));
 
-    QStringList functionsList;
-    const QMetaEnum metaEnum = QMetaEnum::fromType<Base::e_OpenCVFunction>();
-
-    for (int i = 0; i < metaEnum.keyCount() ; i++ )
+    QStringList functionsTypeList;
+    const QMetaEnum metaEnumTypes = QMetaEnum::fromType<Base::e_OPenCVFunctionType>();
+    for (int i = 0; i < metaEnumTypes.keyCount() ; i++ )
     {
-        functionsList += metaEnum.valueToKey(i);
+        const QString functionsType = metaEnumTypes.valueToKey(i);
+        const QChar firstLetter = functionsType.at(0).toUpper();
+        functionsTypeList += functionsType.toLower().replace(0, 1, firstLetter);
     }
-    ui->comboBox_FunctionSelector->addItems(functionsList);
+    ui->comboBox_FunctionTypeSelector->addItems(functionsTypeList);
 
     connect(m_pImageDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_fileSelected);
     connect(m_pVideoDialog.get(), &QFileDialog::fileSelected, this, &QtObjectDetector::on_videoSelected);
@@ -456,6 +457,83 @@ void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
         ui->xSpinBox->setEnabled(true);
         ui->ySpinBox->setEnabled(true);
     }
+}
+
+void QtObjectDetector::on_comboBox_FunctionTypeSelector_currentIndexChanged(const QString &arg1)
+{
+    QStringList functionsListAll;
+    const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVFunction>();
+    for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
+    {
+        functionsListAll += metaEnumFunctions.valueToKey(i);
+    }
+
+    QStringList functionsListPart;
+    if(arg1 == QStringLiteral("Filtering"))
+    {
+        if(functionsListAll.contains("blur"))
+        {
+            functionsListPart.append("blur");
+        }
+        if(functionsListAll.contains("MedianBlur"))
+        {
+            functionsListPart.append("MedianBlur");
+        }
+        if(functionsListAll.contains("GaussianBlur"))
+        {
+            functionsListPart.append("GaussianBlur");
+        }
+        if(functionsListAll.contains("Pow"))
+        {
+            functionsListPart.append("Pow");
+        }
+        if(functionsListAll.contains("Erode"))
+        {
+            functionsListPart.append("Erode");
+        }
+        if(functionsListAll.contains("Sobel"))
+        {
+            functionsListPart.append("Sobel");
+        }
+        if(functionsListAll.contains("Laplacian"))
+        {
+            functionsListPart.append("Laplacian");
+        }
+    }
+    else if(arg1 == QStringLiteral("Transformation"))
+    {
+        if(functionsListAll.contains("CvtColor"))
+        {
+            functionsListPart.append("CvtColor");
+        }
+        if(functionsListAll.contains("Threshold"))
+        {
+            functionsListPart.append("Threshold");
+        }
+        if(functionsListAll.contains("AdaptiveThreshold"))
+        {
+            functionsListPart.append("AdaptiveThreshold");
+        }
+        if(functionsListAll.contains("BitwiseNot"))
+        {
+            functionsListPart.append("BitwiseNot");
+        }
+        if(functionsListAll.contains("AddWeighted"))
+        {
+            functionsListPart.append("AddWeighted");
+        }
+    }
+    else if(arg1 == QStringLiteral("Tracking"))
+    {
+
+    }
+    else if(arg1 == QStringLiteral("Detection"))
+    {
+
+    }
+
+    ui->comboBox_FunctionSelector->clear();
+    ui->comboBox_FunctionSelector->addItems(functionsListPart);
 }
 
 
@@ -1062,3 +1140,5 @@ void QtObjectDetector::on_comboBox_PipelineNameSelectorVideo_currentIndexChanged
         ui->comboBox_PipelineNameSelector->setCurrentIndex(index);
     }
 }
+
+

@@ -109,6 +109,15 @@ public:
     };
     Q_ENUM(e_OPenCVMorphShapes)
 
+    enum e_OPenCVFunctionType
+    {
+        FILTERING = 0,
+        TRANSFORMATION = 1,
+        TRACKING = 2,
+        DETECTION = 3
+    };
+    Q_ENUM(e_OPenCVFunctionType)
+
     enum e_OpenCVFunction
     {
         CvtColor = 0,

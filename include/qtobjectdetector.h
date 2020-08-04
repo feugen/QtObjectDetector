@@ -73,6 +73,8 @@ private slots:
     void on_comboBox_PipelineNameSelector_currentIndexChanged(int index);
     void on_comboBox_PipelineNameSelectorVideo_currentIndexChanged(int index);
 
+    void on_comboBox_FunctionTypeSelector_currentIndexChanged(const QString &arg1);
+
 private:
     void storeImageSettings();
     void loadImage();
