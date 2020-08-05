@@ -254,7 +254,7 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                     const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
                     assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
-                    cv::Mat element = cv::getStructuringElement(enumValue3, cv::Size( 2*enumValue4 + 1, 2*enumValue4+1 ), cv::Point( enumValue4, enumValue4));
+                    cv::Mat element = cv::getStructuringElement(arg3Value, cv::Size( 2*arg4Value + 1, 2*arg4Value+1 ), cv::Point( arg4Value, arg4Value));
                     m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
                 }
 
@@ -331,6 +331,31 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
                     m_lastFunction = [=](){applyAddWeighted(arg1Value, arg2Value, arg3Value, -1);};
                 }
+                break;
+            }
+            case Base::e_OpenCVFunction::CascadeClassifier:
+            {
+                //TODO
+                break;
+            }
+            case Base::e_OpenCVFunction::MeanShift:
+            {
+                //TODO
+                break;
+            }
+            case Base::e_OpenCVFunction::CamShift:
+            {
+                //TODO
+                break;
+            }
+            case Base::e_OpenCVFunction::BackgroundSubtraction:
+            {
+                //TODO
+                break;
+            }
+            case Base::e_OpenCVFunction::OpticalFlow:
+            {
+                //TODO//TODO
                 break;
             }
         }
@@ -461,77 +486,39 @@ void QtObjectDetector::on_checkBox_autoSize_toggled(bool checked)
 
 void QtObjectDetector::on_comboBox_FunctionTypeSelector_currentIndexChanged(const QString &arg1)
 {
-    QStringList functionsListAll;
-    const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVFunction>();
-    for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
-    {
-        functionsListAll += metaEnumFunctions.valueToKey(i);
-    }
-
     QStringList functionsListPart;
     if(arg1 == QStringLiteral("Filtering"))
     {
-        if(functionsListAll.contains("blur"))
+        const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVFilteringFunction>();
+        for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
         {
-            functionsListPart.append("blur");
-        }
-        if(functionsListAll.contains("MedianBlur"))
-        {
-            functionsListPart.append("MedianBlur");
-        }
-        if(functionsListAll.contains("GaussianBlur"))
-        {
-            functionsListPart.append("GaussianBlur");
-        }
-        if(functionsListAll.contains("Pow"))
-        {
-            functionsListPart.append("Pow");
-        }
-        if(functionsListAll.contains("Erode"))
-        {
-            functionsListPart.append("Erode");
-        }
-        if(functionsListAll.contains("Sobel"))
-        {
-            functionsListPart.append("Sobel");
-        }
-        if(functionsListAll.contains("Laplacian"))
-        {
-            functionsListPart.append("Laplacian");
+            functionsListPart += metaEnumFunctions.valueToKey(i);
         }
     }
     else if(arg1 == QStringLiteral("Transformation"))
     {
-        if(functionsListAll.contains("CvtColor"))
+        const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVTransformationFunction>();
+        for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
         {
-            functionsListPart.append("CvtColor");
+            functionsListPart += metaEnumFunctions.valueToKey(i);
         }
-        if(functionsListAll.contains("Threshold"))
+    }
+    else if(arg1 == QStringLiteral("Detection"))
+    {
+        const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVDetectionFunction>();
+        for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
         {
-            functionsListPart.append("Threshold");
-        }
-        if(functionsListAll.contains("AdaptiveThreshold"))
-        {
-            functionsListPart.append("AdaptiveThreshold");
-        }
-        if(functionsListAll.contains("BitwiseNot"))
-        {
-            functionsListPart.append("BitwiseNot");
-        }
-        if(functionsListAll.contains("AddWeighted"))
-        {
-            functionsListPart.append("AddWeighted");
+            functionsListPart += metaEnumFunctions.valueToKey(i);
         }
     }
     else if(arg1 == QStringLiteral("Tracking"))
     {
-
+        const QMetaEnum metaEnumFunctions = QMetaEnum::fromType<Base::e_OpenCVTrackingFunction>();
+        for (int i = 0; i < metaEnumFunctions.keyCount() ; i++ )
+        {
+            functionsListPart += metaEnumFunctions.valueToKey(i);
+        }
     }
-    else if(arg1 == QStringLiteral("Detection"))
-    {
-
-    }
-
     ui->comboBox_FunctionSelector->clear();
     ui->comboBox_FunctionSelector->addItems(functionsListPart);
 }
@@ -561,7 +548,7 @@ void QtObjectDetector::applyThreshold(double threshold, double thresholdMax, Bas
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, type);
+        m_pPipelineHandler->getThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, threshold, thresholdMax, static_cast<int>(type));
     }
     catch( cv::Exception& e)
     {
@@ -576,7 +563,7 @@ void QtObjectDetector::applyAdaptiveThreshold(double maxValue, Base::e_OpenCVAda
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getAdaptiveThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, maxValue, adaptiveMethod, thresholdType, blockSize, C);
+        m_pPipelineHandler->getAdaptiveThreshold()(m_pPipelineHandler->getImagePipeline().back().first, newImage, maxValue, static_cast<int>(adaptiveMethod), static_cast<int>(thresholdType), static_cast<int>(blockSize), C);
     }
     catch( cv::Exception& e)
     {
@@ -591,7 +578,7 @@ void QtObjectDetector::applyMedianBlur(Base::e_OpenCVKSize ksize)
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getMedianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize);
+        m_pPipelineHandler->getMedianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, static_cast<int>(ksize));
     }
     catch( cv::Exception& e)
     {
@@ -606,7 +593,7 @@ void QtObjectDetector::applyBlur(cv::Size ksize, cv::Point anchor, Base::e_OPenC
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, anchor, borderType);
+        m_pPipelineHandler->getBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, anchor, static_cast<int>(borderType));
     }
     catch( cv::Exception& e)
     {
@@ -621,7 +608,7 @@ void QtObjectDetector::applyGaussianBlur(cv::Size ksize, double sigmaX, double s
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getGaussianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, sigmaX, sigmaY, borderType);
+        m_pPipelineHandler->getGaussianBlur()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ksize, sigmaX, sigmaY, static_cast<int>(borderType));
     }
     catch( cv::Exception& e)
     {
@@ -666,7 +653,7 @@ void QtObjectDetector::applyErode(cv::Mat kernel, cv::Point anchor, int iteratio
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getErode()(m_pPipelineHandler->getImagePipeline().back().first, newImage, kernel, anchor, iterations, borderType, borderValue);
+        m_pPipelineHandler->getErode()(m_pPipelineHandler->getImagePipeline().back().first, newImage, kernel, anchor, iterations, static_cast<int>(borderType), borderValue);
     }
     catch( cv::Exception& e)
     {
@@ -681,7 +668,7 @@ void QtObjectDetector::applySobel(int ddepth, int dx, int dy, Base::e_OpenCVKSiz
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getSobel()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, dx, dy, ksize, scale, delta, borderType);
+        m_pPipelineHandler->getSobel()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, dx, dy, static_cast<int>(ksize), scale, delta, static_cast<int>(borderType));
     }
     catch( cv::Exception& e)
     {
@@ -696,7 +683,7 @@ void QtObjectDetector::applyLaplacian(int ddepth, Base::e_OpenCVKSizeExt ksize, 
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
     cv::Mat newImage;
     try{
-        m_pPipelineHandler->getLaplacian()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, ksize, scale, delta, borderType);
+        m_pPipelineHandler->getLaplacian()(m_pPipelineHandler->getImagePipeline().back().first, newImage, ddepth, static_cast<int>(ksize), scale, delta, static_cast<int>(borderType));
     }
     catch( cv::Exception& e)
     {

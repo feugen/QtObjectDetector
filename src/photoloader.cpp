@@ -28,8 +28,6 @@ void PhotoLoader::setImageFormat(const QImage::Format &ImageFormat)
     m_ImageFormat = ImageFormat;
 }
 
-
-
 uint PhotoLoader::getXSize() const
 {
     return m_xSize;

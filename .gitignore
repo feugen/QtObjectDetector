@@ -34,3 +34,6 @@
 # User files
 *.user
 *.autosave
+
+#ignore directories
+data/

@@ -349,10 +349,10 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxKSize = new QComboBox();
         comboboxKSize->setObjectName("comboboxKSize");
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_1));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_3));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_5));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_7));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_1));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_3));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_5));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_7));
 
         //Argument 4
         QLabel* labelScale = new QLabel();
@@ -396,10 +396,10 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QComboBox* comboboxKSize = new QComboBox();
         comboboxKSize->setObjectName("comboboxKSize");
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_1));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_3));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_5));
-        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZEEXT_7));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_1));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_3));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_5));
+        comboboxKSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSizeExt::KSIZE_7));
 
         //Argument 2
         QLabel* labelScale = new QLabel();

@@ -15,10 +15,10 @@ public:
     template<typename QEnum>
     static QString QEnumToQString (const QEnum value)
     {
-      return QMetaEnum::fromType<QEnum>().valueToKey(value);
+      return QMetaEnum::fromType<QEnum>().valueToKey(static_cast<int>(value));
     }
 
-    enum e_OpenCVColorFormat
+    enum class e_OpenCVColorFormat
     {
         COLOR = QImage::Format_BGR888,
         COLOR_INV = QImage::Format_RGB888,
@@ -27,7 +27,7 @@ public:
     };
     Q_ENUM(e_OpenCVColorFormat)
 
-    enum e_OpenCVThresholdType
+    enum class e_OpenCVThresholdType
     {
         THRESH_BINARY = cv::THRESH_BINARY,
         THRESH_BINARY_INV = cv::THRESH_BINARY_INV,
@@ -37,21 +37,21 @@ public:
     };
     Q_ENUM(e_OpenCVThresholdType)
 
-    enum e_OpenCVAdaptivThresholdMethod
+    enum class e_OpenCVAdaptivThresholdMethod
     {
         THRESH_MEAN_C = cv::ADAPTIVE_THRESH_MEAN_C,
         THRESH_GAUSSIAN_C = cv::ADAPTIVE_THRESH_GAUSSIAN_C
     };
     Q_ENUM(e_OpenCVAdaptivThresholdMethod)
 
-    enum e_OpenCVAdaptiveThresholdType
+    enum class e_OpenCVAdaptiveThresholdType
     {
         THRESH_ADAPTIV_BINARY = cv::THRESH_BINARY,
         THRESH_ADAPTIV_BINARY_INV = cv::THRESH_BINARY_INV,
     };
     Q_ENUM(e_OpenCVAdaptiveThresholdType)
 
-    enum e_OpenCVBlockSize
+    enum class e_OpenCVBlockSize
     {
         BLOCKSIZE_3 = 3,
         BLOCKSIZE_5 = 5,
@@ -61,7 +61,7 @@ public:
     };
     Q_ENUM(e_OpenCVBlockSize)
 
-    enum e_OpenCVKSize
+    enum class e_OpenCVKSize
     {
         KSIZE_3 = 3,
         KSIZE_5 = 5,
@@ -71,16 +71,16 @@ public:
     };
     Q_ENUM(e_OpenCVKSize)
 
-    enum e_OpenCVKSizeExt
+    enum class e_OpenCVKSizeExt
     {
-        KSIZEEXT_1 = 1,
-        KSIZEEXT_3 = 3,
-        KSIZEEXT_5 = 5,
-        KSIZEEXT_7 = 7
+        KSIZE_1 = 1,
+        KSIZE_3 = 3,
+        KSIZE_5 = 5,
+        KSIZE_7 = 7
     };
     Q_ENUM(e_OpenCVKSizeExt)
 
-    enum e_OpenCVErosionSize
+    enum class e_OpenCVErosionSize
     {
         ErosionSize_1 = 1,
         ErosionSize_2 = 2,
@@ -90,7 +90,7 @@ public:
     };
     Q_ENUM(e_OpenCVErosionSize)
 
-    enum e_OPenCVBorderType
+    enum class e_OPenCVBorderType
     {
         BORDER_CONSTANT = cv::BorderTypes::BORDER_CONSTANT,
         BORDER_REPLICATE = cv::BorderTypes::BORDER_REPLICATE,
@@ -101,7 +101,7 @@ public:
     };
     Q_ENUM(e_OPenCVBorderType)
 
-    enum e_OPenCVMorphShapes
+    enum class e_OPenCVMorphShapes
     {
         MORPH_RECT = cv::MorphShapes::MORPH_RECT,
         MORPH_CROSS = cv::MorphShapes::MORPH_CROSS,
@@ -109,16 +109,16 @@ public:
     };
     Q_ENUM(e_OPenCVMorphShapes)
 
-    enum e_OPenCVFunctionType
+    enum class e_OPenCVFunctionType
     {
         FILTERING = 0,
         TRANSFORMATION = 1,
-        TRACKING = 2,
-        DETECTION = 3
+        DETECTION = 2,
+        TRACKING = 3
     };
     Q_ENUM(e_OPenCVFunctionType)
 
-    enum e_OpenCVFunction
+    enum class e_OpenCVFunction
     {
         CvtColor = 0,
         Threshold = 1,
@@ -131,9 +131,51 @@ public:
         Erode = 8,
         Sobel = 9,
         Laplacian = 10,
-        AddWeighted = 11
+        AddWeighted = 11,
+        CascadeClassifier = 12,
+        MeanShift = 13,
+        CamShift = 14,
+        BackgroundSubtraction = 15,
+        OpticalFlow = 16
     };
     Q_ENUM(e_OpenCVFunction)
+
+    enum class e_OpenCVFilteringFunction
+    {
+        MedianBlur,
+        Blur,
+        GaussianBlur,
+        Pow,
+        Erode,
+        Sobel,
+        Laplacian
+    };
+    Q_ENUM(e_OpenCVFilteringFunction)
+
+    enum class e_OpenCVTransformationFunction
+    {
+        CvtColor,
+        Threshold,
+        AdaptiveThreshold,
+        BitwiseNot,
+        AddWeighted
+    };
+    Q_ENUM(e_OpenCVTransformationFunction)
+
+    enum class e_OpenCVDetectionFunction
+    {
+        CascadeClassifier
+    };
+    Q_ENUM(e_OpenCVDetectionFunction)
+
+    enum class e_OpenCVTrackingFunction
+    {
+        MeanShift,
+        CamShift,
+        BackgroundSubtraction,
+        OpticalFlow
+    };
+    Q_ENUM(e_OpenCVTrackingFunction)
 
     struct ImageSettings {
         bool autoSize;
