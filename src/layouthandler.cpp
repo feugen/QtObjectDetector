@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QDir>
 
 LayoutHandler::LayoutHandler(QObject *parent) : QObject(parent)
 {
@@ -477,5 +478,24 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         layout->addWidget(spinBoxBeta);
         layout->addWidget(labelGamma);
         layout->addWidget(spinBoxGamma);
+    }
+    else if(function == "CascadeClassifier")
+    {
+        //Argument 1
+        QLabel* labelCascades = new QLabel();
+        labelCascades->setText("Cascade:");
+
+        QComboBox* comboboxCascade = new QComboBox();
+        comboboxCascade->setObjectName("comboboxCascade");
+
+        QDir directory("data/haarcascades");
+        if(directory.isReadable() && !directory.isEmpty())
+        {
+            QStringList haarcascades = directory.entryList(QStringList("*.xml"), QDir::Files);
+            comboboxCascade->addItems(haarcascades);
+        }
+
+        layout->addWidget(labelCascades);
+        layout->addWidget(comboboxCascade);
     }
 }

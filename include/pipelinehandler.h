@@ -27,6 +27,7 @@ public:
     std::function<void (cv::InputArray, cv::OutputArray, int, int, int, int, double, double, int)> &getSobel();
     std::function<void (cv::InputArray, cv::OutputArray, int, int, double, double, int)> &getLaplacian();
     std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> &getAddWeighted();
+    std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &getCascadeClassifier();
 
 private:
     std::function<void(cv::InputArray, cv::OutputArray, int, int)> m_cvtColor = cv::cvtColor;
@@ -42,6 +43,7 @@ private:
     std::function<void(cv::InputArray, cv::OutputArray, int, int, int, int, double, double, int)> m_sobel = cv::Sobel;
     std::function<void(cv::InputArray, cv::OutputArray, int, int, double, double, int)> m_laplacian = cv::Laplacian;
     std::function<void(cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> m_addWeighted = cv::addWeighted;
+    std::function<void(cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> m_CascadeClassifier;
 
 private:
     std::vector<std::pair<cv::Mat, Base::e_OpenCVColorFormat>> m_imagePipeline;

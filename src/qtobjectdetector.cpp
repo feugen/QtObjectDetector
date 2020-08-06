@@ -335,7 +335,14 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             }
             case Base::e_OpenCVFunction::CascadeClassifier:
             {
-                //TODO
+                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxCascade");
+
+                if(arg1)
+                {
+                    const auto arg1Value = arg1->currentText();
+
+                    m_lastFunction = [=](){applyCascadeClassifier(arg1Value.toStdString());};
+                }
                 break;
             }
             case Base::e_OpenCVFunction::MeanShift:
@@ -712,6 +719,28 @@ void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, doubl
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(outputArray, currentColorFormat));
 }
 
+void QtObjectDetector::applyCascadeClassifier(const cv::String &fileName)
+{
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().second;
+    cv::CascadeClassifier cascade;
+
+    if(!cascade.load("data/haarcascades/" + fileName))
+    {
+        qDebug() << "Error loading cascade " + QString::fromStdString(fileName);
+        return;
+    }
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getCascadeClassifier()(m_pPipelineHandler->getImagePipeline().back().first, newImage, cascade);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+}
+
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
 {
     m_pPipelineHandler->getFunctionPipeline().push_back(m_lastFunction);
@@ -881,7 +910,6 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     if (!m_pInputVideo->open(filepath.data(), cv::CAP_ANY)) return;
 
     std::function runVideo = [this](){
-
         const double fps = m_pInputVideo.get()->get(cv::CAP_PROP_FPS);
         qDebug() << fps << "Fps";
         int frameCounter = 0;
@@ -1027,7 +1055,6 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
     }
 
     std::function runCam = [&](){
-
         const double fps = m_pInputCam.get()->get(cv::CAP_PROP_FPS);
         qDebug() << fps << "Fps";
         int frameCounter = 0;

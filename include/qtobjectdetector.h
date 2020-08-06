@@ -58,6 +58,7 @@ private slots:
     void applySobel(int ddepth, int dx, int dy, Base::e_OpenCVKSizeExt ksize = Base::e_OpenCVKSizeExt::KSIZE_3, double scale = 1, double delta = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
     void applyLaplacian(int ddepth, Base::e_OpenCVKSizeExt ksize = Base::e_OpenCVKSizeExt::KSIZE_1, double scale = 1, double delta = 0, Base::e_OPenCVBorderType borderType = Base::e_OPenCVBorderType::BORDER_REFLECT_101);
     void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype = -1);
+    void applyCascadeClassifier(const cv::String &fileName);
 
     //Video Part
     void on_videoSelected(const QString &file);

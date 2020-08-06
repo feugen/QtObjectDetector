@@ -79,3 +79,29 @@ std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::
 {
     return m_addWeighted;
 }
+
+std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &PipelineHandler::getCascadeClassifier()
+{
+    m_CascadeClassifier = [](cv::InputArray input, cv::OutputArray output, cv::CascadeClassifier cascade)
+    {
+        cv::Mat temp_gray;
+        const int depth = input.depth();
+        if(depth == 3)
+        {
+            cv::cvtColor(input, temp_gray, cv::COLOR_BGR2GRAY );
+        }
+        else if(depth == 1)
+        {
+            input.copyTo(temp_gray);
+        }
+
+        std::vector<cv::Rect> cascadeResults;
+        cascade.detectMultiScale(temp_gray, cascadeResults);
+
+        //todo draw results in input
+        input.copyTo(output);
+
+    };
+
+    return m_CascadeClassifier;
+}
