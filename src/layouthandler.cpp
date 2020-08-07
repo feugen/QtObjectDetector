@@ -443,6 +443,54 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         layout->addWidget(labelBorderType);
         layout->addWidget(comboboxBorderType);
     }
+    else if(function == "Canny")
+    {
+        //Argument 1
+        QLabel* labelThreshold1 = new QLabel();
+        labelThreshold1->setText("Threshold1:");
+
+        QDoubleSpinBox* doubleSpinBoxThreshold1 = new QDoubleSpinBox();
+        doubleSpinBoxThreshold1->setObjectName("doubleSpinBoxThreshold1");
+        doubleSpinBoxThreshold1->setRange(0, 255);
+        doubleSpinBoxThreshold1->setValue(100);
+
+        //Argument 2
+        QLabel* labelThreshold2 = new QLabel();
+        labelThreshold2->setText("Threshold1:");
+
+        QDoubleSpinBox* doubleSpinBoxThreshold2 = new QDoubleSpinBox();
+        doubleSpinBoxThreshold2->setObjectName("doubleSpinBoxThreshold2");
+        doubleSpinBoxThreshold2->setRange(0, 255);
+        doubleSpinBoxThreshold2->setValue(200);
+
+        //Argument 3
+        QLabel* labelApertureSize = new QLabel();
+        labelApertureSize->setText("ApertureSize:");
+
+        QComboBox* comboboxApertureSize = new QComboBox();
+        comboboxApertureSize->setObjectName("comboboxApertureSize");
+        comboboxApertureSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSize::KSIZE_3));
+        comboboxApertureSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSize::KSIZE_5));
+        comboboxApertureSize->addItem(Base::QEnumToQString(Base::e_OpenCVKSize::KSIZE_7));
+
+        //Argument 4
+        QLabel* labelL2gradient = new QLabel();
+        labelL2gradient->setText("L2gradient:");
+
+        QComboBox* comboboxL2gradient = new QComboBox();
+        comboboxL2gradient->setObjectName("comboboxL2gradient");
+        comboboxL2gradient->addItem(QStringLiteral("False"));
+        comboboxL2gradient->addItem(QStringLiteral("True"));
+
+        layout->addWidget(labelThreshold1);
+        layout->addWidget(doubleSpinBoxThreshold1);
+        layout->addWidget(labelThreshold2);
+        layout->addWidget(doubleSpinBoxThreshold2);
+        layout->addWidget(labelApertureSize);
+        layout->addWidget(comboboxApertureSize);
+        layout->addWidget(labelL2gradient);
+        layout->addWidget(comboboxL2gradient);
+    }
     else if(function == "AddWeighted")
     {
         //Argument 1

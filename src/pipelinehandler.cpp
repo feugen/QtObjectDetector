@@ -72,7 +72,12 @@ std::function<void (cv::InputArray, cv::OutputArray, int, int, int, int, double,
 
 std::function<void (cv::InputArray, cv::OutputArray, int, int, double, double, int)> &PipelineHandler::getLaplacian()
 {
-    return m_laplacian;
+     return m_laplacian;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, double, double, int, bool)> &PipelineHandler::getCanny()
+{
+     return m_canny;
 }
 
 std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> &PipelineHandler::getAddWeighted()

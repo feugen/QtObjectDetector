@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "base.h"
+#include <opencv2/imgproc.hpp>
 
 class PipelineHandler : public QObject
 {
@@ -26,6 +27,7 @@ public:
     std::function<void (cv::InputArray, cv::OutputArray, cv::InputArray, cv::Point, int, int, const cv::Scalar &)> &getErode();
     std::function<void (cv::InputArray, cv::OutputArray, int, int, int, int, double, double, int)> &getSobel();
     std::function<void (cv::InputArray, cv::OutputArray, int, int, double, double, int)> &getLaplacian();
+    std::function<void (cv::InputArray, cv::OutputArray, double, double, int, bool)> &getCanny();
     std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> &getAddWeighted();
     std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &getCascadeClassifier();
 
@@ -42,6 +44,7 @@ private:
     std::function<void(cv::InputArray, cv::OutputArray, cv::InputArray, cv::Point, int, int, const cv::Scalar&)> m_erode = cv::erode;
     std::function<void(cv::InputArray, cv::OutputArray, int, int, int, int, double, double, int)> m_sobel = cv::Sobel;
     std::function<void(cv::InputArray, cv::OutputArray, int, int, double, double, int)> m_laplacian = cv::Laplacian;
+    std::function<void(cv::InputArray, cv::OutputArray, double, double, int, bool)> m_canny = static_cast<void(*)(cv::InputArray, cv::OutputArray, double, double, int, bool)>(cv::Canny);
     std::function<void(cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> m_addWeighted = cv::addWeighted;
     std::function<void(cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> m_CascadeClassifier;
 
