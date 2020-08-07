@@ -82,25 +82,29 @@ std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::
 
 std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &PipelineHandler::getCascadeClassifier()
 {
-    m_CascadeClassifier = [](cv::InputArray input, cv::OutputArray output, cv::CascadeClassifier cascade)
+    m_CascadeClassifier = [](cv::InputArray input, cv::OutputArray output, cv::CascadeClassifier cascade) -> void
     {
-        cv::Mat temp_gray;
-        const int depth = input.depth();
-        if(depth == 3)
+        cv::Mat tempGray;
+        const int channels = input.channels();
+        if(channels == 3)
         {
-            cv::cvtColor(input, temp_gray, cv::COLOR_BGR2GRAY );
+            cv::cvtColor(input, tempGray, cv::COLOR_BGR2GRAY );
         }
-        else if(depth == 1)
+        else if(channels == 1)
         {
-            input.copyTo(temp_gray);
+            input.copyTo(tempGray);
         }
 
         std::vector<cv::Rect> cascadeResults;
-        cascade.detectMultiScale(temp_gray, cascadeResults);
+        cascade.detectMultiScale(tempGray, cascadeResults);
 
-        //todo draw results in input
+        for (const cv::Rect &result : cascadeResults)
+        {
+            cv::Scalar color(0,255,0,255);
+            cv::rectangle(input.getMat(), result, color);
+        }
+
         input.copyTo(output);
-
     };
 
     return m_CascadeClassifier;

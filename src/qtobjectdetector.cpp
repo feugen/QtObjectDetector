@@ -65,7 +65,26 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
     if (!m_pPipelineHandler->getImagePipeline().empty())
     {
-        const auto selectedFunction = static_cast<Base::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+        //const auto selectedFunction = static_cast<Base::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
+
+        Base::e_OpenCVFunction selectedFunction = Base::e_OpenCVFunction::CvtColor; //Default initialization
+        const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
+
+        const QMetaEnum metaEnumTypes = QMetaEnum::fromType<Base::e_OpenCVFunction>();
+        for (int i = 0; i < metaEnumTypes.keyCount() ; i++ )
+        {
+            const QString functionsName = metaEnumTypes.valueToKey(i);
+            if(functionsName == selectedFunctionName)
+            {
+                selectedFunction = static_cast<Base::e_OpenCVFunction>(i);
+                break;
+            }
+            if(i == metaEnumTypes.keyCount()-1)
+            {
+                //No implemented function found, dont process
+                return;
+            }
+        }
 
         switch (selectedFunction)
         {
@@ -317,6 +336,11 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 }
                 break;
             }
+            case Base::e_OpenCVFunction::Canny:
+            {
+                //todo
+                break;
+            }
             case Base::e_OpenCVFunction::AddWeighted:
             {
                 const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxAlpha");
@@ -343,6 +367,11 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
                     m_lastFunction = [=](){applyCascadeClassifier(arg1Value.toStdString());};
                 }
+                break;
+            }
+            case Base::e_OpenCVFunction::ShiTomasi:
+            {
+                //TODO
                 break;
             }
             case Base::e_OpenCVFunction::MeanShift:

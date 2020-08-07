@@ -111,8 +111,8 @@ public:
 
     enum class e_OPenCVFunctionType
     {
-        FILTERING = 0,
-        TRANSFORMATION = 1,
+        TRANSFORMATION = 0,
+        FILTERING = 1,
         DETECTION = 2,
         TRACKING = 3
     };
@@ -131,12 +131,14 @@ public:
         Erode = 8,
         Sobel = 9,
         Laplacian = 10,
-        AddWeighted = 11,
-        CascadeClassifier = 12,
-        MeanShift = 13,
-        CamShift = 14,
-        BackgroundSubtraction = 15,
-        OpticalFlow = 16
+        Canny = 11,
+        AddWeighted = 12,
+        CascadeClassifier = 13,
+        ShiTomasi = 14,
+        MeanShift = 15,
+        CamShift = 16,
+        BackgroundSubtraction = 17,
+        OpticalFlow = 18
     };
     Q_ENUM(e_OpenCVFunction)
 
@@ -146,9 +148,7 @@ public:
         Blur,
         GaussianBlur,
         Pow,
-        Erode,
-        Sobel,
-        Laplacian
+        Erode
     };
     Q_ENUM(e_OpenCVFilteringFunction)
 
@@ -164,7 +164,11 @@ public:
 
     enum class e_OpenCVDetectionFunction
     {
-        CascadeClassifier
+        CascadeClassifier,
+        ShiTomasi,
+        Sobel,
+        Laplacian,
+        Canny
     };
     Q_ENUM(e_OpenCVDetectionFunction)
 
