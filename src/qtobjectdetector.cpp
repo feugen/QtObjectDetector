@@ -65,8 +65,6 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 {
     if (!m_pPipelineHandler->getImagePipeline().empty())
     {
-        //const auto selectedFunction = static_cast<Base::e_OpenCVFunction>(ui->comboBox_FunctionSelector->currentIndex());
-
         Base::e_OpenCVFunction selectedFunction = Base::e_OpenCVFunction::CvtColor; //Default initialization
         const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
 
@@ -390,7 +388,26 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             }
             case Base::e_OpenCVFunction::ShiTomasi:
             {
-                //TODO
+                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxMaxCorners");
+                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxQualityLevel");
+                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxMinDistance");
+                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
+
+                if(arg1 && arg2 && arg3 && arg4)
+                {
+                    const auto arg1Value = arg1->value();
+                    const auto arg2Value = arg2->value();
+                    const auto arg3Value = arg3->value();
+                    const auto arg4Value = arg4->currentIndex();
+                    const auto arg4ValueInt = 2*arg4Value+3;
+                    const auto arg4ValueText = arg4->currentText();
+
+                    //Verify data
+                    const auto enumValue4 = static_cast<Base::e_OpenCVKSize>(arg4ValueInt);
+                    assert(Base::QEnumToQString(enumValue4).mid(6) == arg4ValueText);
+
+                    m_lastFunction = [=](){applyShiTomasi(arg1Value, arg2Value, arg3Value, enumValue4);};
+                }
                 break;
             }
             case Base::e_OpenCVFunction::MeanShift:
@@ -769,7 +786,6 @@ void QtObjectDetector::applyAddWeighted(double alphaSRC1, double betaSRC2, doubl
     auto currentPipelineSize = m_pPipelineHandler->getImagePipeline().size();
     cv::Mat forelastImage = m_pPipelineHandler->getImagePipeline().at(currentPipelineSize-2).first;
     cv::Mat outputArray;
-
     try{
         m_pPipelineHandler->getAddWeighted()(m_pPipelineHandler->getImagePipeline().back().first, alphaSRC1, forelastImage, betaSRC2, gamma, outputArray, dtype);
     }
@@ -801,6 +817,41 @@ void QtObjectDetector::applyCascadeClassifier(const cv::String &fileName)
     }
     const Base::e_OpenCVColorFormat currentColorFormat = newImage.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+}
+
+void QtObjectDetector::applyShiTomasi(int maxCorners, double qualityLevel, double minDistance, Base::e_OpenCVKSize ksize)
+{
+    cv::Mat tempImage;
+    std::vector<cv::Point2f> corners;
+
+    const int channels = m_pPipelineHandler->getImagePipeline().back().first.channels();
+    if(channels == 3)
+    {
+        cv::cvtColor(m_pPipelineHandler->getImagePipeline().back().first, tempImage, cv::COLOR_BGR2GRAY );
+    }
+    else if(channels == 1)
+    {
+        m_pPipelineHandler->getImagePipeline().back().first.copyTo(tempImage);
+    }
+
+    try{
+        m_pPipelineHandler->getShiTomasi()(tempImage, corners, maxCorners, qualityLevel, minDistance, cv::noArray(), static_cast<int>(ksize), false, 0.04);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    qDebug() << "Number of corners detected: " << corners.size();
+    int radius = 10;
+    cv::Scalar color(0,255,0,255);
+    for(const auto &corner : corners)
+    {
+        cv::circle(m_pPipelineHandler->getImagePipeline().back().first, corner, radius, color, 1, cv::FILLED);
+    }
+
+    const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().first.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pPipelineHandler->getImagePipeline().back().first, currentColorFormat));
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()

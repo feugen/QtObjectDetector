@@ -13,7 +13,7 @@ LayoutHandler::LayoutHandler(QObject *parent) : QObject(parent)
 void LayoutHandler::createLayout(QLayout *layout, QString function)
 {
     if(layout == nullptr) return void();
-    if(function == "CvtColor")
+    else if(function == "CvtColor")
     {
         QLabel* labelFormat = new QLabel();
         labelFormat->setText("Color Format:");
@@ -545,5 +545,55 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         layout->addWidget(labelCascades);
         layout->addWidget(comboboxCascade);
+    }
+    else if(function == "ShiTomasi")
+    {
+        //Argument 1
+        QLabel* labelMaxCorners = new QLabel();
+        labelMaxCorners->setText("Max corners:");
+
+        QSpinBox* spinBoxMaxCorners = new QSpinBox();
+        spinBoxMaxCorners->setObjectName("spinBoxMaxCorners");
+        spinBoxMaxCorners->setRange(0, 255);
+        spinBoxMaxCorners->setValue(10);
+
+        //Argument 2
+        QLabel* labelQualityLevel = new QLabel();
+        labelQualityLevel->setText("Quality level:");
+
+        QDoubleSpinBox* spinBoxQualityLevel = new QDoubleSpinBox();
+        spinBoxQualityLevel->setObjectName("spinBoxQualityLevel");
+        spinBoxQualityLevel->setRange(0,1);
+        spinBoxQualityLevel->setValue(0.5);
+
+        //Argument 3
+        QLabel* labelMinDistance = new QLabel();
+        labelMinDistance->setText("Min distance:");
+
+        QDoubleSpinBox* spinBoxMinDistance = new QDoubleSpinBox();
+        spinBoxMinDistance->setObjectName("spinBoxMinDistance");
+        spinBoxMinDistance->setRange(0,4096);
+        spinBoxMinDistance->setValue(10);
+
+        //Argument 4
+        QLabel* labelBlockSize = new QLabel();
+        labelBlockSize->setText("Block Size:");
+
+        QComboBox* comboboxBlockSize = new QComboBox();
+        comboboxBlockSize->setObjectName("comboboxBlockSize");
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_3)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_5)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_7)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_9)));
+        comboboxBlockSize->addItem(QString::number(static_cast<int>(Base::e_OpenCVBlockSize::BLOCKSIZE_11)));
+
+        layout->addWidget(labelMaxCorners);
+        layout->addWidget(spinBoxMaxCorners);
+        layout->addWidget(labelQualityLevel);
+        layout->addWidget(spinBoxQualityLevel);
+        layout->addWidget(labelMinDistance);
+        layout->addWidget(spinBoxMinDistance);
+        layout->addWidget(labelBlockSize);
+        layout->addWidget(comboboxBlockSize);
     }
 }

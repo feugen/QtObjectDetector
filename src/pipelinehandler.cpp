@@ -87,7 +87,7 @@ std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::
 
 std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &PipelineHandler::getCascadeClassifier()
 {
-    m_CascadeClassifier = [](cv::InputArray input, cv::OutputArray output, cv::CascadeClassifier cascade) -> void
+    m_cascadeClassifier = [](cv::InputArray input, cv::OutputArray output, cv::CascadeClassifier cascade) -> void
     {
         cv::Mat tempGray;
         const int channels = input.channels();
@@ -102,15 +102,20 @@ std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &Pi
 
         std::vector<cv::Rect> cascadeResults;
         cascade.detectMultiScale(tempGray, cascadeResults);
+        cv::Scalar color(0,255,0,255);
 
         for (const cv::Rect &result : cascadeResults)
         {
-            cv::Scalar color(0,255,0,255);
             cv::rectangle(input.getMat(), result, color);
         }
 
         input.copyTo(output);
     };
 
-    return m_CascadeClassifier;
+return m_cascadeClassifier;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, int, double, double, cv::InputArray, int, bool, double)> &PipelineHandler::getShiTomasi()
+{
+    return m_shiTomasi;
 }

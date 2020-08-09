@@ -60,6 +60,7 @@ private slots:
     void applyCanny(double, double, Base::e_OpenCVKSize ksize = Base::e_OpenCVKSize::KSIZE_3, bool L2gradient = false);
     void applyAddWeighted(double alphaSRC1, double betaSRC2, double gamma, int dtype = -1);
     void applyCascadeClassifier(const cv::String &fileName);
+    void applyShiTomasi(int maxCorners, double qualityLevel, double minDistance, Base::e_OpenCVKSize ksize = Base::e_OpenCVKSize::KSIZE_3);
 
     //Video Part
     void on_videoSelected(const QString &file);

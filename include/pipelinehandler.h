@@ -30,6 +30,7 @@ public:
     std::function<void (cv::InputArray, cv::OutputArray, double, double, int, bool)> &getCanny();
     std::function<void (cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> &getAddWeighted();
     std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &getCascadeClassifier();
+    std::function<void (cv::InputArray, cv::OutputArray, int, double, double, cv::InputArray, int, bool, double)> &getShiTomasi();
 
 private:
     std::function<void(cv::InputArray, cv::OutputArray, int, int)> m_cvtColor = cv::cvtColor;
@@ -46,7 +47,8 @@ private:
     std::function<void(cv::InputArray, cv::OutputArray, int, int, double, double, int)> m_laplacian = cv::Laplacian;
     std::function<void(cv::InputArray, cv::OutputArray, double, double, int, bool)> m_canny = static_cast<void(*)(cv::InputArray, cv::OutputArray, double, double, int, bool)>(cv::Canny);
     std::function<void(cv::InputArray, double, cv::InputArray, double, double, cv::OutputArray, int)> m_addWeighted = cv::addWeighted;
-    std::function<void(cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> m_CascadeClassifier;
+    std::function<void(cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> m_cascadeClassifier;
+    std::function<void(cv::InputArray, cv::OutputArray, int, double, double, cv::InputArray, int, bool, double)> m_shiTomasi = static_cast<void(*)(cv::InputArray, cv::OutputArray, int, double, double, cv::InputArray, int, bool, double)>(cv::goodFeaturesToTrack);
 
 private:
     std::vector<std::pair<cv::Mat, Base::e_OpenCVColorFormat>> m_imagePipeline;
