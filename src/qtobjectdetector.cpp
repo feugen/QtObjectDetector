@@ -1216,5 +1216,3 @@ void QtObjectDetector::on_comboBox_PipelineNameSelectorVideo_currentIndexChanged
         ui->comboBox_PipelineNameSelector->setCurrentIndex(index);
     }
 }
-
-
