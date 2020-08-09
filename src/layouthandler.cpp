@@ -596,4 +596,18 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
         layout->addWidget(labelBlockSize);
         layout->addWidget(comboboxBlockSize);
     }
+    else if(function == "BackgroundSubtraction")
+    {
+        //Argument 1
+        QLabel* labelSubtractionMethod = new QLabel();
+        labelSubtractionMethod->setText("Subtraction method:");
+
+        QComboBox* comboboxSubtractionMethod = new QComboBox();
+        comboboxSubtractionMethod->setObjectName("comboboxSubtractionMethod");
+        comboboxSubtractionMethod->addItem(Base::QEnumToQString(Base::e_OpenCVBackgroundSubtractor::KNN));
+        comboboxSubtractionMethod->addItem(Base::QEnumToQString(Base::e_OpenCVBackgroundSubtractor::MOG2));
+
+        layout->addWidget(labelSubtractionMethod);
+        layout->addWidget(comboboxSubtractionMethod);
+    }
 }

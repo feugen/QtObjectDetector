@@ -410,24 +410,22 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
                 }
                 break;
             }
-            case Base::e_OpenCVFunction::MeanShift:
-            {
-                //TODO
-                break;
-            }
-            case Base::e_OpenCVFunction::CamShift:
-            {
-                //TODO
-                break;
-            }
+
             case Base::e_OpenCVFunction::BackgroundSubtraction:
             {
-                //TODO
-                break;
-            }
-            case Base::e_OpenCVFunction::OpticalFlow:
-            {
-                //TODO//TODO
+                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxSubtractionMethod");
+
+                if(arg1)
+                {
+                    const auto arg1Value = arg1->currentIndex();
+                    const auto arg1ValueText = arg1->currentText();
+
+                    //Verify data
+                    const auto enumValue1 = static_cast<Base::e_OpenCVBackgroundSubtractor>(arg1Value);
+                    assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
+
+                    m_lastFunction = [=](){applyBackgroundSubtractor(enumValue1);};
+                }
                 break;
             }
         }
@@ -852,6 +850,22 @@ void QtObjectDetector::applyShiTomasi(int maxCorners, double qualityLevel, doubl
 
     const Base::e_OpenCVColorFormat currentColorFormat = m_pPipelineHandler->getImagePipeline().back().first.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
     m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(m_pPipelineHandler->getImagePipeline().back().first, currentColorFormat));
+}
+
+void QtObjectDetector::applyBackgroundSubtractor(const Base::e_OpenCVBackgroundSubtractor subtractor)
+{
+    cv::Mat newImage;
+    try{
+        m_pPipelineHandler->getBackgroundSubtraction()(m_pPipelineHandler->getImagePipeline().back().first, newImage, subtractor);
+    }
+    catch( cv::Exception& e)
+    {
+        const QString err_msg = QString::fromUtf8(e.what());
+        qDebug() << "Exception caught:" << err_msg;
+    }
+    const Base::e_OpenCVColorFormat currentColorFormat = newImage.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+
 }
 
 void QtObjectDetector::on_pushButton_AddToPipeline_clicked()

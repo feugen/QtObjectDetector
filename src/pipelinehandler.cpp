@@ -99,23 +99,42 @@ std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &Pi
         {
             input.copyTo(tempGray);
         }
-
         std::vector<cv::Rect> cascadeResults;
         cascade.detectMultiScale(tempGray, cascadeResults);
-        cv::Scalar color(0,255,0,255);
-
+        const cv::Scalar color(0,255,0,255);
         for (const cv::Rect &result : cascadeResults)
         {
             cv::rectangle(input.getMat(), result, color, 2);
         }
-
         input.copyTo(output);
     };
 
-return m_cascadeClassifier;
+    return m_cascadeClassifier;
 }
 
 std::function<void (cv::InputArray, cv::OutputArray, int, double, double, cv::InputArray, int, bool, double)> &PipelineHandler::getShiTomasi()
 {
     return m_shiTomasi;
+}
+
+std::function<void (cv::InputArray, cv::OutputArray, Base::e_OpenCVBackgroundSubtractor)> &PipelineHandler::getBackgroundSubtraction()
+{
+    m_backgroundSubtraction = [](cv::InputArray input, cv::OutputArray output, Base::e_OpenCVBackgroundSubtractor substractor) ->void
+    {
+        cv::Ptr<cv::BackgroundSubtractor> pBackSub = nullptr;
+        if(substractor == Base::e_OpenCVBackgroundSubtractor::KNN)
+        {
+            pBackSub = cv::createBackgroundSubtractorKNN();
+        }
+        else{
+            pBackSub = cv::createBackgroundSubtractorMOG2();
+        }
+        cv::Mat fgMask;
+        if(pBackSub)
+        {
+            pBackSub->apply(input, fgMask);
+        }
+        fgMask.copyTo(output);
+    };
+    return m_backgroundSubtraction;
 }

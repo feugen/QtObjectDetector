@@ -135,10 +135,7 @@ public:
         AddWeighted = 12,
         CascadeClassifier = 13,
         ShiTomasi = 14,
-        MeanShift = 15,
-        CamShift = 16,
-        BackgroundSubtraction = 17,
-        OpticalFlow = 18
+        BackgroundSubtraction = 15
     };
     Q_ENUM(e_OpenCVFunction)
 
@@ -174,12 +171,16 @@ public:
 
     enum class e_OpenCVTrackingFunction
     {
-        MeanShift,
-        CamShift,
-        BackgroundSubtraction,
-        OpticalFlow
+        BackgroundSubtraction
     };
     Q_ENUM(e_OpenCVTrackingFunction)
+
+    enum class e_OpenCVBackgroundSubtractor
+    {
+        KNN,
+        MOG2
+    };
+    Q_ENUM(e_OpenCVBackgroundSubtractor)
 
     struct ImageSettings {
         bool autoSize;
