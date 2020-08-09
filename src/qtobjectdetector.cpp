@@ -843,8 +843,8 @@ void QtObjectDetector::applyShiTomasi(int maxCorners, double qualityLevel, doubl
         qDebug() << "Exception caught:" << err_msg;
     }
     qDebug() << "Number of corners detected: " << corners.size();
-    int radius = 10;
-    cv::Scalar color(0,255,0,255);
+    const int radius = 10;
+    const cv::Scalar color(0,255,0,255);
     for(const auto &corner : corners)
     {
         cv::circle(m_pPipelineHandler->getImagePipeline().back().first, corner, radius, color, 1, cv::FILLED);

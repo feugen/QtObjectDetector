@@ -106,7 +106,7 @@ std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &Pi
 
         for (const cv::Rect &result : cascadeResults)
         {
-            cv::rectangle(input.getMat(), result, color);
+            cv::rectangle(input.getMat(), result, color, 2);
         }
 
         input.copyTo(output);
