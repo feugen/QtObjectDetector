@@ -174,7 +174,7 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>150</width>
+                       <width>190</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -545,7 +545,36 @@
                 <string notr="true">background-color: rgb(35, 38, 41);</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_7">
-                <item row="14" column="0" colspan="2">
+                <item row="18" column="0" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_PipelineName">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="placeholderText">
+                   <string>Add pipeline name when finished</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="2">
+                 <widget class="QComboBox" name="comboBox_FunctionTypeSelector"/>
+                </item>
+                <item row="11" column="0" colspan="2">
+                 <widget class="QLabel" name="label_11">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Function Arguments:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="15" column="0" colspan="2">
                  <widget class="QLabel" name="label_12">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -555,19 +584,6 @@
                   </property>
                   <property name="text">
                    <string>Add step to current pipeline:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0" colspan="2">
-                 <widget class="QComboBox" name="comboBox_FunctionSelector"/>
-                </item>
-                <item row="18" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_SavePipeline">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Save Pipeline</string>
                   </property>
                  </widget>
                 </item>
@@ -584,6 +600,42 @@
                   </property>
                  </widget>
                 </item>
+                <item row="16" column="0" colspan="2">
+                 <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
+                </item>
+                <item row="4" column="0" colspan="2">
+                 <widget class="QComboBox" name="comboBox_FunctionSelector"/>
+                </item>
+                <item row="19" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_SavePipeline">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Save Pipeline</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="13" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_ApplyFunction">
+                  <property name="text">
+                   <string>Apply Function</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="17" column="0">
+                 <widget class="QPushButton" name="pushButton_DeleteFromPipeline">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Delete Step</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="0" colspan="2">
+                 <widget class="QWidget" name="widget_Arguments" native="true"/>
+                </item>
                 <item row="1" column="0" colspan="2">
                  <widget class="QLabel" name="label">
                   <property name="sizePolicy">
@@ -597,65 +649,23 @@
                   </property>
                  </widget>
                 </item>
-                <item row="17" column="0" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_PipelineName">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="placeholderText">
-                   <string>Add pipeline name when finished</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QComboBox" name="comboBox_FunctionTypeSelector"/>
-                </item>
-                <item row="15" column="0" colspan="2">
-                 <widget class="QComboBox" name="comboBox_PipelineStepSelector"/>
-                </item>
-                <item row="11" column="0" colspan="2">
-                 <widget class="QLabel" name="label_11">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Function Arguments:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="13" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_ApplyFunction">
-                  <property name="text">
-                   <string>Apply Function</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="12" column="0" colspan="2">
-                 <widget class="QWidget" name="widget_Arguments" native="true"/>
-                </item>
-                <item row="16" column="0">
-                 <widget class="QPushButton" name="pushButton_DeleteFromPipeline">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>Delete Step</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="16" column="1">
+                <item row="17" column="1">
                  <widget class="QPushButton" name="pushButton_AddToPipeline">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
                    <string>Add Step</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="14" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_UndoFunction">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Undo Function</string>
                   </property>
                  </widget>
                 </item>
@@ -986,7 +996,7 @@
                      </property>
                      <property name="minimumSize">
                       <size>
-                       <width>150</width>
+                       <width>190</width>
                        <height>0</height>
                       </size>
                      </property>

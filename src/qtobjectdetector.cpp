@@ -436,7 +436,25 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             m_lastFunction();
             loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
             ui->pushButton_AddToPipeline->setEnabled(true);
+            ui->pushButton_UndoFunction->setEnabled(true);
         }
+    }
+}
+
+void QtObjectDetector::on_pushButton_UndoFunction_clicked()
+{
+    const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
+    if(m_lastFunctionString == selectedFunctionName)
+    {
+        if(m_pPipelineHandler->getImagePipeline().size() > 1)
+        {
+            m_pPipelineHandler->getImagePipeline().pop_back();
+            if(m_pPipelineHandler->getImagePipeline().size() == 1)
+            {
+                ui->pushButton_UndoFunction->setEnabled(false);
+            }
+        }
+        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
     }
 }
 
@@ -877,6 +895,7 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     ui->pushButton_AddToPipeline->setEnabled(false);
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
     ui->lineEdit_PipelineName->setEnabled(true);
+    ui->pushButton_UndoFunction->setEnabled(false);
 
     if(ui->lineEdit_PipelineName->text().length() > 0 && ui->lineEdit_PipelineName->text().at(0).isLetter())
     {
@@ -919,6 +938,9 @@ void QtObjectDetector::on_pushButton_SavePipeline_clicked()
         ui->pushButton_DeletePipelineVideo->setEnabled(true);
         ui->comboBox_PipelineNameSelector->addItem(pipelineName);
         ui->comboBox_PipelineNameSelectorVideo->addItem(pipelineName);
+
+        ui->comboBox_PipelineStepSelector->clear();
+        ui->pushButton_DeleteFromPipeline->setEnabled(false);
     }
 }
 
@@ -994,6 +1016,15 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
     {
         pLayout->setAlignment(Qt::AlignTop);
         ui->widget_Arguments->setLayout(pLayout);
+    }
+
+    const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
+    if(m_lastFunctionString == selectedFunctionName)
+    {
+        ui->pushButton_UndoFunction->setEnabled(true);
+    }
+    else{
+        ui->pushButton_UndoFunction->setEnabled(false);
     }
 }
 

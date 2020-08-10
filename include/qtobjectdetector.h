@@ -79,6 +79,8 @@ private slots:
 
     void on_comboBox_FunctionTypeSelector_currentIndexChanged(const QString &arg1);
 
+    void on_pushButton_UndoFunction_clicked();
+
 private:
     void storeImageSettings();
     void loadImage();
