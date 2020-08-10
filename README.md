@@ -11,7 +11,7 @@ Here is an example for face detection using cascade classifiers. Your own classi
 ![Test Image 1](Facedetection.bmp)
 
 
-Here is another example for a canny function/pipeline applied to a live cam, the function is used to detect conrers.
+Here is another example for a canny function/pipeline applied to a live cam, the function is used to detect edges.
 
 ![Test Image 1](Canny.bmp)
 
