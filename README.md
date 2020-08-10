@@ -15,7 +15,7 @@ Here is another example for a canny function/pipeline applied to a live cam, the
 
 ![Test Image 1](Canny.bmp)
 
-THe workflow should be as follows:
+The workflow should be as follows:
 
 1. You load a picture, select a function, change the parameters and apply it to a loaded picture. Immediatly you can see the changes, if you are satisfied with the results, then you can store the step. Then you select a different function and repeat the steps.
 2. When you are done adding the steps, you can name the pipline and store it. If you wish you can create multiple piplines - just repeat the steps.
