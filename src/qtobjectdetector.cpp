@@ -437,6 +437,10 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
             loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
             ui->pushButton_AddToPipeline->setEnabled(true);
             ui->pushButton_UndoFunction->setEnabled(true);
+            ui->pushButton_ApplyFunction->setEnabled(false);
+            ui->comboBox_FunctionTypeSelector->setEnabled(false);
+            ui->comboBox_FunctionSelector->setEnabled(false);
+            ui->widget_Arguments->setEnabled(false);
         }
     }
 }
@@ -452,6 +456,10 @@ void QtObjectDetector::on_pushButton_UndoFunction_clicked()
             if(m_pPipelineHandler->getImagePipeline().size() == 1)
             {
                 ui->pushButton_UndoFunction->setEnabled(false);
+                ui->pushButton_ApplyFunction->setEnabled(true);
+                ui->comboBox_FunctionTypeSelector->setEnabled(true);
+                ui->comboBox_FunctionSelector->setEnabled(true);
+                ui->widget_Arguments->setEnabled(true);
             }
         }
         loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
@@ -537,6 +545,7 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
 {
     QFile file(m_imageSettings.filePath);
     if (!file.open(QFile::ReadOnly)) return;
+    if (!m_pPipelineHandler->getImagePipeline().size()) return;
 
     if((m_pPipelineHandler->getImagePipeline().size() - 1) >= storagePosition)
     {
@@ -896,6 +905,9 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
     ui->pushButton_DeleteFromPipeline->setEnabled(true);
     ui->lineEdit_PipelineName->setEnabled(true);
     ui->pushButton_UndoFunction->setEnabled(false);
+    ui->comboBox_FunctionTypeSelector->setEnabled(true);
+    ui->comboBox_FunctionSelector->setEnabled(true);
+    ui->widget_Arguments->setEnabled(true);
 
     if(ui->lineEdit_PipelineName->text().length() > 0 && ui->lineEdit_PipelineName->text().at(0).isLetter())
     {
@@ -905,12 +917,22 @@ void QtObjectDetector::on_pushButton_AddToPipeline_clicked()
 
 void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
 {
-    const auto currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
-    ui->comboBox_PipelineStepSelector->removeItem(currentIndex);
-    if(static_cast<int>(m_pPipelineHandler->getFunctionPipeline().size()) > currentIndex)
+    if (!m_pPipelineHandler->getImagePipeline().size()) return;
+    if (!m_pPipelineHandler->getFunctionPipeline().size()) return;
+
+    auto currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
+    if(static_cast<int>(m_pPipelineHandler->getFunctionPipeline().size()) == currentIndex + 1)
     {
-        m_pPipelineHandler->getFunctionPipeline().erase(m_pPipelineHandler->getFunctionPipeline().begin() + currentIndex);
-        m_pPipelineHandler->getImagePipeline().erase(m_pPipelineHandler->getImagePipeline().begin() + currentIndex);
+        ui->comboBox_PipelineStepSelector->removeItem(currentIndex);
+        m_pPipelineHandler->getFunctionPipeline().pop_back();
+        m_pPipelineHandler->getImagePipeline().pop_back();
+
+        loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
+        m_lastFunctionString = ui->comboBox_PipelineStepSelector->currentText();
+        if(m_lastFunctionString == ui->comboBox_FunctionSelector->currentText())
+        {
+            ui->pushButton_ApplyFunction->setEnabled(true);
+        }
     }
     if(m_pPipelineHandler->getFunctionPipeline().empty())
     {
@@ -919,6 +941,28 @@ void QtObjectDetector::on_pushButton_DeleteFromPipeline_clicked()
         ui->pushButton_ApplyPipeline->setEnabled(false);
         ui->pushButton_SavePipeline->setEnabled(false);
         ui->lineEdit_PipelineName->setEnabled(false);
+        ui->pushButton_ApplyFunction->setEnabled(true);
+    }
+
+    currentIndex = ui->comboBox_PipelineStepSelector->currentIndex();
+    if (currentIndex == -1) return;
+    if((currentIndex + 1) == static_cast<int>(m_pPipelineHandler->getFunctionPipeline().size()))
+    {
+        ui->pushButton_DeleteFromPipeline->setEnabled(true);
+    }
+    else{
+        ui->pushButton_DeleteFromPipeline->setEnabled(false);
+    }
+}
+
+void QtObjectDetector::on_comboBox_PipelineStepSelector_currentIndexChanged(int index)
+{
+    if((index + 1) == static_cast<int>(m_pPipelineHandler->getFunctionPipeline().size()))
+    {
+        ui->pushButton_DeleteFromPipeline->setEnabled(true);
+    }
+    else{
+        ui->pushButton_DeleteFromPipeline->setEnabled(false);
     }
 }
 
@@ -1022,9 +1066,11 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
     if(m_lastFunctionString == selectedFunctionName)
     {
         ui->pushButton_UndoFunction->setEnabled(true);
+        ui->pushButton_ApplyFunction->setEnabled(false);
     }
     else{
         ui->pushButton_UndoFunction->setEnabled(false);
+        ui->pushButton_ApplyFunction->setEnabled(true);
     }
 }
 
@@ -1118,6 +1164,7 @@ void QtObjectDetector::on_pushButton_LoadVideo_clicked()
     m_pThreadVideo->setObjectName("runVideo");
     connect(m_pThreadVideo, &QThread::started, this, &QtObjectDetector::setStopVideoSettings);
     connect(m_pThreadVideo, &QThread::finished, this, &QtObjectDetector::setStartVideoSettings);
+    connect(m_pThreadVideo, &QThread::finished, m_pThreadVideo, &QThread::deleteLater);
     m_pThreadVideo->start();
 }
 
@@ -1262,6 +1309,7 @@ void QtObjectDetector::on_pushButton_StartCamera_clicked()
     thread->setObjectName("runCam");
     connect(thread, &QThread::started, this, &QtObjectDetector::setStopCameraSettings);
     connect(thread, &QThread::finished, this, &QtObjectDetector::setStartCameraSettings);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
 }
 

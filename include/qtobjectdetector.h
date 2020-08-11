@@ -81,6 +81,8 @@ private slots:
 
     void on_pushButton_UndoFunction_clicked();
 
+    void on_comboBox_PipelineStepSelector_currentIndexChanged(int index);
+
 private:
     void storeImageSettings();
     void loadImage();
