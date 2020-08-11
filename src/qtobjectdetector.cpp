@@ -460,6 +460,7 @@ void QtObjectDetector::on_pushButton_UndoFunction_clicked()
                 ui->comboBox_FunctionTypeSelector->setEnabled(true);
                 ui->comboBox_FunctionSelector->setEnabled(true);
                 ui->widget_Arguments->setEnabled(true);
+                ui->pushButton_AddToPipeline->setEnabled(false);
             }
         }
         loadImageToQLabel(m_pPipelineHandler->getImagePipeline().size() - 1);
@@ -733,17 +734,32 @@ void QtObjectDetector::applyBitwiseNot()
 
 void QtObjectDetector::applyPow(double power)
 {
+    cv::Mat convertedImage;
     cv::Mat newImage;
+    cv::Mat finalImage;
+
+    const auto depth = m_pPipelineHandler->getImagePipeline().back().first.depth();
+
+    if(!(depth == CV_32F || depth == CV_64F))
+    {
+        m_pPipelineHandler->getImagePipeline().back().first.convertTo(convertedImage, CV_32F);
+    }
+    else
+    {
+        m_pPipelineHandler->getImagePipeline().back().first.copyTo(convertedImage);
+    }
+
     try{
-        m_pPipelineHandler->getPow()(m_pPipelineHandler->getImagePipeline().back().first, power, newImage);
+        m_pPipelineHandler->getPow()(convertedImage, power, newImage);
+        newImage.convertTo(finalImage, 0);
     }
     catch( cv::Exception& e)
     {
         const QString err_msg = QString::fromUtf8(e.what());
         qDebug() << "Exception caught:" << err_msg;
     }
-    const Base::e_OpenCVColorFormat currentColorFormat = newImage.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
-    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(newImage, currentColorFormat));
+    const Base::e_OpenCVColorFormat currentColorFormat = finalImage.channels() == 3 ? Base::e_OpenCVColorFormat::COLOR : Base::e_OpenCVColorFormat::GRAY;
+    m_pPipelineHandler->getImagePipeline().push_back(std::pair<cv::Mat, Base::e_OpenCVColorFormat>(finalImage, currentColorFormat));
 }
 
 void QtObjectDetector::applyErode(cv::Mat kernel, cv::Point anchor, int iterations, Base::e_OPenCVBorderType borderType, const cv::Scalar &borderValue)

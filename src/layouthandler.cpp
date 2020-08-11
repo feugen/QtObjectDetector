@@ -262,8 +262,9 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         QDoubleSpinBox* spinBoxPower = new QDoubleSpinBox();
         spinBoxPower->setObjectName("spinBoxPower");
-        spinBoxPower->setRange(0,1);
-        spinBoxPower->setValue(0.5);
+        spinBoxPower->setRange(0,5);
+        spinBoxPower->setValue(0.8);
+        spinBoxPower->setSingleStep(0.1);
 
         layout->addWidget(labelPow);
         layout->addWidget(spinBoxPower);

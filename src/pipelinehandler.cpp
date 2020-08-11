@@ -93,7 +93,7 @@ std::function<void (cv::InputArray, cv::OutputArray, cv::CascadeClassifier)> &Pi
         const int channels = input.channels();
         if(channels == 3)
         {
-            cv::cvtColor(input, tempGray, cv::COLOR_BGR2GRAY );
+            cv::cvtColor(input, tempGray, cv::COLOR_BGR2GRAY);
         }
         else if(channels == 1)
         {
