@@ -4,7 +4,6 @@
 
 #include <QPixmap>
 #include <QGraphicsVideoItem>
-#include <QAbstractEventDispatcher>
 #include <QDebug>
 
 QtObjectDetector::QtObjectDetector(QWidget *parent)
@@ -86,348 +85,348 @@ void QtObjectDetector::on_pushButton_ApplyFunction_clicked()
 
         switch (selectedFunction)
         {
-            case Base::e_OpenCVFunction::CvtColor:
-            {
-                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
+        case Base::e_OpenCVFunction::CvtColor:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxFormat");
 
-                if(arg1)
+            if(arg1)
+            {
+                const auto arg1Value = arg1->currentText();
+                Base::e_OpenCVColorFormat selectedColorFormat;
+                if(arg1Value == "Gray")
                 {
-                    const auto arg1Value = arg1->currentText();
-                    Base::e_OpenCVColorFormat selectedColorFormat;
-                    if(arg1Value == "Gray")
-                    {
-                        selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
-                        m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
-                    }
+                    selectedColorFormat = Base::e_OpenCVColorFormat::GRAY;
+                    m_lastFunction = [this, selectedColorFormat](){applyCvtColor(selectedColorFormat);};
                 }
-                break;
             }
+            break;
+        }
 
-            case Base::e_OpenCVFunction::Threshold:
+        case Base::e_OpenCVFunction::Threshold:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
+            const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+
+            if(arg1 && arg2 && arg3)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValue");
-                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueText = arg3->currentText();
 
-                if(arg1 && arg2 && arg3)
+                //Verify data
+                const auto enum3Value = static_cast<Base::e_OpenCVThresholdType>(arg3Value);
+                assert(Base::QEnumToQString(enum3Value) == arg3ValueText);
+
+                m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, enum3Value);};
+            }
+            break;
+        }
+
+        case Base::e_OpenCVFunction::AdaptiveThreshold:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
+            const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxAdaptiveMethod");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
+            const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
+            const auto arg5 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxConstantC");
+
+            if(arg1 && arg2 && arg3 && arg4 && arg5)
+            {
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->currentIndex();
+                const auto arg2ValueText = arg2->currentText();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueText = arg3->currentText();
+                const auto arg4Value = arg4->currentText().toInt();
+                const auto arg4ValueText = arg4->currentText();
+                const auto arg5Value = arg5->value();
+
+                //Verify data
+                const auto enumValue2 = static_cast<Base::e_OpenCVAdaptivThresholdMethod>(arg2Value);
+                assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
+                const auto enumValue3 = static_cast<Base::e_OpenCVAdaptiveThresholdType>(arg3Value);
+                assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                const auto enumValue4 = static_cast<Base::e_OpenCVBlockSize>(arg4Value);
+                assert(Base::QEnumToQString(enumValue4).mid(10) == arg4ValueText);
+
+                m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, enumValue2, enumValue3, enumValue4, arg5Value);};
+            }
+            break;
+        }
+
+        case Base::e_OpenCVFunction::MedianBlur:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+            if(arg1)
+            {
+                const auto arg1Value = arg1->currentText();
+                bool isOk = false;
+                const auto arg1ValueInt = arg1Value.toInt(&isOk);
+                if(isOk)
                 {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueText = arg3->currentText();
-
                     //Verify data
-                    const auto enum3Value = static_cast<Base::e_OpenCVThresholdType>(arg3Value);
-                    assert(Base::QEnumToQString(enum3Value) == arg3ValueText);
+                    const auto enumValue1 = static_cast<Base::e_OpenCVKSize>(arg1ValueInt);
+                    assert(Base::QEnumToQString(enumValue1).mid(6) == arg1Value);
 
-                    m_lastFunction = [=](){applyThreshold(arg1Value, arg2Value, enum3Value);};
+                    m_lastFunction = [=](){applyMedianBlur(enumValue1);};
                 }
-                break;
             }
+            break;
+        }
+        case Base::e_OpenCVFunction::Blur:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
+            const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
 
-            case Base::e_OpenCVFunction::AdaptiveThreshold:
+            if(arg1 && arg2 && arg3)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxTresholdValueMax");
-                const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxAdaptiveMethod");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxThreshType");
-                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
-                const auto arg5 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinboxConstantC");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueText = arg3->currentText();
 
-                if(arg1 && arg2 && arg3 && arg4 && arg5)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->currentIndex();
-                    const auto arg2ValueText = arg2->currentText();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueText = arg3->currentText();
-                    const auto arg4Value = arg4->currentText().toInt();
-                    const auto arg4ValueText = arg4->currentText();
-                    const auto arg5Value = arg5->value();
+                auto size = cv::Size(arg1Value, arg2Value);
+                auto point = cv::Point(-1,-1); //Look at OpenCv documentation
 
-                    //Verify data
-                    const auto enumValue2 = static_cast<Base::e_OpenCVAdaptivThresholdMethod>(arg2Value);
-                    assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
-                    const auto enumValue3 = static_cast<Base::e_OpenCVAdaptiveThresholdType>(arg3Value);
-                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
-                    const auto enumValue4 = static_cast<Base::e_OpenCVBlockSize>(arg4Value);
-                    assert(Base::QEnumToQString(enumValue4).mid(10) == arg4ValueText);
+                //Verify data
+                const auto enumValue3 = static_cast<Base::e_OPenCVBorderType>(arg3Value);
+                assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
 
-                    m_lastFunction = [=](){applyAdaptiveThreshold(arg1Value, enumValue2, enumValue3, enumValue4, arg5Value);};
-                }
-                break;
+                m_lastFunction = [=](){applyBlur(size, point, enumValue3);};
             }
+            break;
+        }
+        case Base::e_OpenCVFunction::GaussianBlur:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
+            const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
+            const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaX");
+            const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaY");
+            const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
 
-            case Base::e_OpenCVFunction::MedianBlur:
+            if(arg1 && arg2 && arg3 && arg4 && arg5)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
-                if(arg1)
-                {
-                    const auto arg1Value = arg1->currentText();
-                    bool isOk = false;
-                    const auto arg1ValueInt = arg1Value.toInt(&isOk);
-                    if(isOk)
-                    {
-                        //Verify data
-                        const auto enumValue1 = static_cast<Base::e_OpenCVKSize>(arg1ValueInt);
-                        assert(Base::QEnumToQString(enumValue1).mid(6) == arg1Value);
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->value();
+                const auto arg4Value = arg4->value();
+                const auto arg5Value = arg5->currentIndex();
+                const auto arg5ValueText = arg5->currentText();
 
-                        m_lastFunction = [=](){applyMedianBlur(enumValue1);};
-                    }
-                }
-                break;
+                auto size = cv::Size(arg1Value, arg2Value);
+
+                //Verify data
+                const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
+                assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
+
+                m_lastFunction = [=](){applyGaussianBlur(size, arg3Value, arg4Value, enumValue5);};
             }
-            case Base::e_OpenCVFunction::Blur:
+            break;
+        }
+
+        case Base::e_OpenCVFunction::BitwiseNot:
+        {
+            m_lastFunction = [=](){applyBitwiseNot();};
+            break;
+        }
+        case Base::e_OpenCVFunction::Pow:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxPower");
+
+            if(arg1)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
-                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+                const auto arg1Value = arg1->value();
 
-                if(arg1 && arg2 && arg3)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueText = arg3->currentText();
-
-                    auto size = cv::Size(arg1Value, arg2Value);
-                    auto point = cv::Point(-1,-1); //Look at OpenCv documentation
-
-                    //Verify data
-                    const auto enumValue3 = static_cast<Base::e_OPenCVBorderType>(arg3Value);
-                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
-
-                    m_lastFunction = [=](){applyBlur(size, point, enumValue3);};
-                }
-                break;
+                m_lastFunction = [=](){applyPow(arg1Value);};
             }
-            case Base::e_OpenCVFunction::GaussianBlur:
+            break;
+        }
+
+        case Base::e_OpenCVFunction::Erode:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxIterations");
+            const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxMorphShapes");
+            const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxErosionSize");
+
+            if(arg1 && arg2 && arg3 && arg4)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeWidth");
-                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxKSizeHeight");
-                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaX");
-                const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxSigmaY");
-                const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->currentIndex();
+                const auto arg2ValueText = arg2->currentText();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueText = arg3->currentText();
+                const auto arg4Value = arg4->currentIndex()+1;
+                const auto arg4ValueText = arg4->currentText();
 
-                if(arg1 && arg2 && arg3 && arg4 && arg5)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->value();
-                    const auto arg4Value = arg4->value();
-                    const auto arg5Value = arg5->currentIndex();
-                    const auto arg5ValueText = arg5->currentText();
+                //Verify data
+                const auto enumValue2 = static_cast<Base::e_OPenCVBorderType>(arg2Value);
+                assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
+                const auto enumValue3 = static_cast<Base::e_OPenCVMorphShapes>(arg3Value);
+                assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
+                assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
-                    auto size = cv::Size(arg1Value, arg2Value);
-
-                    //Verify data
-                    const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
-                    assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
-
-                    m_lastFunction = [=](){applyGaussianBlur(size, arg3Value, arg4Value, enumValue5);};
-                }
-                break;
+                cv::Mat element = cv::getStructuringElement(arg3Value, cv::Size( 2*arg4Value + 1, 2*arg4Value+1 ), cv::Point( arg4Value, arg4Value));
+                m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
             }
 
-            case Base::e_OpenCVFunction::BitwiseNot:
+            break;
+        }
+        case Base::e_OpenCVFunction::Sobel:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDx");
+            const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDy");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+            const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
+            const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+            if(arg1 && arg2 && arg3 && arg4 && arg5)
             {
-                m_lastFunction = [=](){applyBitwiseNot();};
-                break;
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueInt = 2*arg3Value+1;
+                const auto arg3ValueText = arg3->currentText();
+                const auto arg4Value = arg4->value();
+                const auto arg5Value = arg5->currentIndex();
+                const auto arg5ValueText = arg5->currentText();
+
+                //Verify data
+                const auto enumValue3 = static_cast<Base::e_OpenCVKSizeExt>(arg3ValueInt);
+                assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
+                const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
+                assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
+
+                m_lastFunction = [=](){applySobel(-1, arg1Value, arg2Value, enumValue3, arg4Value, 0, enumValue5);};
             }
-            case Base::e_OpenCVFunction::Pow:
+            break;
+        }
+
+        case Base::e_OpenCVFunction::Laplacian:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
+            const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
+            const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxDelta");
+            const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+
+            if(arg1 && arg2 && arg3 && arg4)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxPower");
+                const auto arg1Value = arg1->currentIndex();
+                const auto arg1ValueInt = 2*arg1Value+1;
+                const auto arg1ValueText = arg1->currentText();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->value();
+                const auto arg4Value = arg4->currentIndex();
+                const auto arg4ValueText = arg4->currentText();
 
-                if(arg1)
-                {
-                    const auto arg1Value = arg1->value();
+                //Verify data
+                const auto enumValue1 = static_cast<Base::e_OpenCVKSizeExt>(arg1ValueInt);
+                assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
+                const auto enumValue4 = static_cast<Base::e_OPenCVBorderType>(arg4Value);
+                assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
 
-                    m_lastFunction = [=](){applyPow(arg1Value);};
-                }
-                break;
+                m_lastFunction = [=](){applyLaplacian(-1, enumValue1, arg2Value, arg3Value, enumValue4);};
             }
+            break;
+        }
+        case Base::e_OpenCVFunction::Canny:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("doubleSpinBoxThreshold1");
+            const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("doubleSpinBoxThreshold2");
+            const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxApertureSize");
+            const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxL2gradient");
 
-            case Base::e_OpenCVFunction::Erode:
+            if(arg1 && arg2 && arg3 && arg4)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxIterations");
-                const auto arg2 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxMorphShapes");
-                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxErosionSize");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->currentIndex();
+                const auto arg3ValueInt = 2*arg3Value+3;
+                const auto arg3ValueText = arg3->currentText();
+                const auto arg4Value = arg4->currentIndex();
 
-                if(arg1 && arg2 && arg3 && arg4)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->currentIndex();
-                    const auto arg2ValueText = arg2->currentText();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueText = arg3->currentText();
-                    const auto arg4Value = arg4->currentIndex()+1;
-                    const auto arg4ValueText = arg4->currentText();
+                //Verify data
+                const auto enumValue3 = static_cast<Base::e_OpenCVKSize>(arg3ValueInt);
+                assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
 
-                    //Verify data
-                    const auto enumValue2 = static_cast<Base::e_OPenCVBorderType>(arg2Value);
-                    assert(Base::QEnumToQString(enumValue2) == arg2ValueText);
-                    const auto enumValue3 = static_cast<Base::e_OPenCVMorphShapes>(arg3Value);
-                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
-                    const auto enumValue4 = static_cast<Base::e_OpenCVErosionSize>(arg4Value);
-                    assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
-
-                    cv::Mat element = cv::getStructuringElement(arg3Value, cv::Size( 2*arg4Value + 1, 2*arg4Value+1 ), cv::Point( arg4Value, arg4Value));
-                    m_lastFunction = [=](){applyErode(element, cv::Point(-1,-1), arg1Value, enumValue2, cv::morphologyDefaultBorderValue());};
-                }
-
-                break;
+                m_lastFunction = [=](){applyCanny(arg1Value, arg2Value, enumValue3, arg4Value);};
             }
-            case Base::e_OpenCVFunction::Sobel:
+            break;
+        }
+        case Base::e_OpenCVFunction::AddWeighted:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxAlpha");
+            const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxBeta");
+            const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxGamma");
+
+            if(arg1 && arg2 && arg3)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDx");
-                const auto arg2 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxDy");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
-                const auto arg4 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
-                const auto arg5 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->value();
 
-                if(arg1 && arg2 && arg3 && arg4 && arg5)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueInt = 2*arg3Value+1;
-                    const auto arg3ValueText = arg3->currentText();
-                    const auto arg4Value = arg4->value();
-                    const auto arg5Value = arg5->currentIndex();
-                    const auto arg5ValueText = arg5->currentText();
-
-                    //Verify data
-                    const auto enumValue3 = static_cast<Base::e_OpenCVKSizeExt>(arg3ValueInt);
-                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
-                    const auto enumValue5 = static_cast<Base::e_OPenCVBorderType>(arg5Value);
-                    assert(Base::QEnumToQString(enumValue5) == arg5ValueText);
-
-                    m_lastFunction = [=](){applySobel(-1, arg1Value, arg2Value, enumValue3, arg4Value, 0, enumValue5);};
-                }
-                break;
+                m_lastFunction = [=](){applyAddWeighted(arg1Value, arg2Value, arg3Value, -1);};
             }
+            break;
+        }
+        case Base::e_OpenCVFunction::CascadeClassifier:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxCascade");
 
-            case Base::e_OpenCVFunction::Laplacian:
+            if(arg1)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxKSize");
-                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxScale");
-                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxDelta");
-                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBorderType");
+                const auto arg1Value = arg1->currentText();
 
-                if(arg1 && arg2 && arg3 && arg4)
-                {
-                    const auto arg1Value = arg1->currentIndex();
-                    const auto arg1ValueInt = 2*arg1Value+1;
-                    const auto arg1ValueText = arg1->currentText();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->value();
-                    const auto arg4Value = arg4->currentIndex();
-                    const auto arg4ValueText = arg4->currentText();
-
-                    //Verify data
-                    const auto enumValue1 = static_cast<Base::e_OpenCVKSizeExt>(arg1ValueInt);
-                    assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
-                    const auto enumValue4 = static_cast<Base::e_OPenCVBorderType>(arg4Value);
-                    assert(Base::QEnumToQString(enumValue4) == arg4ValueText);
-
-                    m_lastFunction = [=](){applyLaplacian(-1, enumValue1, arg2Value, arg3Value, enumValue4);};
-                }
-                break;
+                m_lastFunction = [=](){applyCascadeClassifier(arg1Value.toStdString());};
             }
-            case Base::e_OpenCVFunction::Canny:
+            break;
+        }
+        case Base::e_OpenCVFunction::ShiTomasi:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxMaxCorners");
+            const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxQualityLevel");
+            const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxMinDistance");
+            const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
+
+            if(arg1 && arg2 && arg3 && arg4)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("doubleSpinBoxThreshold1");
-                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("doubleSpinBoxThreshold2");
-                const auto arg3 = ui->widget_Arguments->findChild<QComboBox*>("comboboxApertureSize");
-                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxL2gradient");
+                const auto arg1Value = arg1->value();
+                const auto arg2Value = arg2->value();
+                const auto arg3Value = arg3->value();
+                const auto arg4Value = arg4->currentIndex();
+                const auto arg4ValueInt = 2*arg4Value+3;
+                const auto arg4ValueText = arg4->currentText();
 
-                if(arg1 && arg2 && arg3 && arg4)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->currentIndex();
-                    const auto arg3ValueInt = 2*arg3Value+3;
-                    const auto arg3ValueText = arg3->currentText();
-                    const auto arg4Value = arg4->currentIndex();
+                //Verify data
+                const auto enumValue4 = static_cast<Base::e_OpenCVKSize>(arg4ValueInt);
+                assert(Base::QEnumToQString(enumValue4).mid(6) == arg4ValueText);
 
-                    //Verify data
-                    const auto enumValue3 = static_cast<Base::e_OpenCVKSize>(arg3ValueInt);
-                    assert(Base::QEnumToQString(enumValue3) == arg3ValueText);
-
-                    m_lastFunction = [=](){applyCanny(arg1Value, arg2Value, enumValue3, arg4Value);};
-                }
-                break;
+                m_lastFunction = [=](){applyShiTomasi(arg1Value, arg2Value, arg3Value, enumValue4);};
             }
-            case Base::e_OpenCVFunction::AddWeighted:
+            break;
+        }
+
+        case Base::e_OpenCVFunction::BackgroundSubtraction:
+        {
+            const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxSubtractionMethod");
+
+            if(arg1)
             {
-                const auto arg1 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxAlpha");
-                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxBeta");
-                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxGamma");
+                const auto arg1Value = arg1->currentIndex();
+                const auto arg1ValueText = arg1->currentText();
 
-                if(arg1 && arg2 && arg3)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->value();
+                //Verify data
+                const auto enumValue1 = static_cast<Base::e_OpenCVBackgroundSubtractor>(arg1Value);
+                assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
 
-                    m_lastFunction = [=](){applyAddWeighted(arg1Value, arg2Value, arg3Value, -1);};
-                }
-                break;
+                m_lastFunction = [=](){applyBackgroundSubtractor(enumValue1);};
             }
-            case Base::e_OpenCVFunction::CascadeClassifier:
-            {
-                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxCascade");
-
-                if(arg1)
-                {
-                    const auto arg1Value = arg1->currentText();
-
-                    m_lastFunction = [=](){applyCascadeClassifier(arg1Value.toStdString());};
-                }
-                break;
-            }
-            case Base::e_OpenCVFunction::ShiTomasi:
-            {
-                const auto arg1 = ui->widget_Arguments->findChild<QSpinBox*>("spinBoxMaxCorners");
-                const auto arg2 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxQualityLevel");
-                const auto arg3 = ui->widget_Arguments->findChild<QDoubleSpinBox*>("spinBoxMinDistance");
-                const auto arg4 = ui->widget_Arguments->findChild<QComboBox*>("comboboxBlockSize");
-
-                if(arg1 && arg2 && arg3 && arg4)
-                {
-                    const auto arg1Value = arg1->value();
-                    const auto arg2Value = arg2->value();
-                    const auto arg3Value = arg3->value();
-                    const auto arg4Value = arg4->currentIndex();
-                    const auto arg4ValueInt = 2*arg4Value+3;
-                    const auto arg4ValueText = arg4->currentText();
-
-                    //Verify data
-                    const auto enumValue4 = static_cast<Base::e_OpenCVKSize>(arg4ValueInt);
-                    assert(Base::QEnumToQString(enumValue4).mid(6) == arg4ValueText);
-
-                    m_lastFunction = [=](){applyShiTomasi(arg1Value, arg2Value, arg3Value, enumValue4);};
-                }
-                break;
-            }
-
-            case Base::e_OpenCVFunction::BackgroundSubtraction:
-            {
-                const auto arg1 = ui->widget_Arguments->findChild<QComboBox*>("comboboxSubtractionMethod");
-
-                if(arg1)
-                {
-                    const auto arg1Value = arg1->currentIndex();
-                    const auto arg1ValueText = arg1->currentText();
-
-                    //Verify data
-                    const auto enumValue1 = static_cast<Base::e_OpenCVBackgroundSubtractor>(arg1Value);
-                    assert(Base::QEnumToQString(enumValue1) == arg1ValueText);
-
-                    m_lastFunction = [=](){applyBackgroundSubtractor(enumValue1);};
-                }
-                break;
-            }
+            break;
+        }
         }
 
         if(m_lastFunction)
@@ -496,6 +495,11 @@ Base::e_OpenCVColorFormat QtObjectDetector::getColorFormat(cv::Mat mat, bool BGR
 
 void QtObjectDetector::on_selectFileButton_clicked()
 {
+    QStringList mimeTypeFilters({"image/jpeg", // will show "JPEG image (*.jpeg *.jpg *.jpe)
+                                 "image/png",  // will show "PNG image (*.png)"
+                                 "image/bmp"  // will show "BMP image (*.bmp)"
+                                });
+    m_pImageDialog->setMimeTypeFilters(mimeTypeFilters);
     m_pImageDialog->open();
 }
 
@@ -517,12 +521,10 @@ void QtObjectDetector::storeImageSettings()
 {
     if(!m_pPipelineHandler->getImagePipeline().empty())
     {
-        m_imageSettings.filePath = m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8();
-        m_imageSettings.autoSize = ui->checkBox_autoSize->isChecked();
-        m_imageSettings.autoScaled = ui->checkBox_autoScale->isChecked();
-        m_imageSettings.x = m_imageSettings.autoSize ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : (ui->xSpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.cols ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : ui->xSpinBox->value());
-        m_imageSettings.y = m_imageSettings.autoSize  ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : (ui->ySpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.rows ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : ui->ySpinBox->value());
-        m_imageSettings.imageFormat = static_cast<QImage::Format>(ui->formatListComboBox->currentIndex());
+        m_imageSizePolicy.autoSize = ui->checkBox_autoSize->isChecked();
+        m_imageSizePolicy.autoScaled = ui->checkBox_autoScale->isChecked();
+        m_imageSizePolicy.x = m_imageSizePolicy.autoSize ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : (ui->xSpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.cols ? m_pPipelineHandler->getImagePipeline().at(0).first.cols : ui->xSpinBox->value());
+        m_imageSizePolicy.y = m_imageSizePolicy.autoSize  ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : (ui->ySpinBox->value() > m_pPipelineHandler->getImagePipeline().at(0).first.rows ? m_pPipelineHandler->getImagePipeline().at(0).first.rows : ui->ySpinBox->value());
     }
 }
 
@@ -544,16 +546,16 @@ void QtObjectDetector::loadImage()
 
 void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
 {
-    QFile file(m_imageSettings.filePath);
+    QFile file(m_pPhotoLoader->getFileInfo().absoluteFilePath().toUtf8());
     if (!file.open(QFile::ReadOnly)) return;
     if (!m_pPipelineHandler->getImagePipeline().size()) return;
 
     if((m_pPipelineHandler->getImagePipeline().size() - 1) >= storagePosition)
     {
         qDebug() << "Image Format loaded: " << QString::fromStdString(cv::typeToString(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.type()));
-        const QImage *imgIn = new QImage(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSettings.x, m_imageSettings.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
+        const QImage *imgIn = new QImage(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSizePolicy.x, m_imageSizePolicy.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
         QPixmap myPixmap;
-        if(m_imageSettings.autoSize)
+        if(ui->checkBox_autoSize->isChecked())
         {
             const int lineWidth = ui->qLabel_PhotoLoader->lineWidth(); // we need to substract the line width.
             const int bugFix = 1 + 4*lineWidth; //Where does the "1" come from??? Without a box around qlabel (with line width = 1), the 1 fixes the scaling. Why is the Line-width *2 wrong? Fixes needed
@@ -1111,6 +1113,13 @@ void QtObjectDetector::on_videoSelected(const QString &file)
 
 void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 {
+    QStringList mimeTypeFilters({"video/mpeg",
+                                 "video/mp4",
+                                 "video/ogg",
+                                 "video/webm",
+                                 "video/x-msvideo"
+                                });
+    m_pVideoDialog->setMimeTypeFilters(mimeTypeFilters);
     m_pVideoDialog->open();
 }
 

@@ -1,21 +1,20 @@
 #ifndef BASE_H
 #define BASE_H
 
-#include <QObject>
 #include <QImage>
 #include <QMetaEnum>
 #include <opencv2/opencv.hpp>
 
-class Base : public QObject
+class Base
 {
-    Q_OBJECT
+    Q_GADGET
 
 public:
 
     template<typename QEnum>
     static QString QEnumToQString (const QEnum value)
     {
-      return QMetaEnum::fromType<QEnum>().valueToKey(static_cast<int>(value));
+        return QMetaEnum::fromType<QEnum>().valueToKey(static_cast<int>(value));
     }
 
     enum class e_OpenCVColorFormat
@@ -182,13 +181,11 @@ public:
     };
     Q_ENUM(e_OpenCVBackgroundSubtractor)
 
-    struct ImageSettings {
+    struct ImageSizePolicy {
         bool autoSize;
         bool autoScaled;
         int x;
         int y;
-        QImage::Format imageFormat;
-        QByteArray filePath;
     };
 
 signals:

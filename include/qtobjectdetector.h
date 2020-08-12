@@ -111,6 +111,6 @@ private:
     QGraphicsScene *m_pScene = nullptr;
     QGraphicsPixmapItem *m_pVideoImageItem = nullptr;
     QList<QCameraInfo> m_Cameras;
-    Base::ImageSettings m_imageSettings;
+    Base::ImageSizePolicy m_imageSizePolicy;
 };
 #endif // OBJECTDETECTOR_H
