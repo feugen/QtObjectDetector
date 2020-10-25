@@ -553,16 +553,16 @@ void QtObjectDetector::loadImageToQLabel(const size_t& storagePosition)
     if((m_pPipelineHandler->getImagePipeline().size() - 1) >= storagePosition)
     {
         qDebug() << "Image Format loaded: " << QString::fromStdString(cv::typeToString(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.type()));
-        const QImage *imgIn = new QImage(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSizePolicy.x, m_imageSizePolicy.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
+        const std::unique_ptr<QImage> imgIn = std::make_unique<QImage>(static_cast<uchar*>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.data), m_imageSizePolicy.x, m_imageSizePolicy.y, static_cast<int>(m_pPipelineHandler->getImagePipeline().at(storagePosition).first.step), static_cast<QImage::Format>(m_pPipelineHandler->getImagePipeline().at(storagePosition).second));
         QPixmap myPixmap;
         if(ui->checkBox_autoSize->isChecked())
         {
             const int lineWidth = ui->qLabel_PhotoLoader->lineWidth(); // we need to substract the line width.
             const int bugFix = 1 + 4*lineWidth; //Where does the "1" come from??? Without a box around qlabel (with line width = 1), the 1 fixes the scaling. Why is the Line-width *2 wrong? Fixes needed
-            myPixmap = QPixmap::fromImage(*imgIn).scaled(ui->qLabel_PhotoLoader->size().width() - bugFix, ui->qLabel_PhotoLoader->size().height() - bugFix, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            myPixmap = QPixmap::fromImage(*imgIn.get()).scaled(ui->qLabel_PhotoLoader->size().width() - bugFix, ui->qLabel_PhotoLoader->size().height() - bugFix, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
         else{
-            myPixmap = QPixmap::fromImage(*imgIn).scaled(ui->xSpinBox->value(),ui->ySpinBox->value(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            myPixmap = QPixmap::fromImage(*imgIn.get()).scaled(ui->xSpinBox->value(),ui->ySpinBox->value(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
         ui->qLabel_PhotoLoader->setScaledContents(ui->checkBox_autoScale->isChecked());
         ui->qLabel_PhotoLoader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -1072,12 +1072,12 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
         delete myLayout;
     }
 
-    QVBoxLayout *pLayout = new QVBoxLayout();
-    LayoutHandler::createLayout(pLayout, arg1);
+    std::unique_ptr<QVBoxLayout> pLayout = std::make_unique<QVBoxLayout>();
+    LayoutHandler::createLayout(pLayout.get(), arg1);
     if(pLayout != nullptr)
     {
         pLayout->setAlignment(Qt::AlignTop);
-        ui->widget_Arguments->setLayout(pLayout);
+        ui->widget_Arguments->setLayout(pLayout.get());
     }
 
     const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
@@ -1206,9 +1206,9 @@ void QtObjectDetector::setUpVideo()
 {
     if(m_pVideoImageItem == nullptr)
     {
-        m_pVideoImageItem = new QGraphicsPixmapItem();
+        m_pVideoImageItem = std::make_unique<QGraphicsPixmapItem>();
         ui->graphicsView_VideoLoader->setScene(m_pScene);
-        m_pScene->addItem(m_pVideoImageItem);
+        m_pScene->addItem(m_pVideoImageItem.get());
     }
     if(!m_pInputVideo)
     {
@@ -1218,7 +1218,6 @@ void QtObjectDetector::setUpVideo()
     {
         m_pInputCam = std::make_unique<cv::VideoCapture>();
     }
-    //todo delete
 }
 
 //When camera is running

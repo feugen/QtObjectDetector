@@ -6,6 +6,7 @@
 #include <QCamera>
 #include <QThread>
 #include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 #include <memory>
 #include "base.h"
 #include "photoloader.h"
@@ -109,7 +110,7 @@ private:
     std::vector<std::function<void()>> m_selectedVideoPipeline;
     cv::Mat m_pOutputVideoImage;
     QGraphicsScene *m_pScene = nullptr;
-    QGraphicsPixmapItem *m_pVideoImageItem = nullptr;
+    std::unique_ptr<QGraphicsPixmapItem> m_pVideoImageItem = nullptr;
     QList<QCameraInfo> m_Cameras;
     Base::ImageSizePolicy m_imageSizePolicy;
 };
