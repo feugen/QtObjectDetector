@@ -91,6 +91,7 @@ private:
     void loadImageToQLabel(const size_t &storagePosition = 0);
     Base::e_OpenCVColorFormat getColorFormat(cv::Mat mat, bool BGRtoRGB = false) const;
     void setUpVideo();
+    void deleteItems();
 
 private:
     Ui::QtObjectDetector *ui;

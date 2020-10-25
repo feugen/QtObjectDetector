@@ -54,6 +54,7 @@ QtObjectDetector::QtObjectDetector(QWidget *parent)
 
 QtObjectDetector::~QtObjectDetector()
 {
+    deleteItems();
     delete ui;
 }
 
@@ -1059,17 +1060,7 @@ void QtObjectDetector::on_pushButton_ApplyPipeline_clicked()
 
 void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QString &arg1)
 {
-    QLayout* myLayout = ui->widget_Arguments->layout();
-    if(myLayout != nullptr)
-    {
-        QLayoutItem* item;
-        while((item = myLayout->takeAt(0)) != nullptr)
-        {
-            delete item->widget();
-            myLayout->removeItem(item);
-        }
-        delete item;
-    }
+    deleteItems();
 
     if(m_pLayout) m_pLayout.reset();
     m_pLayout = std::make_unique<QVBoxLayout>();
@@ -1217,6 +1208,21 @@ void QtObjectDetector::setUpVideo()
     if(!m_pInputCam)
     {
         m_pInputCam = std::make_unique<cv::VideoCapture>();
+    }
+}
+
+void QtObjectDetector::deleteItems()
+{
+    QLayout* myLayout = ui->widget_Arguments->layout();
+    if(myLayout != nullptr)
+    {
+        QLayoutItem* item;
+        while((item = myLayout->takeAt(0)) != nullptr)
+        {
+            delete item->widget();
+            myLayout->removeItem(item);
+        }
+        delete item;
     }
 }
 
