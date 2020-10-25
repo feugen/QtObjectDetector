@@ -457,7 +457,7 @@ void LayoutHandler::createLayout(QLayout *layout, QString function)
 
         //Argument 2
         QLabel* labelThreshold2 = new QLabel();
-        labelThreshold2->setText("Threshold1:");
+        labelThreshold2->setText("Threshold2:");
 
         QDoubleSpinBox* doubleSpinBoxThreshold2 = new QDoubleSpinBox();
         doubleSpinBoxThreshold2->setObjectName("doubleSpinBoxThreshold2");
