@@ -1,7 +1,7 @@
 #include "medialoader.h"
 
 MediaLoader::MediaLoader(QObject *parent) : QObject(parent),
-  m_FileInfo(QFileInfo("No File selected"))
+    m_FileInfo(QFileInfo("No File selected"))
 {
     const QMetaEnum formatEnum = QMetaEnum::fromType<QImage::Format>();
 

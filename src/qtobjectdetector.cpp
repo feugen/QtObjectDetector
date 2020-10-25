@@ -1113,12 +1113,12 @@ void QtObjectDetector::on_videoSelected(const QString &file)
 
 void QtObjectDetector::on_pushButton_SelectVideo_clicked()
 {
-    QStringList mimeTypeFilters({"video/mpeg",
-                                 "video/mp4",
-                                 "video/ogg",
-                                 "video/webm",
-                                 "video/x-msvideo"
-                                });
+    const QStringList mimeTypeFilters({"video/mpeg",
+                                       "video/mp4",
+                                       "video/ogg",
+                                       "video/webm",
+                                       "video/x-msvideo"
+                                      });
     m_pVideoDialog->setMimeTypeFilters(mimeTypeFilters);
     m_pVideoDialog->open();
 }
