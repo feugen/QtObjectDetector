@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QVBoxLayout>
 #include <memory>
 #include "base.h"
 #include "photoloader.h"
@@ -107,6 +108,7 @@ private:
     std::unique_ptr<QFileDialog> m_pVideoDialog = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputCam = nullptr;
     std::unique_ptr<cv::VideoCapture> m_pInputVideo = nullptr;
+    std::unique_ptr<QVBoxLayout> m_pLayout = nullptr;
     std::vector<std::function<void()>> m_selectedVideoPipeline;
     cv::Mat m_pOutputVideoImage;
     QGraphicsScene *m_pScene = nullptr;

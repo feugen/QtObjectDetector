@@ -1069,15 +1069,15 @@ void QtObjectDetector::on_comboBox_FunctionSelector_currentIndexChanged(const QS
             myLayout->removeItem(item);
         }
         delete item;
-        delete myLayout;
     }
 
-    std::unique_ptr<QVBoxLayout> pLayout = std::make_unique<QVBoxLayout>();
-    LayoutHandler::createLayout(pLayout.get(), arg1);
-    if(pLayout != nullptr)
+    if(m_pLayout) m_pLayout.reset();
+    m_pLayout = std::make_unique<QVBoxLayout>();
+    LayoutHandler::createLayout(m_pLayout.get(), arg1);
+    if(m_pLayout != nullptr)
     {
-        pLayout->setAlignment(Qt::AlignTop);
-        ui->widget_Arguments->setLayout(pLayout.get());
+        m_pLayout->setAlignment(Qt::AlignTop);
+        ui->widget_Arguments->setLayout(m_pLayout.get());
     }
 
     const auto selectedFunctionName = ui->comboBox_FunctionSelector->currentText();
